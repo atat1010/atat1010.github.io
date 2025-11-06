@@ -1,10 +1,9 @@
 /* ===== 引用块美化 ===== */
-blockquote {
-  border-left: 4px solid #007acc;
-  background-color: #f5faff;
-  padding: 10px 20px;
-  color: #333;
-  border-radius: 6px;
+.markdown-body blockquote {
+  border-left: 0.2rem solid var(--purple-light-4);
+  padding: 10px 15px;
+  color: var(--light-text-color);
+  background-color: var(--purple-light-1);
 }
 
 /* ===== 表格样式优化 ===== */
