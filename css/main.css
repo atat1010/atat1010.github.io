@@ -2239,3 +2239,11 @@ input[type=checkbox] {
     margin-left: 1rem;
   }
 }
+blockquote {
+  background: #f6f8fa;
+  border-left: 4px solid #4f7cff;
+  padding: 10px 15px;
+  border-radius: 8px;
+  color: #444;
+  font-style: italic;
+}
