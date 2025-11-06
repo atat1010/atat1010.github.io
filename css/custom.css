@@ -1,0 +1,26 @@
+/* ===== 引用块美化 ===== */
+blockquote {
+  border-left: 4px solid #007acc;
+  background-color: #f5faff;
+  padding: 10px 20px;
+  color: #333;
+  border-radius: 6px;
+}
+
+/* ===== 表格样式优化 ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+}
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+}
+th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+tr:nth-child(even) {
+  background-color: #fafafa;
+}
