@@ -4,13 +4,27 @@
   
   
   <entry>
-    <title>Test</title>
-    <link href="/2025/10/27/Test/"/>
-    <url>/2025/10/27/Test/</url>
+    <title>为什么 keil 开发不同型号单片机需要下载对应支持包</title>
+    <link href="/2025/10/27/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/"/>
+    <url>/2025/10/27/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/</url>
     
-    <content type="html"><![CDATA[<p>这是一篇测试文章check</p><img src="/2025/10/27/Test/test.jpg" class="" title="图片引用方法二"><!-- ![图片引用方法二](./Test/test.jpg) -->]]></content>
+    <content type="html"><![CDATA[<img src="/2025/10/27/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/test.jpg" class=""><h1 id="为什么-keil-开发不同型号单片机需要下载对应支持包"><a href="#为什么-keil-开发不同型号单片机需要下载对应支持包" class="headerlink" title="为什么 keil 开发不同型号单片机需要下载对应支持包"></a>为什么 keil 开发不同型号单片机需要下载对应支持包</h1><p>Keil 的“支持包”就是让 Keil 能认出、支持某个单片机（MCU）所需的一整套配置文件和驱动。</p><p>也就是说：</p><blockquote><p>支持包 &#x3D; 让 Keil “懂得”你这颗芯片的“语言”的工具包。</p></blockquote><h2 id="smile-举个例子"><a href="#smile-举个例子" class="headerlink" title=":smile: 举个例子"></a>:smile: 举个例子</h2><p>假设你要用 Keil 开发 STM32F103，Keil 自己其实并“不认识”这颗芯片，它不知道：</p><ul><li>这颗芯片用什么 CPU 核（比如 ARM Cortex-M3）</li><li>有哪些外设（比如 GPIO、UART、ADC）</li><li>寄存器地址在哪</li><li>如何配置启动文件</li><li>启动时要跑哪段初始化代码（比如 SystemInit）</li></ul><p>:point_right: 这些都由 <strong>芯片厂商（ST、NXP、Infineon 等）提供的” Device Family Pack “(DFP)</strong> 来告诉 Keil。</p><h2 id="tent-支持包内容一般包括："><a href="#tent-支持包内容一般包括：" class="headerlink" title=":tent: 支持包内容一般包括："></a>:tent: 支持包内容一般包括：</h2><table><thead><tr><th>内容</th><th>作用</th></tr></thead><tbody><tr><td>启动文件（startup_xxx.s）</td><td>初始化堆栈、时钟、中断向量表等</td></tr><tr><td>系统配置文件（system_xxx.c&#x2F;h）</td><td>设置系统时钟、外设等基础配置</td></tr><tr><td>头文件（cmsis_device.h）</td><td>定义寄存器地址和位段</td></tr><tr><td>驱动库（HAL&#x2F;LL）</td><td>简化对外设的操作</td></tr><tr><td>Flash 编程算法</td><td>让 Keil 能烧录程序进芯片</td></tr><tr><td>示例工程</td><td>演示怎么使用</td></tr></tbody></table>]]></content>
     
     
+    <categories>
+      
+      <category>学习笔记</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>嵌入式</tag>
+      
+      <tag>单片机</tag>
+      
+    </tags>
     
   </entry>
   
