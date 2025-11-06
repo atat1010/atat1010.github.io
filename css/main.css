@@ -2240,10 +2240,9 @@ input[type=checkbox] {
   }
 }
 blockquote {
-  background: #f6f8fa;
-  border-left: 4px solid #4f7cff;
-  padding: 10px 15px;
-  border-radius: 8px;
-  color: #444;
-  font-style: italic;
+  border-left: 4px solid #007acc;
+  background-color: #f5faff;
+  padding: 10px 20px;
+  color: #333;
+  border-radius: 6px;
 }
