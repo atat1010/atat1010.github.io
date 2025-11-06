@@ -19,12 +19,12 @@
   <meta name="author" content="QM">
   <meta name="keywords" content="">
   
-    <meta name="description" content="为什么 keil 开发不同型号单片机需要下载对应支持包Keil 的“支持包”就是让 Keil 能认出、支持某个单片机（MCU）所需的一整套配置文件和驱动。 也就是说：  支持包 &#x3D; 让 Keil “懂得”你这颗芯片的“语言”的工具包。  :smile: 举个例子假设你要用 Keil 开发 STM32F103，Keil 自己其实并“不认识”这颗芯片，它不知道：  这颗芯片用什么 CPU">
+    <meta name="description" content="为什么 keil 开发不同型号单片机需要下载对应支持包 Keil 的“支持包”就是让 Keil 能认出、支持某个单片机（MCU）所需的一整套配置文件和驱动。 也就是说：  支持包 &#x3D; 让 Keil “懂得”你这颗芯片的“语言”的工具包。  🔗😄 举个例子 假设你要用 Keil 开发 STM32F103，Keil 自己其实并“不认识”这颗芯片，它不知道：  这颗芯片用什么 CPU 核（比如 A">
 <meta property="og:type" content="article">
 <meta property="og:title" content="为什么 keil 开发不同型号单片机需要下载对应支持包">
 <meta property="og:url" content="https://atat1010.github.io/2025/10/27/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/index.html">
 <meta property="og:site_name" content="啦啦啦">
-<meta property="og:description" content="为什么 keil 开发不同型号单片机需要下载对应支持包Keil 的“支持包”就是让 Keil 能认出、支持某个单片机（MCU）所需的一整套配置文件和驱动。 也就是说：  支持包 &#x3D; 让 Keil “懂得”你这颗芯片的“语言”的工具包。  :smile: 举个例子假设你要用 Keil 开发 STM32F103，Keil 自己其实并“不认识”这颗芯片，它不知道：  这颗芯片用什么 CPU">
+<meta property="og:description" content="为什么 keil 开发不同型号单片机需要下载对应支持包 Keil 的“支持包”就是让 Keil 能认出、支持某个单片机（MCU）所需的一整套配置文件和驱动。 也就是说：  支持包 &#x3D; 让 Keil “懂得”你这颗芯片的“语言”的工具包。  🔗😄 举个例子 假设你要用 Keil 开发 STM32F103，Keil 自己其实并“不认识”这颗芯片，它不知道：  这颗芯片用什么 CPU 核（比如 A">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://atat1010.github.io/2025/10/27/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/test.jpg">
 <meta property="article:published_time" content="2025-10-27T15:01:19.000Z">
@@ -239,7 +239,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          509 字
+          487 字
         
       </span>
     
@@ -310,13 +310,14 @@
               <div class="markdown-body">
                 
                 <img src="/2025/10/27/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/test.jpg" srcset="/img/loading.gif" lazyload class="">
-
-<h1 id="为什么-keil-开发不同型号单片机需要下载对应支持包"><a href="#为什么-keil-开发不同型号单片机需要下载对应支持包" class="headerlink" title="为什么 keil 开发不同型号单片机需要下载对应支持包"></a>为什么 keil 开发不同型号单片机需要下载对应支持包</h1><p>Keil 的“支持包”就是让 Keil 能认出、支持某个单片机（MCU）所需的一整套配置文件和驱动。</p>
+<h1>为什么 keil 开发不同型号单片机需要下载对应支持包</h1>
+<p>Keil 的“支持包”就是让 Keil 能认出、支持某个单片机（MCU）所需的一整套配置文件和驱动。</p>
 <p>也就是说：</p>
 <blockquote>
-<p>支持包 &#x3D; 让 Keil “懂得”你这颗芯片的“语言”的工具包。</p>
+<p>支持包 = 让 Keil “懂得”你这颗芯片的“语言”的工具包。</p>
 </blockquote>
-<h2 id="smile-举个例子"><a href="#smile-举个例子" class="headerlink" title=":smile: 举个例子"></a>:smile: 举个例子</h2><p>假设你要用 Keil 开发 STM32F103，Keil 自己其实并“不认识”这颗芯片，它不知道：</p>
+<h2 id="😄-举个例子"><a class="header-anchor" href="#😄-举个例子">🔗</a>😄 举个例子</h2>
+<p>假设你要用 Keil 开发 STM32F103，Keil 自己其实并“不认识”这颗芯片，它不知道：</p>
 <ul>
 <li>这颗芯片用什么 CPU 核（比如 ARM Cortex-M3）</li>
 <li>有哪些外设（比如 GPIO、UART、ADC）</li>
@@ -324,20 +325,22 @@
 <li>如何配置启动文件</li>
 <li>启动时要跑哪段初始化代码（比如 SystemInit）</li>
 </ul>
-<p>:point_right: 这些都由 <strong>芯片厂商（ST、NXP、Infineon 等）提供的” Device Family Pack “(DFP)</strong> 来告诉 Keil。</p>
-<h2 id="tent-支持包内容一般包括："><a href="#tent-支持包内容一般包括：" class="headerlink" title=":tent: 支持包内容一般包括："></a>:tent: 支持包内容一般包括：</h2><table>
+<p>👉 这些都由 <strong>芯片厂商（ST、NXP、Infineon 等）提供的&quot; Device Family Pack &quot;(DFP)</strong> 来告诉 Keil。</p>
+<h2 id="⛺-支持包内容一般包括："><a class="header-anchor" href="#⛺-支持包内容一般包括：">🔗</a>⛺ 支持包内容一般包括：</h2>
+<table>
 <thead>
 <tr>
 <th>内容</th>
 <th>作用</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>启动文件（startup_xxx.s）</td>
 <td>初始化堆栈、时钟、中断向量表等</td>
 </tr>
 <tr>
-<td>系统配置文件（system_xxx.c&#x2F;h）</td>
+<td>系统配置文件（system_xxx.c/h）</td>
 <td>设置系统时钟、外设等基础配置</td>
 </tr>
 <tr>
@@ -345,7 +348,7 @@
 <td>定义寄存器地址和位段</td>
 </tr>
 <tr>
-<td>驱动库（HAL&#x2F;LL）</td>
+<td>驱动库（HAL/LL）</td>
 <td>简化对外设的操作</td>
 </tr>
 <tr>
@@ -356,7 +359,8 @@
 <td>示例工程</td>
 <td>演示怎么使用</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 
                 
               </div>
