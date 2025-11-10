@@ -4,11 +4,38 @@
   
   
   <entry>
-    <title>为什么 keil 开发不同型号单片机需要下载对应支持包</title>
-    <link href="/2025/10/27/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/"/>
-    <url>/2025/10/27/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/</url>
+    <title>论文泛读之Deformable 3DGS</title>
+    <link href="/2025/11/10/papers_note/Deformable_3DGS/"/>
+    <url>/2025/11/10/papers_note/Deformable_3DGS/</url>
     
-    <content type="html"><![CDATA[<img src="/2025/10/27/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/test.jpg" class="" title="mQm"><!-- !["mqm"](./支持包解释/test.jpg) --><h1>为什么 keil 开发不同型号单片机需要下载对应支持包</h1><p>Keil 的“支持包”就是让 Keil 能认出、支持某个单片机（MCU）所需的一整套配置文件和驱动。</p><p>也就是说：</p><blockquote><p>支持包 = 让 Keil “懂得”你这颗芯片的“语言”的工具包。</p></blockquote><h2 id="😄-举个例子"><a class="header-anchor" href="#😄-举个例子"></a>😄 举个例子</h2><p>假设你要用 Keil 开发 STM32F103，Keil 自己其实并“不认识”这颗芯片，它不知道：</p><ul><li>这颗芯片用什么 CPU 核（比如 ARM Cortex-M3）</li><li>有哪些外设（比如 GPIO、UART、ADC）</li><li>寄存器地址在哪</li><li>如何配置启动文件</li><li>启动时要跑哪段初始化代码（比如 SystemInit）</li></ul><p>👉 这些都由 <strong>芯片厂商（ST、NXP、Infineon 等）提供的&quot; Device Family Pack &quot;(DFP)</strong> 来告诉 Keil。</p><h2 id="⛺-支持包内容一般包括："><a class="header-anchor" href="#⛺-支持包内容一般包括："></a>⛺ 支持包内容一般包括：</h2><table><thead><tr><th>内容</th><th>作用</th></tr></thead><tbody><tr><td>启动文件（startup_xxx.s）</td><td>初始化堆栈、时钟、中断向量表等</td></tr><tr><td>系统配置文件（system_xxx.c/h）</td><td>设置系统时钟、外设等基础配置</td></tr><tr><td>头文件（cmsis_device.h）</td><td>定义寄存器地址和位段</td></tr><tr><td>驱动库（HAL/LL）</td><td>简化对外设的操作</td></tr><tr><td>Flash 编程算法</td><td>让 Keil 能烧录程序进芯片</td></tr><tr><td>示例工程</td><td>演示怎么使用</td></tr></tbody></table>]]></content>
+    <content type="html"><![CDATA[<h1>单目动态：Deformable 3D Gaussians for High-Fidelity Monocular Dynamic Scene Reconstruction [CVPR2024]</h1><h2 id="😄contribution"><a class="header-anchor" href="#😄contribution"></a>😄contribution:</h2><ul><li>提出了一种基于可变形3D高斯模型的单目动态场景重建方法，能够高效地捕捉和表示动态场景中的细节变化。</li><li>一种新颖的退火平滑训练机制，确保时间平滑性。</li></ul><p><img src="image.png" alt="overview"></p><h2 id="⛺method"><a class="header-anchor" href="#⛺method"></a>⛺method:</h2><ul><li>Deformable 3DGS: 仅仅使用一个形变网络来预测基元的属性增量 <strong>(位置x、四元数r、缩放s)</strong>，网络由MLP实现。输入的是经过位置编码后的向量。</li></ul>(\delta\boldsymbol{x},\delta\boldsymbol{r},\delta\boldsymbol{s})=\mathcal{F}_\theta(\gamma(\mathrm{sg}(\boldsymbol{x})),\gamma(t))<blockquote><p>作者未使用NeRF中常用的参数编码 <strong>(网格、平面结构)</strong> 来编码场景加速收敛，原因是因为这些编码方式是低秩的，而动态场景是高秩的。</p></blockquote><ul><li>退火平滑训练机制 <strong>(AST)</strong>: 提出原因是colmap提供的位姿估计不准确，会降低渲染效果。在训练时间的NVS效果挺好但是在新插值时间下的渲染效果不行。在编码时间上加一个经迭代次数衰减的噪声项：</li></ul>\begin{aligned}\boldsymbol{\Delta}&=\mathcal{F}_{\boldsymbol{\theta}}\left(\boldsymbol{\gamma}(\mathrm{sg}(\boldsymbol{x})),\boldsymbol{\gamma}(t)+\mathcal{X}(i)\right),\\\mathcal{X}(i)&=\mathbb{N}(0,1)\cdot\beta\cdot\Delta t\cdot\max((1-i/\tau),0)\end{aligned}<ul><li>初始化是由sfm得到的3D点初始化----作为规范场。训练过程中40k次迭代，前3k只优化GS，后面联合优化GS和MLP。</li><li>从overview来看只用了render损失，文中也没细说。</li></ul><h2 id="⭐experiment"><a class="header-anchor" href="#⭐experiment"></a>⭐experiment:</h2><p><img src="image-1.png" alt="alt text"></p><blockquote><p>点刷的非常高啊😢</p></blockquote>]]></content>
+    
+    
+    <categories>
+      
+      <category>论文笔记</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>3DGS</tag>
+      
+      <tag>4DGS</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>为什么 keil 开发不同型号单片机需要下载对应支持包</title>
+    <link href="/2025/10/27/study_note/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/"/>
+    <url>/2025/10/27/study_note/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/</url>
+    
+    <content type="html"><![CDATA[<img src="/2025/10/27/study_note/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/test.jpg" class="" title="mQm"><!-- !["mqm"](./支持包解释/test.jpg) --><h1>为什么 keil 开发不同型号单片机需要下载对应支持包</h1><p>Keil 的“支持包”就是让 Keil 能认出、支持某个单片机（MCU）所需的一整套配置文件和驱动。</p><p>也就是说：</p><blockquote><p>支持包 = 让 Keil “懂得”你这颗芯片的“语言”的工具包。</p></blockquote><h2 id="😄-举个例子"><a class="header-anchor" href="#😄-举个例子"></a>😄 举个例子</h2><p>假设你要用 Keil 开发 STM32F103，Keil 自己其实并“不认识”这颗芯片，它不知道：</p><ul><li>这颗芯片用什么 CPU 核（比如 ARM Cortex-M3）</li><li>有哪些外设（比如 GPIO、UART、ADC）</li><li>寄存器地址在哪</li><li>如何配置启动文件</li><li>启动时要跑哪段初始化代码（比如 SystemInit）</li></ul><p>👉 这些都由 <strong>芯片厂商（ST、NXP、Infineon 等）提供的&quot; Device Family Pack &quot;(DFP)</strong> 来告诉 Keil。</p><h2 id="⛺-支持包内容一般包括："><a class="header-anchor" href="#⛺-支持包内容一般包括："></a>⛺ 支持包内容一般包括：</h2><table><thead><tr><th>内容</th><th>作用</th></tr></thead><tbody><tr><td>启动文件（startup_xxx.s）</td><td>初始化堆栈、时钟、中断向量表等</td></tr><tr><td>系统配置文件（system_xxx.c/h）</td><td>设置系统时钟、外设等基础配置</td></tr><tr><td>头文件（cmsis_device.h）</td><td>定义寄存器地址和位段</td></tr><tr><td>驱动库（HAL/LL）</td><td>简化对外设的操作</td></tr><tr><td>Flash 编程算法</td><td>让 Keil 能烧录程序进芯片</td></tr><tr><td>示例工程</td><td>演示怎么使用</td></tr></tbody></table>]]></content>
     
     
     <categories>
@@ -25,19 +52,6 @@
       <tag>单片机</tag>
       
     </tags>
-    
-  </entry>
-  
-  
-  
-  <entry>
-    <title>Hello World</title>
-    <link href="/2025/10/27/hello-world/"/>
-    <url>/2025/10/27/hello-world/</url>
-    
-    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start"><a class="header-anchor" href="#Quick-Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a class="header-anchor" href="#Create-a-new-post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo new <span class="hljs-string">&quot;My New Post&quot;</span><br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a class="header-anchor" href="#Run-server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo server<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a class="header-anchor" href="#Generate-static-files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo generate<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a class="header-anchor" href="#Deploy-to-remote-sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo deploy<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
-    
-    
     
   </entry>
   
