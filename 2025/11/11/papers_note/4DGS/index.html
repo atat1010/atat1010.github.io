@@ -31,7 +31,7 @@
 <meta property="og:image" content="https://atat1010.github.io/2025/11/11/papers_note/4DGS/image-2.png">
 <meta property="og:image" content="https://atat1010.github.io/2025/11/11/papers_note/4DGS/image-3.png">
 <meta property="article:published_time" content="2025-11-11T07:08:50.000Z">
-<meta property="article:modified_time" content="2025-11-11T08:56:35.928Z">
+<meta property="article:modified_time" content="2025-11-11T09:37:02.061Z">
 <meta property="article:author" content="QM">
 <meta property="article:tag" content="3DGS">
 <meta property="article:tag" content="4DGS">
@@ -371,7 +371,7 @@
 <blockquote>
 <p>之前认为单目动态重建和多视角视频重建是两种不同的技术路线，认为一个是相机和场景有相互运动一个是相机和场景没有相互运动，也没细想。现在想想好像是相通的？单目是多时间点的单视角观察，没有多视角监督几何约束不强重建也比较困难。</p>
 <ul>
-<li>以这篇文章为例，单目流程先用colmap提取所有帧用来初始化GS，前3k次迭代优化一个caononical场，后面通过loss联合优化MLP和GS场景。单目视频动态重建有一个尺度模糊 <strong>(Non-Metric)</strong> 的问题并且由于缺乏约束，NVS的效果不如多视角视频好。</li>
+<li>以这篇文章为例，单目流程先用colmap提取所有帧用来初始化GS，前3k次迭代优化一个canonical场，后面通过loss联合优化MLP和GS场景。单目视频动态重建有一个尺度模糊 <strong>(Non-Metric)</strong> 的问题并且由于缺乏约束，NVS的效果不如多视角视频好。</li>
 <li>多视角视频是用多视角视频的第一帧用colmap提取点云初始化GS，后面通过loss联合优化MLP和GS场景。不同的是在计算loss的时候可以优化更多视点的render loss，这样可以提供多视角约束，NVS的效果也更好。</li>
 <li>可能理解有误我再细细了解一下。</li>
 </ul>
