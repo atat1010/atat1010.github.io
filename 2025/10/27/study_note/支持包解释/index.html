@@ -19,26 +19,25 @@
   <meta name="author" content="QM">
   <meta name="keywords" content="">
   
-    <meta name="description" content="单目动态：Deformable 3D Gaussians for High-Fidelity Monocular Dynamic Scene Reconstruction [CVPR2024] 😄contribution:  提出了一种基于可变形3D高斯模型的单目动态场景重建方法，能够高效地捕捉和表示动态场景中的细节变化。 一种新颖的退火平滑训练机制，确保时间平滑性。   ⛺method:  D">
+    <meta name="description" content="为什么 keil 开发不同型号单片机需要下载对应支持包 Keil 的“支持包”就是让 Keil 能认出、支持某个单片机（MCU）所需的一整套配置文件和驱动。 也就是说：  支持包 &#x3D; 让 Keil “懂得”你这颗芯片的“语言”的工具包。  😄 举个例子 假设你要用 Keil 开发 STM32F103，Keil 自己其实并“不认识”这颗芯片，它不知道：  这颗芯片用什么 CPU 核（比如 AR">
 <meta property="og:type" content="article">
-<meta property="og:title" content="论文泛读之Deformable 3DGS">
-<meta property="og:url" content="https://atat1010.github.io/2025/11/10/papers_note/Deformable_3DGS/index.html">
+<meta property="og:title" content="为什么 keil 开发不同型号单片机需要下载对应支持包">
+<meta property="og:url" content="https://atat1010.github.io/2025/10/27/study_note/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/index.html">
 <meta property="og:site_name" content="啦啦啦">
-<meta property="og:description" content="单目动态：Deformable 3D Gaussians for High-Fidelity Monocular Dynamic Scene Reconstruction [CVPR2024] 😄contribution:  提出了一种基于可变形3D高斯模型的单目动态场景重建方法，能够高效地捕捉和表示动态场景中的细节变化。 一种新颖的退火平滑训练机制，确保时间平滑性。   ⛺method:  D">
+<meta property="og:description" content="为什么 keil 开发不同型号单片机需要下载对应支持包 Keil 的“支持包”就是让 Keil 能认出、支持某个单片机（MCU）所需的一整套配置文件和驱动。 也就是说：  支持包 &#x3D; 让 Keil “懂得”你这颗芯片的“语言”的工具包。  😄 举个例子 假设你要用 Keil 开发 STM32F103，Keil 自己其实并“不认识”这颗芯片，它不知道：  这颗芯片用什么 CPU 核（比如 AR">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://atat1010.github.io/2025/11/10/papers_note/Deformable_3DGS/image.png">
-<meta property="og:image" content="https://atat1010.github.io/2025/11/10/papers_note/Deformable_3DGS/image-1.png">
-<meta property="article:published_time" content="2025-11-10T13:34:07.000Z">
-<meta property="article:modified_time" content="2025-11-10T15:26:35.444Z">
+<meta property="og:image" content="https://atat1010.github.io/2025/10/27/study_note/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/test.jpg">
+<meta property="article:published_time" content="2025-10-27T15:01:19.000Z">
+<meta property="article:modified_time" content="2025-11-11T02:00:46.544Z">
 <meta property="article:author" content="QM">
-<meta property="article:tag" content="3DGS">
-<meta property="article:tag" content="4DGS">
+<meta property="article:tag" content="嵌入式">
+<meta property="article:tag" content="单片机">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://atat1010.github.io/2025/11/10/papers_note/Deformable_3DGS/image.png">
+<meta name="twitter:image" content="https://atat1010.github.io/2025/10/27/study_note/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/test.jpg">
   
   
   
-  <title>论文泛读之Deformable 3DGS - 啦啦啦</title>
+  <title>为什么 keil 开发不同型号单片机需要下载对应支持包 - 啦啦啦</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -221,7 +220,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="论文泛读之Deformable 3DGS"></span>
+            <span id="subtitle" data-typed-text="为什么 keil 开发不同型号单片机需要下载对应支持包"></span>
           
         </div>
 
@@ -232,8 +231,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-11-10 21:34" pubdate>
-          2025年11月10日 晚上
+        <time datetime="2025-10-27 23:01" pubdate>
+          2025年10月27日 晚上
         </time>
       </span>
     
@@ -244,7 +243,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.1k 字
+          483 字
         
       </span>
     
@@ -255,7 +254,7 @@
         
         
         
-          10 分钟
+          5 分钟
         
       </span>
     
@@ -301,12 +300,12 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">论文泛读之Deformable 3DGS</h1>
+            <h1 id="seo-header">为什么 keil 开发不同型号单片机需要下载对应支持包</h1>
             
               <p id="updated-time" class="note note-info" style="">
                 
                   
-                    本文最后更新于 2025年11月10日 晚上
+                    本文最后更新于 2025年11月11日 上午
                   
                 
               </p>
@@ -314,36 +313,59 @@
             
               <div class="markdown-body">
                 
-                <h1>单目动态：Deformable 3D Gaussians for High-Fidelity Monocular Dynamic Scene Reconstruction [CVPR2024]</h1>
-<h2 id="😄contribution"><a class="header-anchor" href="#😄contribution"></a>😄contribution:</h2>
-<ul>
-<li>提出了一种基于可变形3D高斯模型的单目动态场景重建方法，能够高效地捕捉和表示动态场景中的细节变化。</li>
-<li>一种新颖的退火平滑训练机制，确保时间平滑性。</li>
-</ul>
-<p><img src="image.png" srcset="/img/loading.gif" lazyload alt="overview"></p>
-<h2 id="⛺method"><a class="header-anchor" href="#⛺method"></a>⛺method:</h2>
-<ul>
-<li>Deformable 3DGS: 仅仅使用一个形变网络来预测基元的属性增量 <strong>(位置x、四元数r、缩放s)</strong>，网络由MLP实现。输入的是经过位置编码后的向量。</li>
-</ul>
-<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mo stretchy="false">(</mo><mi>δ</mi><mi mathvariant="bold-italic">x</mi><mo separator="true">,</mo><mi>δ</mi><mi mathvariant="bold-italic">r</mi><mo separator="true">,</mo><mi>δ</mi><mi mathvariant="bold-italic">s</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi mathvariant="script">F</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>γ</mi><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">g</mi></mrow><mo stretchy="false">(</mo><mi mathvariant="bold-italic">x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo separator="true">,</mo><mi>γ</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(\delta\boldsymbol{x},\delta\boldsymbol{r},\delta\boldsymbol{s})=\mathcal{F}_\theta(\gamma(\mathrm{sg}(\boldsymbol{x})),\gamma(t))
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03785em;">δ</span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03785em;">δ</span><span class="mord"><span class="mord"><span class="mord boldsymbol" style="margin-right:0.03194em;">r</span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03785em;">δ</span><span class="mord"><span class="mord"><span class="mord boldsymbol">s</span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.09931em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0993em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05556em;">γ</span><span class="mopen">(</span><span class="mord"><span class="mord mathrm" style="margin-right:0.01389em;">sg</span></span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="mclose">))</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.05556em;">γ</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mclose">))</span></span></span></span></span></p>
+                <img src="/2025/10/27/study_note/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/test.jpg" srcset="/img/loading.gif" lazyload class="" title="mQm">
+<!-- !["mqm"](./支持包解释/test.jpg) -->
+<h1>为什么 keil 开发不同型号单片机需要下载对应支持包</h1>
+<p>Keil 的“支持包”就是让 Keil 能认出、支持某个单片机（MCU）所需的一整套配置文件和驱动。</p>
+<p>也就是说：</p>
 <blockquote>
-<p>作者未使用NeRF中常用的参数编码 <strong>(网格、平面结构)</strong> 来编码场景加速收敛，原因是因为这些编码方式是低秩的，而动态场景是高秩的。</p>
+<p>支持包 = 让 Keil “懂得”你这颗芯片的“语言”的工具包。</p>
 </blockquote>
+<h2 id="😄-举个例子"><a class="header-anchor" href="#😄-举个例子"></a>😄 举个例子</h2>
+<p>假设你要用 Keil 开发 STM32F103，Keil 自己其实并“不认识”这颗芯片，它不知道：</p>
 <ul>
-<li>退火平滑训练机制 <strong>(AST)</strong>: 提出原因是colmap提供的位姿估计不准确，会降低渲染效果。在训练时间的NVS效果挺好但是在新插值时间下的渲染效果不行。在编码时间上加一个经迭代次数衰减的噪声项：</li>
+<li>这颗芯片用什么 CPU 核（比如 ARM Cortex-M3）</li>
+<li>有哪些外设（比如 GPIO、UART、ADC）</li>
+<li>寄存器地址在哪</li>
+<li>如何配置启动文件</li>
+<li>启动时要跑哪段初始化代码（比如 SystemInit）</li>
 </ul>
-<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable rowspacing="0.25em" columnalign="right left" columnspacing="0em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mi mathvariant="bold">Δ</mi></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><msub><mi mathvariant="script">F</mi><mi mathvariant="bold-italic">θ</mi></msub><mrow><mo fence="true">(</mo><mi mathvariant="bold-italic">γ</mi><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">g</mi></mrow><mo stretchy="false">(</mo><mi mathvariant="bold-italic">x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo separator="true">,</mo><mi mathvariant="bold-italic">γ</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo>+</mo><mi mathvariant="script">X</mi><mo stretchy="false">(</mo><mi>i</mi><mo stretchy="false">)</mo><mo fence="true">)</mo></mrow><mo separator="true">,</mo></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mi mathvariant="script">X</mi><mo stretchy="false">(</mo><mi>i</mi><mo stretchy="false">)</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi mathvariant="double-struck">N</mi><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo><mo>⋅</mo><mi>β</mi><mo>⋅</mo><mi mathvariant="normal">Δ</mi><mi>t</mi><mo>⋅</mo><mi>max</mi><mo>⁡</mo><mo stretchy="false">(</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>i</mi><mi mathvariant="normal">/</mi><mi>τ</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mn>0</mn><mo stretchy="false">)</mo></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}\boldsymbol{\Delta}&amp;=\mathcal{F}_{\boldsymbol{\theta}}\left(\boldsymbol{\gamma}(\mathrm{sg}(\boldsymbol{x})),\boldsymbol{\gamma}(t)+\mathcal{X}(i)\right),\\\mathcal{X}(i)&amp;=\mathbb{N}(0,1)\cdot\beta\cdot\Delta t\cdot\max((1-i/\tau),0)\end{aligned}
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:3em;vertical-align:-1.25em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.75em;"><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord"><span class="mord mathbf">Δ</span></span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.14643em;">X</span><span class="mopen">(</span><span class="mord mathnormal">i</span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.75em;"><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.09931em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0993em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord boldsymbol mtight" style="margin-right:0.03194em;">θ</span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">(</span><span class="mord"><span class="mord"><span class="mord boldsymbol" style="margin-right:0.06389em;">γ</span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathrm" style="margin-right:0.01389em;">sg</span></span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="mclose">))</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord"><span class="mord boldsymbol" style="margin-right:0.06389em;">γ</span></span></span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathcal" style="margin-right:0.14643em;">X</span><span class="mopen">(</span><span class="mord mathnormal">i</span><span class="mclose">)</span><span class="mclose delimcenter" style="top:0em;">)</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathbb">N</span><span class="mopen">(</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal" style="margin-right:0.05278em;">β</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord">Δ</span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mop">max</span><span class="mopen">((</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal">i</span><span class="mord">/</span><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">0</span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
-<ul>
-<li>初始化是由sfm得到的3D点初始化----作为规范场。训练过程中40k次迭代，前3k只优化GS，后面联合优化GS和MLP。</li>
-<li>从overview来看只用了render损失，文中也没细说。</li>
-</ul>
-<h2 id="⭐experiment"><a class="header-anchor" href="#⭐experiment"></a>⭐experiment:</h2>
-<p><img src="image-1.png" srcset="/img/loading.gif" lazyload alt="D-NeRF dataset"></p>
-<blockquote>
-<p>点刷的非常高啊😂</p>
-</blockquote>
+<p>👉 这些都由 <strong>芯片厂商（ST、NXP、Infineon 等）提供的&quot; Device Family Pack &quot;(DFP)</strong> 来告诉 Keil。</p>
+<h2 id="⛺-支持包内容一般包括："><a class="header-anchor" href="#⛺-支持包内容一般包括："></a>⛺ 支持包内容一般包括：</h2>
+<table>
+<thead>
+<tr>
+<th>内容</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>启动文件（startup_xxx.s）</td>
+<td>初始化堆栈、时钟、中断向量表等</td>
+</tr>
+<tr>
+<td>系统配置文件（system_xxx.c/h）</td>
+<td>设置系统时钟、外设等基础配置</td>
+</tr>
+<tr>
+<td>头文件（cmsis_device.h）</td>
+<td>定义寄存器地址和位段</td>
+</tr>
+<tr>
+<td>驱动库（HAL/LL）</td>
+<td>简化对外设的操作</td>
+</tr>
+<tr>
+<td>Flash 编程算法</td>
+<td>让 Keil 能烧录程序进芯片</td>
+</tr>
+<tr>
+<td>示例工程</td>
+<td>演示怎么使用</td>
+</tr>
+</tbody>
+</table>
 
                 
               </div>
@@ -362,7 +384,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" class="category-chain-item">论文笔记</a>
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">学习笔记</a>
   
   
 
@@ -377,9 +399,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/3DGS/" class="print-no-link">#3DGS</a>
+        <a href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/" class="print-no-link">#嵌入式</a>
       
-        <a href="/tags/4DGS/" class="print-no-link">#4DGS</a>
+        <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" class="print-no-link">#单片机</a>
       
     </div>
   
@@ -391,8 +413,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>论文泛读之Deformable 3DGS</div>
-      <div>https://atat1010.github.io/2025/11/10/papers_note/Deformable_3DGS/</div>
+      <div>为什么 keil 开发不同型号单片机需要下载对应支持包</div>
+      <div>https://atat1010.github.io/2025/10/27/study_note/支持包解释/</div>
     </div>
     <div class="license-meta">
       
@@ -404,7 +426,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年11月10日</div>
+          <div>2025年10月27日</div>
         </div>
       
       
@@ -436,21 +458,15 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/11/10/papers_note/Deformable_3DGS-1/" title="Deformable_3DGS">
+                      <a href="/2025/11/10/papers_note/Deformable_3DGS/" title="论文泛读之Deformable 3DGS">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Deformable_3DGS</span>
+                        <span class="hidden-mobile">论文泛读之Deformable 3DGS</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
                   </article>
                   <article class="post-next col-6">
                     
-                    
-                      <a href="/2025/10/27/study_note/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/" title="为什么 keil 开发不同型号单片机需要下载对应支持包">
-                        <span class="hidden-mobile">为什么 keil 开发不同型号单片机需要下载对应支持包</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
                     
                   </article>
                 </div>
