@@ -1,0 +1,796 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/southeast.png">
+  <link rel="icon" href="/img/southeast.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="QM">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="已知相机位姿情况下的colmap稀疏或稠密重建 环境准备 首先在官网上下载需要版本的colmap，最好是cuda版本，可以利用GPU加速。  解压后找到colmap.bat文件双击即可打开GUI界面。  这里建议把colmap的路径添加到环境变量中，方便在cmd或powershell中直接使用colmap命令。否则需要用绝对路径：  设置 -&gt;搜索环境变量 -&gt;编辑系统环境变量 -&amp;g">
+<meta property="og:type" content="article">
+<meta property="og:title" content="已知相机位姿情况下的colmap稀疏或稠密重建">
+<meta property="og:url" content="https://atat1010.github.io/2025/11/28/study_note/%E5%B7%B2%E7%9F%A5%E4%BD%8D%E5%A7%BF%E4%B8%8B%E7%9A%84colmap%E9%87%8D%E5%BB%BA/index.html">
+<meta property="og:site_name" content="啦啦啦">
+<meta property="og:description" content="已知相机位姿情况下的colmap稀疏或稠密重建 环境准备 首先在官网上下载需要版本的colmap，最好是cuda版本，可以利用GPU加速。  解压后找到colmap.bat文件双击即可打开GUI界面。  这里建议把colmap的路径添加到环境变量中，方便在cmd或powershell中直接使用colmap命令。否则需要用绝对路径：  设置 -&gt;搜索环境变量 -&gt;编辑系统环境变量 -&amp;g">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://atat1010.github.io/2025/11/28/study_note/%E5%B7%B2%E7%9F%A5%E4%BD%8D%E5%A7%BF%E4%B8%8B%E7%9A%84colmap%E9%87%8D%E5%BB%BA/image.png">
+<meta property="og:image" content="https://atat1010.github.io/2025/11/28/study_note/%E5%B7%B2%E7%9F%A5%E4%BD%8D%E5%A7%BF%E4%B8%8B%E7%9A%84colmap%E9%87%8D%E5%BB%BA/image-1.png">
+<meta property="og:image" content="https://atat1010.github.io/2025/11/28/study_note/%E5%B7%B2%E7%9F%A5%E4%BD%8D%E5%A7%BF%E4%B8%8B%E7%9A%84colmap%E9%87%8D%E5%BB%BA/image-3.png">
+<meta property="og:image" content="https://atat1010.github.io/2025/11/28/study_note/%E5%B7%B2%E7%9F%A5%E4%BD%8D%E5%A7%BF%E4%B8%8B%E7%9A%84colmap%E9%87%8D%E5%BB%BA/image-2.png">
+<meta property="og:image" content="https://atat1010.github.io/2025/11/28/study_note/%E5%B7%B2%E7%9F%A5%E4%BD%8D%E5%A7%BF%E4%B8%8B%E7%9A%84colmap%E9%87%8D%E5%BB%BA/image-4.png">
+<meta property="og:image" content="https://atat1010.github.io/2025/11/28/study_note/%E5%B7%B2%E7%9F%A5%E4%BD%8D%E5%A7%BF%E4%B8%8B%E7%9A%84colmap%E9%87%8D%E5%BB%BA/image-5.png">
+<meta property="og:image" content="https://atat1010.github.io/2025/11/28/study_note/%E5%B7%B2%E7%9F%A5%E4%BD%8D%E5%A7%BF%E4%B8%8B%E7%9A%84colmap%E9%87%8D%E5%BB%BA/image-9.png">
+<meta property="og:image" content="https://atat1010.github.io/2025/11/28/study_note/%E5%B7%B2%E7%9F%A5%E4%BD%8D%E5%A7%BF%E4%B8%8B%E7%9A%84colmap%E9%87%8D%E5%BB%BA/image-7.png">
+<meta property="og:image" content="https://atat1010.github.io/2025/11/28/study_note/%E5%B7%B2%E7%9F%A5%E4%BD%8D%E5%A7%BF%E4%B8%8B%E7%9A%84colmap%E9%87%8D%E5%BB%BA/image-8.png">
+<meta property="og:image" content="https://atat1010.github.io/2025/11/28/study_note/%E5%B7%B2%E7%9F%A5%E4%BD%8D%E5%A7%BF%E4%B8%8B%E7%9A%84colmap%E9%87%8D%E5%BB%BA/image-10.png">
+<meta property="article:published_time" content="2025-11-28T14:38:39.000Z">
+<meta property="article:modified_time" content="2025-12-01T07:37:41.737Z">
+<meta property="article:author" content="QM">
+<meta property="article:tag" content="colmap 三维重建">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://atat1010.github.io/2025/11/28/study_note/%E5%B7%B2%E7%9F%A5%E4%BD%8D%E5%A7%BF%E4%B8%8B%E7%9A%84colmap%E9%87%8D%E5%BB%BA/image.png">
+  
+  
+  
+  <title>已知相机位姿情况下的colmap稀疏或稠密重建 - 啦啦啦</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"atat1010.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":60,"cursorChar":"|","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"§"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","app_key":"eD94sW1TI15wEWfAYQ9MecGN","server_url":"https://9ir8y8ab.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>啦啦啦</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/maqma.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="已知相机位姿情况下的colmap稀疏或稠密重建"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-11-28 22:38" pubdate>
+          2025年11月28日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          24 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">已知相机位姿情况下的colmap稀疏或稠密重建</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2025年12月1日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1>已知相机位姿情况下的colmap稀疏或稠密重建</h1>
+<h2 id="环境准备"><a class="header-anchor" href="#环境准备"></a>环境准备</h2>
+<p>首先在官网上下载需要版本的<a target="_blank" rel="noopener" href="https://github.com/colmap/colmap/releases/">colmap</a>，最好是cuda版本，可以利用GPU加速。</p>
+<p><img src="image.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<p>解压后找到colmap.bat文件双击即可打开GUI界面。</p>
+<p><img src="image-1.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<p>这里建议把colmap的路径添加到环境变量中，方便在cmd或powershell中直接使用colmap命令。否则需要用绝对路径：</p>
+<blockquote>
+<p>设置 -&gt;搜索环境变量 -&gt;编辑系统环境变量 -&gt;环境变量 -&gt;系统变量 -&gt;Path -&gt;编辑 -&gt;新建 -&gt;添加colmap的bin目录路径。</p>
+</blockquote>
+<h2 id="已知相机位姿情况下的稀疏重建"><a class="header-anchor" href="#已知相机位姿情况下的稀疏重建"></a>已知相机位姿情况下的稀疏重建</h2>
+<p>首先准备创建如下文件夹结构：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">+── path/to/manual/<br>│   +── cameras.txt<br>│   +── images.txt<br>│   +── points3D.txt<br></code></pre></td></tr></table></figure>
+<p>point3D.txt是空文件后续会存放生成的3D点云数据，images.txt用来存放相机位姿和对应的图像文件名。中间必须隔一行用来存放提取的特征点。<br>
+<img src="image-3.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<p>其中cameras.txt存放相机内参和相机模型，如果相机内参存在较大的畸变系数，那么应该将cameras.txt中的参数复制到数据库中。官方有一个脚本文件<code>scripts/python/database.py</code>可以修改数据库中的文件。<br>
+<img src="image-2.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<p>然后准备好input文件夹存放图像。</p>
+<blockquote>
+<p>最重要的是如何生成.db文件这里就是因人而异了，如果每个数据集他的内外参存放格式是不一样的那么就需要自己编写脚本生成.db文件。这一部分可以让AI根据你的数据集格式帮你生成脚本。这个过程和上面的cameras.txt和images.txt文件生成可以是一起的。</p>
+</blockquote>
+<p>比如说我有一个json文件存放相机内外参：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;camera_001&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;orientation&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">[</span>...<span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span> <span class="hljs-punctuation">[</span>...<span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span> <span class="hljs-punctuation">[</span>...<span class="hljs-punctuation">]</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;position&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>...<span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;focal_length&quot;</span><span class="hljs-punctuation">:</span> ...<span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;principal_point&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>...<span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;skew&quot;</span><span class="hljs-punctuation">:</span> ...<span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;pixel_aspect_ratio&quot;</span><span class="hljs-punctuation">:</span> ...<span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;radial_distortion&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>...<span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;tangential_distortion&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>...<span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;image_size&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>...<span class="hljs-punctuation">]</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>  ...<br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+<p>那么就可以让AI写一个脚本生成txt文件的同时还可以生成.db文件。<strong>这里注意我们的数据要转换成colmap格式。</strong><br>
+这样我们所需要的文件就都准备好了。文件结构如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash">+── path/to/manual/<br>│   +── cameras.txt<br>│   +── images.txt<br>│   +── points3D.txt<br>+── path/to/input/<br>│   +── image_001.jpg<br>│   +── image_002.jpg<br>│   +── ...<br>+── path/to/input.db<br></code></pre></td></tr></table></figure>
+<p>接下载我们需要创建一个<code>sparse/0</code>文件夹用来存放稀疏重建结果。一个<code>dense/workspace</code>文件夹用来存放稠密重建结果。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">+── path/to/sparse/<br>│   +── 0/<br>+── path/to/dense/<br>    +── workspace/<br></code></pre></td></tr></table></figure>
+<h2 id="运行colmap进行稀疏重建"><a class="header-anchor" href="#运行colmap进行稀疏重建"></a>运行colmap进行稀疏重建</h2>
+<p>打开cmd或powershell，(我这里打开powershell和cmd有些细微差别)输入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 特征提取</span><br>colmap feature_extractor `<br>     --database_path .\input.db `<br>     --image_path .\input<br><br><span class="hljs-comment"># 特征匹配</span><br>colmap exhaustive_matcher `<br>     --database_path .\input.db<br><br><span class="hljs-comment"># 稀疏重建(三角化)</span><br>colmap point_triangulator `<br>     --database_path .\input.db `<br>     --image_path .\input\ `<br>     --input_path .\manual\ `<br>     --output_path .\sparse\0 `<br>     --Mapper.ba_global_function_tolerance=0.000001 <span class="hljs-comment"># (可选参数:全局BA的容差设置)</span><br></code></pre></td></tr></table></figure>
+<p><strong>这里<code>powershell</code>命令换行要用<code>&quot;`&quot;</code>键盘左上角的符号。这里我已经添加了环境变量所以可以直接使用colmap命令，如果没添加环境变量则需要使用全局路径<code>C:\path\to\colmap.exe</code>。</strong><br>
+我们的.db文件在这个过程中会被修改用来存放特征点和匹配信息。生成的稀疏重建结果存放在<code>sparse/0</code>文件夹中。</p>
+<p><img src="image-4.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<p>这里我们怀疑这里重建用的位姿是不是我们导入的，因为特征提取特征匹配也会生成位姿信息，这里我们可以查看生成的.bin文件和.txt文件对比一下。创建<code>sparse_txt</code>文件夹用来存放转换后的txt格式文件，然后运行下面的命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">colmap model_converter `<br>     --input_path .\sparse\0 `<br>     --output_path sparse_txt `<br>     --output_type TXT<br></code></pre></td></tr></table></figure>
+<p>对比一下与你从数据集生成的<code>images.txt</code>文件中的位姿信息是否一致。如果<code>points3D.txt</code>文件中有点云数据说明稀疏重建成功。也可以用GUI界面打开查看。<br>
+<img src="image-5.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<h2 id="运行colmap进行稠密重建"><a class="header-anchor" href="#运行colmap进行稠密重建"></a>运行colmap进行稠密重建</h2>
+<p>虽然官网说，稠密重建可以不需要稀疏重建但是我也没看到怎么使用已知的位姿创建的.db文件，所以这里我们还是使用上面生成的稀疏重建结果进行稠密重建。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 图像去畸变</span><br>colmap image_undistorter `<br>     --image_path .\input\ `<br>     --input_path .\sparse\0\ `<br>     --output_path .\dense\workspace\ `<br>     --output_type COLMAP<br><br><span class="hljs-comment"># 稠密重建-深度图估计</span><br>colmap patch_match_stereo `<br>     --workspace_path .\dense\workspace\ `<br>     --PatchMatchStereo.gpu_index 0<br><br><span class="hljs-comment"># 稠密重建-深度图融合</span><br>colmap stereo_fusion `<br>     --workspace_path .\dense\workspace\ `<br>     --output_path .\dense\workspace\fused.ply<br></code></pre></td></tr></table></figure>
+<p>生成的稠密点云数据存放在<code>dense/workspace/fused.ply</code>文件中，可以用GUI界面打开查看。</p>
+<p><img src="image-9.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<p>点击<code>select</code>选择<code>dense/workspace/</code>文件夹，然后点击<code>fusion</code>：</p>
+<p><img src="image-7.png" srcset="/img/loading.gif" lazyload alt="alt text"><br>
+<img src="image-8.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<p>然后就得到最终的稠密点云结果。</p>
+<p><img src="image-10.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<blockquote>
+<p>在无头服务器上也是一样的操作，这里完全可以脱离GUI界面进行操作。</p>
+</blockquote>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">学习笔记</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/colmap-%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BA/" class="print-no-link">#colmap 三维重建</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>已知相机位姿情况下的colmap稀疏或稠密重建</div>
+      <div>https://atat1010.github.io/2025/11/28/study_note/已知位姿下的colmap重建/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>QM</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年11月28日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/11/14/study_note/3DGS%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" title="50系显卡的3DGS基础环境配置编译diff-gaussian-rasterization和simple-knn">
+                        <span class="hidden-mobile">50系显卡的3DGS基础环境配置编译diff-gaussian-rasterization和simple-knn</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","appKey":"eD94sW1TI15wEWfAYQ9MecGN","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
