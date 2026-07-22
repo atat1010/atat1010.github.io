@@ -1,0 +1,1336 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/q-mark.png">
+  <link rel="icon" href="/img/q-mark.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="QM">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="😄工程模板 1、江协科技模板  Start文件夹存放1启动文件，不同型号选择不同的启动文件；2-3是内核的寄存器描述函数；4是配置寄存器和对应地址的；5-6是用来配置时钟的。复制过来的文件要Add Files to Group XXX。 User文件夹存放用户代码，main.c是主函数。其他文件是配置库函数的包含关系和用来存放终端函数的it文件。 Library文件夹用来存放标准库文件。 Sys">
+<meta property="og:type" content="article">
+<meta property="og:title" content="STM32标准库">
+<meta property="og:url" content="https://atat1010.github.io/2026/02/22/study_note/STM32%E6%A0%87%E5%87%86%E5%BA%93/index.html">
+<meta property="og:site_name" content="啦啦啦">
+<meta property="og:description" content="😄工程模板 1、江协科技模板  Start文件夹存放1启动文件，不同型号选择不同的启动文件；2-3是内核的寄存器描述函数；4是配置寄存器和对应地址的；5-6是用来配置时钟的。复制过来的文件要Add Files to Group XXX。 User文件夹存放用户代码，main.c是主函数。其他文件是配置库函数的包含关系和用来存放终端函数的it文件。 Library文件夹用来存放标准库文件。 Sys">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://atat1010.github.io/2026/02/22/study_note/STM32%E6%A0%87%E5%87%86%E5%BA%93/image.png">
+<meta property="og:image" content="https://atat1010.github.io/2026/02/22/study_note/STM32%E6%A0%87%E5%87%86%E5%BA%93/image-1.png">
+<meta property="og:image" content="https://atat1010.github.io/2026/02/22/study_note/STM32%E6%A0%87%E5%87%86%E5%BA%93/image-2.png">
+<meta property="og:image" content="https://atat1010.github.io/2026/02/22/study_note/STM32%E6%A0%87%E5%87%86%E5%BA%93/image-3.png">
+<meta property="og:image" content="https://atat1010.github.io/2026/02/22/study_note/STM32%E6%A0%87%E5%87%86%E5%BA%93/image-4.png">
+<meta property="article:published_time" content="2026-02-22T12:24:55.000Z">
+<meta property="article:modified_time" content="2026-03-02T14:43:51.243Z">
+<meta property="article:author" content="QM">
+<meta property="article:tag" content="【STM32, 标准库】">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://atat1010.github.io/2026/02/22/study_note/STM32%E6%A0%87%E5%87%86%E5%BA%93/image.png">
+  
+  
+  
+  <title>STM32标准库 - 啦啦啦</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="/vendor/katex/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"atat1010.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":60,"cursorChar":"|","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"§"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","app_key":"eD94sW1TI15wEWfAYQ9MecGN","server_url":"https://9ir8y8ab.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body class="post-page">
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <img class="brand-mark" src="/img/q-mark.png" srcset="/img/loading.gif" lazyload alt="Q">
+      <strong>啦啦啦</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+
+  <div id="banner" class="banner" parallax=true
+       style="background: url('/img/maqma.jpg') no-repeat center center; background-size: cover;">
+    <div class="full-bg-img">
+      <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+        <div class="banner-text text-center fade-in-up">
+          <div class="h2"><span id="subtitle">STM32标准库</span></div>
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-02-22 20:24" pubdate>
+          2026年2月22日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          21k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          179 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+      
+    
+  </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">STM32标准库</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年3月2日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1>😄工程模板</h1>
+<h2 id="1、江协科技模板"><a class="header-anchor" href="#1、江协科技模板"></a>1、江协科技模板</h2>
+<p><img src="image.png" srcset="/img/loading.gif" lazyload alt="alt text"><img src="image-1.png" srcset="/img/loading.gif" lazyload alt="alt text"><br>
+<code>Start</code>文件夹存放1启动文件，不同型号选择不同的启动文件；2-3是内核的寄存器描述函数；4是配置寄存器和对应地址的；5-6是用来配置时钟的。复制过来的文件要<code>Add Files to Group XXX</code>。<br>
+<code>User</code>文件夹存放用户代码，<code>main.c</code>是主函数。其他文件是配置库函数的包含关系和用来存放终端函数的it文件。<br>
+<code>Library</code>文件夹用来存放标准库文件。<br>
+<code>System</code>用来存放延时函数。<br>
+后续还有<code>Hardware</code>文件夹用来存放外设驱动库文件。<br>
+<img src="image-2.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<h3 id="1-1添加头文件路径"><a class="header-anchor" href="#1-1添加头文件路径"></a>1.1添加头文件路径</h3>
+<p><code>魔术棒-&gt;C/C++/Include Paths</code></p>
+<h3 id="1-2时钟树"><a class="header-anchor" href="#1-2时钟树"></a>1.2时钟树</h3>
+<p>APB（Advanced Peripheral Bus） 总线负责连接各种外设。APB2 的频率通常比 APB1 高。<br>
+在 STM32 中，时钟系统就像一个人的<strong>脉搏</strong>，决定了芯片运行的速度。而**锁相环（PLL）**则是这个系统里的“加压泵”，负责把低频的晶振信号翻倍成高性能的时钟。</p>
+<hr>
+<h4 id="1-2-1-信号源：晶振（HSE）"><a class="header-anchor" href="#1-2-1-信号源：晶振（HSE）"></a>1.2.1 信号源：晶振（HSE）</h4>
+<p>一切的开始都是<strong>外部高速晶振（HSE）</strong>。对于典型的 STM32F103 开发板，你通常会在电路板上看到一个写着 <strong>8.000</strong> 的金属小方块。</p>
+<ul>
+<li><strong>频率</strong>：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>8</mn><mtext>MHz</mtext></mrow><annotation encoding="application/x-tex">8\text{MHz}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">8</span><span class="mord text"><span class="mord">MHz</span></span></span></span></span>。</li>
+<li><strong>地位</strong>：它是最稳定的物理基准，但在<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>8</mn><mtext>MHz</mtext></mrow><annotation encoding="application/x-tex">8\text{MHz}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">8</span><span class="mord text"><span class="mord">MHz</span></span></span></span></span>。下，芯片运行会慢得像蜗牛。</li>
+</ul>
+<h4 id="1-2-2-加压泵：锁相环（PLL）"><a class="header-anchor" href="#1-2-2-加压泵：锁相环（PLL）"></a>1.2.2 加压泵：锁相环（PLL）</h4>
+<p>为了达到  的高性能，我们需要 <strong>PLL（Phase-Locked Loop）</strong> 登场。</p>
+<ul>
+<li><strong>作用</strong>：<strong>倍频</strong>。</li>
+<li><strong>计算公式</strong>：在标准配置下，它会先将 HSE 的  进行 1 分频（即保持 ），然后通过 PLL 锁相环进行 <strong>9 倍频</strong>。</li>
+<li><strong>结果</strong>：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>8</mn><mtext>MHz</mtext><mo>×</mo><mn>9</mn><mo>=</mo><mn>72</mn><mtext>MHz</mtext></mrow><annotation encoding="application/x-tex">8\text{MHz} \times 9 = 72\text{MHz}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord">8</span><span class="mord text"><span class="mord">MHz</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">9</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">72</span><span class="mord text"><span class="mord">MHz</span></span></span></span></span>。这个 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>72</mn><mtext>MHz</mtext></mrow><annotation encoding="application/x-tex">72\text{MHz}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">72</span><span class="mord text"><span class="mord">MHz</span></span></span></span></span>的信号就是我们的 <strong>SYSCLK（系统时钟）</strong>。</li>
+</ul>
+<h4 id="1-2-3-分配站：各个总线与外设的频率关系"><a class="header-anchor" href="#1-2-3-分配站：各个总线与外设的频率关系"></a>1.2.3 分配站：各个总线与外设的频率关系</h4>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>72</mn><mtext>MHz</mtext></mrow><annotation encoding="application/x-tex">72\text{MHz}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">72</span><span class="mord text"><span class="mord">MHz</span></span></span></span></span>的系统时钟（SYSCLK）生成后，会通过“预分频器”分发给不同的总线：</p>
+<h4 id="HCLK-高性能总线时钟-AHB"><a class="header-anchor" href="#HCLK-高性能总线时钟-AHB"></a><strong>HCLK (高性能总线时钟 - AHB)</strong></h4>
+<ul>
+<li><strong>倍数</strong>：通常是 SYSCLK 的 1 分频。</li>
+<li><strong>频率</strong>： <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>72</mn><mtext>MHz</mtext></mrow><annotation encoding="application/x-tex">72\text{MHz}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">72</span><span class="mord text"><span class="mord">MHz</span></span></span></span></span>。</li>
+<li><strong>挂载对象</strong>：内存（Flash/RAM）、DMA。</li>
+</ul>
+<h4 id="PCLK2-高速外设时钟-APB2"><a class="header-anchor" href="#PCLK2-高速外设时钟-APB2"></a><strong>PCLK2 (高速外设时钟 - APB2)</strong></h4>
+<ul>
+<li><strong>倍数</strong>：通常是 HCLK 的 1 分频。</li>
+<li><strong>频率</strong>： <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>72</mn><mtext>MHz</mtext></mrow><annotation encoding="application/x-tex">72\text{MHz}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">72</span><span class="mord text"><span class="mord">MHz</span></span></span></span></span>。</li>
+<li><strong>对应外设</strong>：GPIO、ADC、USART1、TIM1。</li>
+<li><strong>注意</strong>：<strong>ADC</strong> 有个特殊的 6 或 8 分频器，因为它最高只能跑<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>14</mn><mtext>MHz</mtext></mrow><annotation encoding="application/x-tex">14\text{MHz}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">14</span><span class="mord text"><span class="mord">MHz</span></span></span></span></span>左右。</li>
+</ul>
+<h4 id="PCLK1-低速外设时钟-APB1"><a class="header-anchor" href="#PCLK1-低速外设时钟-APB1"></a><strong>PCLK1 (低速外设时钟 - APB1)</strong></h4>
+<ul>
+<li><strong>倍数</strong>：强制要求必须 ，所以通常设为 HCLK 的 <strong>2 分频</strong>。</li>
+<li><strong>频率</strong>： <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>72</mn><mtext>MHz</mtext><mi mathvariant="normal">/</mi><mn>2</mn><mo>=</mo><mn>36</mn><mtext>MHz</mtext></mrow><annotation encoding="application/x-tex">72\text{MHz} / 2 = 36\text{MHz}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">72</span><span class="mord text"><span class="mord">MHz</span></span><span class="mord">/2</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">36</span><span class="mord text"><span class="mord">MHz</span></span></span></span></span>。</li>
+<li><strong>对应外设</strong>：USART2/3、I2C、CAN、通用定时器（TIM2-4）。</li>
+</ul>
+<h4 id="1-2-4-总结：频率层级表"><a class="header-anchor" href="#1-2-4-总结：频率层级表"></a>1.2.4 总结：频率层级表</h4>
+<table>
+<thead>
+<tr>
+<th>时钟名称</th>
+<th>信号来源</th>
+<th>典型频率</th>
+<th>逻辑关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>HSE</strong></td>
+<td>外部晶振</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>8</mn><mtext>MHz</mtext></mrow><annotation encoding="application/x-tex">8\text{MHz}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">8</span><span class="mord text"><span class="mord">MHz</span></span></span></span></span></td>
+<td>原始输入</td>
+</tr>
+<tr>
+<td><strong>PLLCLK</strong></td>
+<td>HSE  倍频系数</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>72</mn><mtext>MHz</mtext></mrow><annotation encoding="application/x-tex">72\text{MHz}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">72</span><span class="mord text"><span class="mord">MHz</span></span></span></span></span></td>
+<td>锁相环输出</td>
+</tr>
+<tr>
+<td><strong>SYSCLK</strong></td>
+<td>PLLCLK</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>72</mn><mtext>MHz</mtext></mrow><annotation encoding="application/x-tex">72\text{MHz}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">72</span><span class="mord text"><span class="mord">MHz</span></span></span></span></span></td>
+<td>芯片大脑的主频</td>
+</tr>
+<tr>
+<td><strong>PCLK2</strong></td>
+<td>SYSCLK / 1</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>72</mn><mtext>MHz</mtext></mrow><annotation encoding="application/x-tex">72\text{MHz}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">72</span><span class="mord text"><span class="mord">MHz</span></span></span></span></span></td>
+<td><strong>APB2</strong> 外设用</td>
+</tr>
+<tr>
+<td><strong>PCLK1</strong></td>
+<td>SYSCLK / 2</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>36</mn><mtext>MHz</mtext></mrow><annotation encoding="application/x-tex">36\text{MHz}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">36</span><span class="mord text"><span class="mord">MHz</span></span></span></span></span></td>
+<td><strong>APB1</strong> 外设用</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="2、GPIO输入输出"><a class="header-anchor" href="#2、GPIO输入输出"></a>2、GPIO输入输出</h2>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c">RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE); <span class="hljs-comment">//使能时钟</span><br>GPIO_InitTypeDef GPIO_InitStructure; <span class="hljs-comment">//定义结构体</span><br>GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; <span class="hljs-comment">//IO口模式（可输入输出）</span><br>GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;   <span class="hljs-comment">//定义引脚</span><br>GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;   <span class="hljs-comment">//IO口速率</span><br>GPIO_Init(GPIOA, &amp;GPIO_InitStructure);  <span class="hljs-comment">//初始化</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c">GPIO_ResetBits(GPIOA, GPIO_Pin_0);  <span class="hljs-comment">//IO口复位</span><br>GPIO_SetBits(GPIOA, GPIO_Pin_0);    <span class="hljs-comment">//IO口置位</span><br></code></pre></td></tr></table></figure>
+<hr>
+<h2 id="3、外部中断"><a class="header-anchor" href="#3、外部中断"></a>3、外部中断</h2>
+<p>中断：在主程序运行过程中，出现了特定的中断触发条件（中断源），使得CPU暂停当前正在运行的程序，转而去处理中断程序，处理完成后又返回原来被暂停的位置继续运行。<br>
+中断优先级：当有多个中断源同时申请中断时，GPU会根据中断源的轻重缓急进行裁决，优先响应更加紧急的中断源。<br>
+中断嵌套：当一个中断程序正在运行时，又有新的更高优先级的中断源申请中断，CPU再次暂停当前中断程序，转而去处理新的中断程序，处理完成后依次进行返回。</p>
+<ul>
+<li>68个可屏蔽中断通道，包含EXTI、TIM、ADC、USART、SPI、I2C、RTC等多个外设。</li>
+<li>使用NVIC统一管理中断，每个中断通道都拥有16个可编程的优先等级，可对优先级进行分组，进一步设置抢占优先级和响应优先级。抢占优先级可以决定中断嵌套，响应优先级可以决定优先级排队。</li>
+<li>中断向量本质上就是一个地址（指针），它指向了处理这个紧急事件的函数（即中断服务程序，ISR）在内存里的起始位置。由于 STM32 有很多中断（复位、NMI、各种外设中断），CPU 需要一个清单来管理它们。这就是中断向量表（Interrupt Vector Table）。</li>
+<li>AFIO主要用来引脚复用和中断引脚配置。</li>
+<li>GPIO-&gt;AFIO-&gt;EXTI-&gt;NVIC-&gt;CPU</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs c">RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);<br>RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);    <span class="hljs-comment">//使能AFIO</span><br>	<br>GPIO_InitTypeDef GPIO_InitStructure;<br>GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;<br>GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;<br>GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;<br>GPIO_Init(GPIOB, &amp;GPIO_InitStructure);<br><br>GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource14);    <span class="hljs-comment">//AFIO配置外部中断线，GPIOB的14引脚连接到EXTI14</span><br><br>EXTI_InitTypeDef EXTI_InitStructure;<br>EXTI_InitStructure.EXTI_Line = EXTI_Line14;<br>EXTI_InitStructure.EXTI_LineCmd = ENABLE;<br>EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;     <span class="hljs-comment">//可选中断模式或者事件模式</span><br>EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling; <span class="hljs-comment">//可选下降沿、上升沿或者双边沿触发</span><br>EXTI_Init(&amp;EXTI_InitStructure);<br><br>NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);         <span class="hljs-comment">//设置优先级分组</span><br><br>NVIC_InitTypeDef NVIC_InitStructure;<br>NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;    <span class="hljs-comment">//选择中断通道，EXTI14对应的中断通道是EXTI15_10_IRQn</span><br>NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;<br>NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = <span class="hljs-number">1</span>;<br>NVIC_InitStructure.NVIC_IRQChannelSubPriority = <span class="hljs-number">1</span>;<br>NVIC_Init(&amp;NVIC_InitStructure);<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">EXTI15_10_IRQHandler</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>	<span class="hljs-keyword">if</span> (EXTI_GetITStatus(EXTI_Line14) == SET)   <span class="hljs-comment">//判断中断标志位</span><br>	&#123;<br>		<span class="hljs-comment">/*如果出现数据乱跳的现象，可再次判断引脚电平，以避免抖动*/</span><br>		<span class="hljs-keyword">if</span> (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_14) == <span class="hljs-number">0</span>)<br>		&#123;<br>			CountSensor_Count ++;<br>		&#125;<br>		EXTI_ClearITPendingBit(EXTI_Line14);    <span class="hljs-comment">//清除中断标志位</span><br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>简单来说，STM32 用 <strong>4 位（bit）</strong> 来表示一个中断的优先级。这 4 位被划分为两个部分：<strong>抢占优先级（Preemption Priority）</strong> 和 <strong>响应优先级（Sub Priority，也叫子优先级）</strong>。</p>
+<h4 id="3-1-两个优先级的区别"><a class="header-anchor" href="#3-1-两个优先级的区别"></a>3.1 两个优先级的区别</h4>
+<ul>
+<li>
+<p><strong>抢占优先级（高地位）</strong>：</p>
+<ul>
+<li><strong>能打断别人</strong>。如果中断 A 的抢占优先级高于中断 B，那么当 B 正在执行时，A 发生了，CPU 会立刻暂停 B 去执行 A（这就是“嵌套”）。</li>
+</ul>
+</li>
+<li>
+<p><strong>响应优先级（低地位）</strong>：</p>
+<ul>
+<li><strong>排队领号</strong>。如果两个中断的抢占优先级一样，且同时发生，谁的响应优先级高（数字越小），谁就先被执行。</li>
+</ul>
+</li>
+<li>
+<p><strong>注意</strong>：响应优先级<strong>不能</strong>打断正在执行的中断。如果抢占优先级相同，即使你响应优先级再高，也得等人家运行完。</p>
+</li>
+</ul>
+<h4 id="3-2-优先级分组（Grouping）"><a class="header-anchor" href="#3-2-优先级分组（Grouping）"></a>3.2 优先级分组（Grouping）</h4>
+<p>由于总共只有 4 位，你需要决定这 4 位里，“抢占”占几位，“响应”占几位。STM32 提供了 5 种分组方式：</p>
+<table>
+<thead>
+<tr>
+<th>分组方式</th>
+<th>抢占优先级位（位宽）</th>
+<th>响应优先级位（位宽）</th>
+<th>抢占优先级范围</th>
+<th>响应优先级范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>第 0 组</strong></td>
+<td>0 位</td>
+<td>4 位</td>
+<td>0（无抢占）</td>
+<td>0 - 15</td>
+</tr>
+<tr>
+<td><strong>第 1 组</strong></td>
+<td>1 位</td>
+<td>3 位</td>
+<td>0 - 1</td>
+<td>0 - 7</td>
+</tr>
+<tr>
+<td><strong>第 2 组</strong></td>
+<td>2 位</td>
+<td>2 位</td>
+<td>0 - 3</td>
+<td>0 - 3</td>
+</tr>
+<tr>
+<td><strong>第 3 组</strong></td>
+<td>3 位</td>
+<td>1 位</td>
+<td>0 - 7</td>
+<td>0 - 1</td>
+</tr>
+<tr>
+<td><strong>第 4 组</strong></td>
+<td>4 位</td>
+<td>0 位</td>
+<td>0 - 15</td>
+<td>0（无响应）</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3-3-重要规则：数字越小，优先级越高"><a class="header-anchor" href="#3-3-重要规则：数字越小，优先级越高"></a>3.3 重要规则：数字越小，优先级越高</h4>
+<p>不管是哪种优先级，<strong>0 是最高级，15 是最低级</strong>。这就像特种兵编号，001 永远比 015 厉害。</p>
+<h4 id="3-4-为什么要在代码里先设置分组？"><a class="header-anchor" href="#3-4-为什么要在代码里先设置分组？"></a>3.4 为什么要在代码里先设置分组？</h4>
+<p>在标准库（STM32STL）中，你通常会在 <code>main()</code> 函数的最开始看到这一句：<br>
+<code>NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);</code></p>
+<p><strong>为什么要先写这一句？</strong></p>
+<ol>
+<li><strong>全局性</strong>：在一个工程中，优先级分组<strong>只能设置一次</strong>。一旦确定了是“2位抢占+2位响应”，后续所有的外设（串口、定时器等）都要遵循这个规则。</li>
+<li><strong>防止混乱</strong>：如果你不设分组，系统会有一个默认值。如果你在串口初始化里按“组2”写优先级，而在定时器初始化里按“组3”写，系统逻辑就会发生不可预知的错误。</li>
+</ol>
+<hr>
+<h2 id="4-定时器"><a class="header-anchor" href="#4-定时器"></a>4.定时器</h2>
+<p>在 STM32 的开发中，<strong>TIM（Timer/定时器）</strong> 是功能最强大、使用频率最高的外设之一。它不仅仅是用来计时的“闹钟”，更是产生 PWM 波形（控制电机、舵机）、测量输入频率（编码器接口）的核心工具。</p>
+<p>STM32F103 的定时器根据功能复杂程度分为三类：<strong>高级定时器</strong>、<strong>通用定时器</strong> 和 <strong>基本定时器</strong>。定时器的时钟源可以来自内部或者外部（GPIO的跳变也可以当作时钟源）。</p>
+<hr>
+<p><strong>定时器的分类</strong></p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>实例</th>
+<th>主要功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>高级定时器</strong></td>
+<td>TIM1, TIM8</td>
+<td>包含通用定时器所有功能，外加死区生成、互补输出、刹车输入（专为电机控制设计）。挂载在 <strong>APB2</strong> 总线。</td>
+</tr>
+<tr>
+<td><strong>通用定时器</strong></td>
+<td>TIM2, TIM3, TIM4, TIM5</td>
+<td>具有定时、输出比较（PWM）、输入捕获（测量频率/占空比）、级联等功能。挂载在 <strong>APB1</strong> 总线。</td>
+</tr>
+<tr>
+<td><strong>基本定时器</strong></td>
+<td>TIM6, TIM7</td>
+<td>只有最基本的定时功能，没有外部通道。常用于触发 DAC。挂载在 <strong>APB1</strong> 总线。</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h4 id="4-1-定时中断"><a class="header-anchor" href="#4-1-定时中断"></a>4.1 定时中断</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">Timer_Init</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);<br>	<br>	TIM_InternalClockConfig(TIM2);  <span class="hljs-comment">//选择内部时钟源，默认就是内部时钟，所以这行代码可以省略</span><br>        <span class="hljs-comment">//TIM_ETRClockMode2Config(TIM2, TIM_ExtTRGPSC_OFF, TIM_ExtTRGPolarity_NonInverted, 0x00); //选择外部时钟源，TIM2的外部时钟源是ETR引脚，配置为不分频、非反向、滤波器关闭（0x00）</span><br>	<br>	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;<br>	TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1; <span class="hljs-comment">//设置时钟滤波器的采样频率，TIM_CKD_DIV1表示不分频，TIM_CKD_DIV2表示分频2，TIM_CKD_DIV4表示分频4</span><br>	TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up;<br>	TIM_TimeBaseInitStructure.TIM_Period = <span class="hljs-number">10000</span> - <span class="hljs-number">1</span>;<br>	TIM_TimeBaseInitStructure.TIM_Prescaler = <span class="hljs-number">7200</span> - <span class="hljs-number">1</span>; <span class="hljs-comment">//PSC和ARR的值都要在0-65535之间</span><br>	TIM_TimeBaseInitStructure.TIM_RepetitionCounter = <span class="hljs-number">0</span>; <span class="hljs-comment">//高级定时器特有的参数，表示重复计数器的值，只有当计数器达到这个值时才会产生更新事件，对于通用定时器和基本定时器，这个参数必须设置为0</span><br>	TIM_TimeBaseInit(TIM2, &amp;TIM_TimeBaseInitStructure);<br>	<br>	TIM_ClearFlag(TIM2, TIM_FLAG_Update);   <span class="hljs-comment">//手动清除中断标志位，避免刚初始化就进中断</span><br>	TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);<br>	<br>	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);<br>	<br><br>	NVIC_InitTypeDef NVIC_InitStructure;<br>	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;<br>	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;<br>	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = <span class="hljs-number">2</span>;<br>	NVIC_InitStructure.NVIC_IRQChannelSubPriority = <span class="hljs-number">1</span>;<br>	NVIC_Init(&amp;NVIC_InitStructure);<br>	<br>	TIM_Cmd(TIM2, ENABLE);<br>&#125;<br><span class="hljs-type">void</span> <span class="hljs-title function_">TIM2_IRQHandler</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>	<span class="hljs-keyword">if</span> (TIM_GetITStatus(TIM2, TIM_IT_Update) == SET)<br>	&#123;<br>		<br>		TIM_ClearITPendingBit(TIM2, TIM_IT_Update); <span class="hljs-comment">//清除中断标志位</span><br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>STM32 的定时器参数都有两层寄存器：</p>
+<ul>
+<li>
+<p>预装载寄存器（Preload Register）：你通过代码（如 TIM_TimeBaseInit）直接写入的地方，就像是“候补席”。</p>
+</li>
+<li>
+<p>影子寄存器（Shadow Register）：硬件真正用来计数的地方，就像是“正式上场”。</p>
+</li>
+</ul>
+<p>核心逻辑： 只有当发生 <strong>更新事件(Update Event)</strong> 时，硬件才会把“候补席”的值搬到“正式位”上。</p>
+<p>如果没有这个机制，假设定时器正在高速计数，你突然改了 ARR 且改后的值比当前计数值还小，计数器可能就“飞”了（永远等不到等于 ARR 的那一刻），导致系统崩溃。</p>
+<p>为什么会有程序刚初始化就直接进入中断：这是因为在标准库函数 <code>TIM_TimeBaseInit</code> 的内部，为了让你写的 <code>PSC</code> 和 <code>ARR</code> 立刻生效，它最后有一行代码：<code>TIMx-&gt;EGR = TIM_PSCReloadMode_Immediate;</code>手动触发一个软件更新事件（UG 位）。这个事件强制将你刚才设定的 PSC 和 ARR 搬进影子寄存器。既然触发了“更新事件”，而你又开启了“更新中断”，那么硬件就会认为：“哦，产生更新了，快去执行中断函数吧！” 所以才会出现“刚初始化就进中断”的现象。解决办法就是在 <code>TIM_TimeBaseInit</code> 之后，<strong>手动清除一次中断标志位</strong>，代码是：<code>TIM_ClearFlag(TIM2, TIM_FLAG_Update);</code> 。</p>
+<hr>
+<h4 id="4-2-输出比较"><a class="header-anchor" href="#4-2-输出比较"></a>4.2 输出比较</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">PWM_Init</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);<br>	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);<br>	<br><span class="hljs-comment">//	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);    //使能AFIO，TIM2的通道1-4默认映射在PA0-PA3引脚上，如果需要映射到其他引脚上，需要使能AFIO，并进行引脚复用配置</span><br><span class="hljs-comment">//	GPIO_PinRemapConfig(GPIO_PartialRemap1_TIM2, ENABLE);</span><br><span class="hljs-comment">//	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);</span><br>	<br>	GPIO_InitTypeDef GPIO_InitStructure;<br>	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP; <span class="hljs-comment">//复用推挽输出，TIM2的通道1-4默认映射在PA0-PA3引脚上，配置为复用推挽输出模式</span><br>	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;		<span class="hljs-comment">//GPIO_Pin_15;</span><br>	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;<br>	GPIO_Init(GPIOA, &amp;GPIO_InitStructure);<br>	<br>	TIM_InternalClockConfig(TIM2);<br>	<br>	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;<br>	TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;<br>	TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up;<br>	TIM_TimeBaseInitStructure.TIM_Period = <span class="hljs-number">100</span> - <span class="hljs-number">1</span>;		<span class="hljs-comment">//ARR</span><br>	TIM_TimeBaseInitStructure.TIM_Prescaler = <span class="hljs-number">720</span> - <span class="hljs-number">1</span>;		<span class="hljs-comment">//PSC</span><br>	TIM_TimeBaseInitStructure.TIM_RepetitionCounter = <span class="hljs-number">0</span>;<br>	TIM_TimeBaseInit(TIM2, &amp;TIM_TimeBaseInitStructure);<br>	<br>	TIM_OCInitTypeDef TIM_OCInitStructure;<br>	TIM_OCStructInit(&amp;TIM_OCInitStructure); <span class="hljs-comment">//给结构体赋初始值，因为下面没有对所有成员进行赋值，如果不初始化，未赋值的成员可能是随机值，导致不可预知的行为</span><br>	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;   <span class="hljs-comment">//设置输出比较模式</span><br>	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;<br>	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;<br>	TIM_OCInitStructure.TIM_Pulse = <span class="hljs-number">0</span>;		<span class="hljs-comment">//CCR</span><br>	TIM_OC1Init(TIM2, &amp;TIM_OCInitStructure);<br>	<br>	TIM_Cmd(TIM2, ENABLE);<br>&#125;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">PWM_SetCompare1</span><span class="hljs-params">(<span class="hljs-type">uint16_t</span> Compare)</span><br>&#123;<br>	TIM_SetCompare1(TIM2, Compare);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>输出比较模式下，硬件会持续将两个寄存器的值进行比对：</p>
+<ul>
+<li>
+<p>CNT (Counter)：正在不断增加的计数器。</p>
+</li>
+<li>
+<p>CCR (Capture/Compare Register)：你手动设置的“比较值”。</p>
+</li>
+</ul>
+<p>当两者的大小关系发生变化（相等、大于或小于）时，对应的 GPIO 引脚电平就会根据你预设的模式发生翻转。</p>
+<p>STM32 提供了多种模式来处理这种“比较结果”，最常用的是以下几种：</p>
+<ul>
+<li>PWM 模式 1/2：最常用的模式，用于产生脉冲宽度调制信号（控制电机、LED、舵机）。</li>
+<li>匹配翻转（Toggle）：当 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mi>N</mi><mi>T</mi><mo>=</mo><mi>C</mi><mi>C</mi><mi>R</mi></mrow><annotation encoding="application/x-tex">CNT = CCR</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">CNT</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">CCR</span></span></span></span> 时，引脚电平翻转。这常用于产生精确的方波。</li>
+<li>匹配置高/置低（Active/Inactive）：当匹配时，强制引脚输出高电平或低电平。</li>
+<li>冻结（Frozen）：匹配时引脚电平保持不变。</li>
+</ul>
+<hr>
+<h4 id="4-3-输入捕获"><a class="header-anchor" href="#4-3-输入捕获"></a>4.3 输入捕获</h4>
+<p>没问题，这个方式非常高效。先看代码能让你快速建立直观的工程印象，再配合详细解释就能从原理上彻底吃透。</p>
+<p>既然我们刚才聊到了<strong>输入捕获（Input Capture）</strong>，我就以“<strong>测量外部脉冲频率</strong>”为场景，先给出标准库的配置代码，再为你深入拆解。</p>
+<p><strong>输入捕获（测频率）配置代码</strong></p>
+<p>这段代码配置 <strong>TIM3_CH1（PA6引脚）</strong> 为输入捕获模式，用于测量外部信号的频率。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;stm32f10x.h&quot;</span></span><br><br><span class="hljs-type">void</span> <span class="hljs-title function_">IC_Init</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>    GPIO_InitTypeDef GPIO_InitStructure;<br>    TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;<br>    TIM_ICInitTypeDef  TIM_ICInitStructure;<br><br>    <span class="hljs-comment">// 1. 开启时钟 (TIM3 在 APB1，GPIOA 在 APB2)</span><br>    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);<br>    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);<br><br>    <span class="hljs-comment">// 2. GPIO 配置：PA6 设为输入模式 (浮空或上拉)</span><br>    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;<br>    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING; <br>    GPIO_Init(GPIOA, &amp;GPIO_InitStructure);<br><br>    <span class="hljs-comment">// 3. 定时器时基配置 (72MHz 主频)</span><br>    <span class="hljs-comment">// 我们把 ARR 设为最大，防止还没捕获到第二次信号就溢出了</span><br>    TIM_TimeBaseStructure.TIM_Period = <span class="hljs-number">65535</span>;          <span class="hljs-comment">// ARR</span><br>    TIM_TimeBaseStructure.TIM_Prescaler = <span class="hljs-number">71</span>;          <span class="hljs-comment">// PSC (72分频，计数频率为 1MHz)</span><br>    TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;<br>    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;<br>    TIM_TimeBaseInit(TIM3, &amp;TIM_TimeBaseStructure);<br><br>    <span class="hljs-comment">// 4. 输入捕获通道配置 (TIM3_CH1)</span><br>    TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;          <span class="hljs-comment">// 选择通道 1</span><br>    TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising; <span class="hljs-comment">// 上升沿捕获</span><br>    TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI; <span class="hljs-comment">// 直连模式</span><br>    TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;     <span class="hljs-comment">// 不分频，每次上升沿都捕获</span><br>    TIM_ICInitStructure.TIM_ICFilter = <span class="hljs-number">0x0F</span>;                  <span class="hljs-comment">// 滤波器，0x0-0xF，值越大滤波越强</span><br>    TIM_ICInit(TIM3, &amp;TIM_ICInitStructure);<br>    <span class="hljs-comment">// 关键函数：自动配置另一个通道为相反极性（下降沿）和交叉连接;与TIM_ICInit()只用出现一个</span><br>    TIM_PWMIConfig(TIM3, &amp;TIM_ICInitStructure);<br><br><br>    <span class="hljs-comment">// --- 核心步骤：设置从模式自动复位 ---</span><br><br>    <span class="hljs-comment">// 4. 选择触发源：选择 TI1FP1（即通道 1 的信号）作为触发信号</span><br>    TIM_SelectInputTrigger(TIM3, TIM_TS_TI1FP1);<br><br>    <span class="hljs-comment">// 5. 选择从模式：复位模式 (Reset Mode)</span><br>    <span class="hljs-comment">// 效果：每当 TI1FP1 出现上升沿，CNT 计数器立刻自动清零</span><br>    TIM_SelectSlaveMode(TIM3, TIM_SlaveMode_Reset);<br><br>    <span class="hljs-comment">// 5. 使能定时器</span><br>    TIM_Cmd(TIM3, ENABLE);<br>&#125;<br><br><span class="hljs-comment">// 由于硬件原因+1</span><br><span class="hljs-type">uint32_t</span> <span class="hljs-title function_">IC_GetFreq</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">1000000</span> / (TIM_GetCapture1(TIM3) + <span class="hljs-number">1</span>);   <span class="hljs-comment">// 1MHz / 捕获到的周期数 = 频率</span><br>&#125;<br><span class="hljs-type">uint32_t</span> <span class="hljs-title function_">IC_GetDuty</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>	<span class="hljs-keyword">return</span> (TIM_GetCapture2(TIM3) + <span class="hljs-number">1</span>) * <span class="hljs-number">100</span> / (TIM_GetCapture1(TIM3) + <span class="hljs-number">1</span>);     <span class="hljs-comment">// 占空比 = (高电平持续时间 / 总周期) * 100%</span><br>&#125;<br><br></code></pre></td></tr></table></figure>
+<h4 id="1-为什么-GPIO-模式是-IN-FLOATING？"><a class="header-anchor" href="#1-为什么-GPIO-模式是-IN-FLOATING？"></a>(1). 为什么 GPIO 模式是 <code>IN_FLOATING</code>？</h4>
+<p>在“输出比较”中，我们要用 <code>AF_PP</code>（复用推挽），因为那是定时器<strong>控制</strong>引脚；而在“输入捕获”中，是外部信号<strong>驱动</strong>引脚，所以引脚必须配置为<strong>输入</strong>模式。浮空输入可以最真实地反映外部波形。</p>
+<h4 id="2-滤波器（Filter）的作用"><a class="header-anchor" href="#2-滤波器（Filter）的作用"></a>(2). 滤波器（Filter）的作用</h4>
+<p><code>TIM_ICFilter = 0x0F</code>。在实际电路中，信号跳变瞬间可能会有抖动（毛刺）。滤波器的工作原理是：只有当引脚电平连续保持 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> 个时钟周期稳定，定时器才承认这是一次有效的跳变。这能极大提高测量高频或嘈杂信号时的稳定性。</p>
+<h4 id="3-直连（DirectTI）与间接（IndirectTI）"><a class="header-anchor" href="#3-直连（DirectTI）与间接（IndirectTI）"></a>(3). 直连（DirectTI）与间接（IndirectTI）</h4>
+<ul>
+<li><strong>DirectTI</strong>：通道 1 捕获引脚 1 的信号。</li>
+<li><strong>IndirectTI</strong>：通道 1 捕获引脚 2 的信号。<br>
+这允许你用一个引脚输入信号，但同时用两个通道去捕获它（比如一个测周期，一个测占空比）。</li>
+</ul>
+<h4 id="4-频率是怎么算出来的？"><a class="header-anchor" href="#4-频率是怎么算出来的？"></a>(4). 频率是怎么算出来的？</h4>
+<p>当代码运行起来后，你需要读取两次捕获到的值：</p>
+<ol>
+<li>第一次上升沿，读取 <code>CCR1</code> 的值，记为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">N_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。</li>
+<li>第二次上升沿，读取 <code>CCR1</code> 的值，记为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">N_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。</li>
+<li><strong>计算</strong>：两次捕获间的脉冲数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>=</mo><msub><mi>N</mi><mn>2</mn></msub><mo>−</mo><msub><mi>N</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">M = N_2 - N_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>（如果 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mn>2</mn></msub><mo>&lt;</mo><msub><mi>N</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">N_2 &lt; N_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，说明中间过了一次 ARR 溢出，需要补上 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>65536</mn></mrow><annotation encoding="application/x-tex">65536</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">65536</span></span></span></span>）。</li>
+<li><strong>最终频率</strong>：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo>=</mo><mfrac><msub><mi>f</mi><mrow><mi>c</mi><mi>n</mi><mi>t</mi></mrow></msub><mi>M</mi></mfrac></mrow><annotation encoding="application/x-tex">f = \frac{f_{cnt}}{M}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2772em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9322em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">M</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.4461em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2963em;"><span style="top:-2.357em;margin-left:-0.1076em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">c</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>（其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mrow><mi>c</mi><mi>n</mi><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">f_{cnt}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">c</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是你在 PSC 里设定的计数频率，本例中为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mtext>MHz</mtext></mrow><annotation encoding="application/x-tex">1\text{MHz}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">1</span><span class="mord text"><span class="mord">MHz</span></span></span></span></span>）。</li>
+</ol>
+<p><img src="image-3.png" srcset="/img/loading.gif" lazyload alt="alt text"><br>
+这就是 PWMI 模式的核心“神经通路”。<strong>TI1FP1</strong> 和 <strong>TI1FP2</strong>（Timer Input 1 Filtered Prescaled）是信号进入定时器后，经过加工生成的两路“副本”信号。</p>
+<p>在 PWMI 模式下，它们通过<strong>交叉连接</strong>，让一个引脚的信号能同时驱动两个捕获通道。</p>
+<hr>
+<h4 id="PWMI-核心配置代码（针对-TI1FP）"><a class="header-anchor" href="#PWMI-核心配置代码（针对-TI1FP）"></a>PWMI 核心配置代码（针对 TI1FP）</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 1. 选择输入触发源：TI1FP1</span><br><span class="hljs-comment">// 这告诉从模式控制器：盯着通道1过滤后的信号看</span><br>TIM_SelectInputTrigger(TIM3, TIM_TS_TI1FP1);<br><br><span class="hljs-comment">// 2. 设置从模式：复位模式</span><br><span class="hljs-comment">// 只要 TI1FP1 出现上升沿，CNT 立刻归零</span><br>TIM_SelectSlaveMode(TIM3, TIM_SlaveMode_Reset);<br><br><span class="hljs-comment">// 3. 极性配置（由 TIM_PWMIConfig 自动完成）</span><br><span class="hljs-comment">// TI1FP1 -&gt; 上升沿触发（捕获周期，触发复位）</span><br><span class="hljs-comment">// TI1FP2 -&gt; 下降沿触发（捕获高电平宽，不触发复位）</span><br><br></code></pre></td></tr></table></figure>
+<h4 id="详细解释"><a class="header-anchor" href="#详细解释"></a>详细解释</h4>
+<p>图中右下角的蓝色区域展示了信号的流转过程：</p>
+<h4 id="1-TI1（源信号）的加工"><a class="header-anchor" href="#1-TI1（源信号）的加工"></a>(1). TI1（源信号）的加工</h4>
+<p>外部引脚（GPIO）输入的原始信号叫做 <strong>TI1</strong>。它首先通过两个“关卡”：</p>
+<ul>
+<li><strong>滤波器</strong>：过滤毛刺。</li>
+<li><strong>边沿检测/极性选择</strong>：决定你是要看上升沿还是下降沿。<br>
+加工完后的信号就变成了 <strong>TI1F</strong>（Filtered）。</li>
+</ul>
+<h4 id="2-TI1FP1：主控路径"><a class="header-anchor" href="#2-TI1FP1：主控路径"></a>(2). TI1FP1：主控路径</h4>
+<ul>
+<li><strong>定义</strong>：通道 1 过滤后的信号。</li>
+<li><strong>作用 A（捕获）</strong>：它连接到 <code>CCR1</code>。当上升沿到来，<code>CCR1 = CNT</code>（记录总周期）。</li>
+<li><strong>作用 B（触发）</strong>：它是从模式控制器的<strong>触发源</strong>。正如代码中 <code>TIM_TS_TI1FP1</code> 所示，它负责给“从模式（Reset）”发指令：<strong>“周期开始了，快把 CNT 清零！”</strong></li>
+</ul>
+<h4 id="3-TI1FP2：辅助路径（交叉通道）"><a class="header-anchor" href="#3-TI1FP2：辅助路径（交叉通道）"></a>(3). TI1FP2：辅助路径（交叉通道）</h4>
+<ul>
+<li><strong>定义</strong>：同样来自通道 1，但它被引流到了<strong>通道 2</strong> 的捕获电路上。</li>
+<li><strong>作用</strong>：在 <code>TIM_PWMIConfig</code> 函数中，它被设置为<strong>相反极性</strong>（下降沿）。</li>
+<li><strong>逻辑</strong>：当下降沿到来，它触发 <code>CCR2 = CNT</code>。由于此时 <code>CNT</code> 是从上升沿（0点）开始数的，所以 <code>CCR2</code> 里的值就是<strong>高电平持续的时间</strong>。</li>
+</ul>
+<hr>
+<h4 id="总结"><a class="header-anchor" href="#总结"></a>总结</h4>
+<table>
+<thead>
+<tr>
+<th>信号名称</th>
+<th>对应目标</th>
+<th>在 PWMI 中的角色</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>TI1FP1</strong></td>
+<td><code>CCR1</code> &amp; 从模式控制器</td>
+<td><strong>周期管家</strong>：负责记录总时间，并指挥 CNT 复位。</td>
+</tr>
+<tr>
+<td><strong>TI1FP2</strong></td>
+<td><code>CCR2</code></td>
+<td><strong>宽度测量员</strong>：负责在中间卡点，记录高电平时间。</td>
+</tr>
+</tbody>
+</table>
+<p>这种设计巧妙地解决了一个问题：<strong>单引脚如何同时测量两个时间维度？</strong> 答案就是把 TI1 信号“一分为二”，给 TI1FP1 负责周期，给 TI1FP2 负责脉宽。</p>
+<hr>
+<h4 id="4-4-定时器编码器"><a class="header-anchor" href="#4-4-定时器编码器"></a>4.4 定时器编码器</h4>
+<p>在 STM32 中，<strong>编码器模式（Encoder Interface Mode）</strong> 是通用定时器的一项硬件级“黑科技”。它能直接连接增量式正交编码器，由硬件自动处理 A、B 相的相位差，实现<strong>自动加减计数</strong>。</p>
+<h4 id="编码器模式配置代码"><a class="header-anchor" href="#编码器模式配置代码"></a>编码器模式配置代码</h4>
+<p>这段代码配置 <strong>TIM3</strong> 的 <strong>CH1 (PA6)</strong> 和 <strong>CH2 (PA7)</strong> 为编码器模式。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">Encoder_Init</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>    GPIO_InitTypeDef GPIO_InitStructure;<br>    TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;<br><br>    <span class="hljs-comment">// 1. 开启时钟</span><br>    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);<br>    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);<br><br>    <span class="hljs-comment">// 2. GPIO 配置：PA6/PA7 设为输入模式</span><br>    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;<br>    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; <span class="hljs-comment">// 推荐上拉输入，防止悬空抖动</span><br>    GPIO_Init(GPIOA, &amp;GPIO_InitStructure);<br><br>    <span class="hljs-comment">// 3. 定时器时基配置</span><br>    <span class="hljs-comment">// 对于编码器，通常把 ARR 设为最大 65535，除非你需要计数到特定值自动清零</span><br>    TIM_TimeBaseStructure.TIM_Period = <span class="hljs-number">65535</span>;<br>    TIM_TimeBaseStructure.TIM_Prescaler = <span class="hljs-number">0</span>;           <span class="hljs-comment">// 编码器模式通常不分频，直接捕获边缘</span><br>    TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;<br>    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;<br>    TIM_TimeBaseInit(TIM3, &amp;TIM_TimeBaseStructure);<br><br>    <span class="hljs-comment">// 4. 配置编码器接口</span><br>    <span class="hljs-comment">// TIM_EncoderMode_TI12：在 A、B 相的所有上升沿/下降沿都计数（4倍频精度）</span><br>    <span class="hljs-comment">// 后两个参数用于设置输入极性（是否反向）</span><br>    TIM_EncoderInterfaceConfig(TIM3, TIM_EncoderMode_TI12, <br>                               TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);<br><br>    <span class="hljs-comment">// 5. 使能定时器</span><br>    TIM_Cmd(TIM3, ENABLE);<br>&#125;<br><br><span class="hljs-comment">// 在代码中获取当前位置或转速：</span><br><span class="hljs-comment">// int16_t pos = (int16_t)TIM_GetCounter(TIM3);</span><br><br></code></pre></td></tr></table></figure>
+<hr>
+<h4 id="详细解释-2"><a class="header-anchor" href="#详细解释-2"></a>详细解释</h4>
+<h4 id="1-正交信号逻辑"><a class="header-anchor" href="#1-正交信号逻辑"></a>1. 正交信号逻辑</h4>
+<p>编码器输出两路信号：<strong>A 相（TI1）</strong> 和 <strong>B 相（TI2）</strong>。它们之间存在 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>90</mn><mo>∘</mo></msup></mrow><annotation encoding="application/x-tex">90^\circ</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6741em;"></span><span class="mord">9</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6741em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∘</span></span></span></span></span></span></span></span></span></span></span> 的相位差。</p>
+<ul>
+<li><strong>顺时针旋转</strong>：A 相领先 B 相。</li>
+<li><strong>逆时针旋转</strong>：B 相领先 A 相。</li>
+</ul>
+<h4 id="2-硬件如何判断方向？"><a class="header-anchor" href="#2-硬件如何判断方向？"></a>2. 硬件如何判断方向？</h4>
+<p>当你调用 <code>TIM_EncoderInterfaceConfig</code> 后，定时器内部的硬件逻辑会自动检测：</p>
+<ul>
+<li>如果检测到 A 领先 B，计数器 <code>CNT</code> <strong>向上自增</strong>。</li>
+<li>如果检测到 B 领先 A，计数器 <code>CNT</code> <strong>向下自减</strong>。<br>
+<strong>全程不需要 CPU 参与</strong>。即使电机转速极快，硬件也能精准捕捉每一个跳变。</li>
+</ul>
+<h4 id="3-倍频的概念（精度提升）"><a class="header-anchor" href="#3-倍频的概念（精度提升）"></a>3. 倍频的概念（精度提升）</h4>
+<p>在配置函数中，你可以选择三种模式：</p>
+<ul>
+<li><strong>TIM_EncoderMode_TI1</strong>：仅在 A 相边缘计数（2倍频）。</li>
+<li><strong>TIM_EncoderMode_TI2</strong>：仅在 B 相边缘计数（2倍频）。</li>
+<li><strong>TIM_EncoderMode_TI12</strong>：在 A、B 相的<strong>所有上升沿和下降沿</strong>都计数。</li>
+<li><strong>效果</strong>：如果编码器物理线数是 500 线，使用 <code>TI12</code> 模式后，一圈能得到 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>500</mn><mo>×</mo><mn>4</mn><mo>=</mo><mn>2000</mn></mrow><annotation encoding="application/x-tex">500 \times 4 = 2000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">500</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">4</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2000</span></span></span></span> 个脉冲。这不仅提高了位置精度，还能有效过滤掉引脚上的微小震荡（因为震荡不会产生完整的正交相位变化）。</li>
+</ul>
+<h4 id="4-关于-16-位溢出的处理技巧"><a class="header-anchor" href="#4-关于-16-位溢出的处理技巧"></a>4. 关于 16 位溢出的处理技巧</h4>
+<p>由于 TIM3 是 16 位定时器，其 <code>CNT</code> 范围是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>∼</mo><mn>65535</mn></mrow><annotation encoding="application/x-tex">0 \sim 65535</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">65535</span></span></span></span>。</p>
+<ul>
+<li><strong>技巧</strong>：将读取到的 <code>uint16_t</code> 强制转换为 <code>int16_t</code>。</li>
+<li><strong>好处</strong>：如果计数器从 <code>0</code> 减到了 <code>65535</code>，强转后会变成 <code>-1</code>。这样即使电机反转跨越了零点，你的软件逻辑依然能正确识别出位置变化。</li>
+</ul>
+<h4 id="总结-2"><a class="header-anchor" href="#总结-2"></a>总结</h4>
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>传统外部中断计脉冲</th>
+<th>定时器编码器模式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CPU 占用</strong></td>
+<td>极高（每个脉冲都要进中断）</td>
+<td><strong>极低（硬件自动计数）</strong></td>
+</tr>
+<tr>
+<td><strong>方向识别</strong></td>
+<td>需要复杂的软件逻辑判断相位</td>
+<td><strong>硬件自动识别加减</strong></td>
+</tr>
+<tr>
+<td><strong>抗干扰</strong></td>
+<td>容易受毛刺误触发</td>
+<td>硬件逻辑天然过滤非正交信号</td>
+</tr>
+<tr>
+<td><strong>应用场景</strong></td>
+<td>低速、简易计数</td>
+<td><strong>电机闭环控制、精准定位</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="5-ADC模数转换器"><a class="header-anchor" href="#5-ADC模数转换器"></a>5. ADC模数转换器</h3>
+<h4 id="5-1-ADC单通道"><a class="header-anchor" href="#5-1-ADC单通道"></a>5.1 ADC单通道</h4>
+<h4 id="ADC（模数转换器）配置代码"><a class="header-anchor" href="#ADC（模数转换器）配置代码"></a>ADC（模数转换器）配置代码</h4>
+<p>以 STM32F103 的 <strong>ADC1 通道 0 (PA0)</strong> 为例，展示单次转换模式的配置：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">AD_Init</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);<br>	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);<br>	<br>	RCC_ADCCLKConfig(RCC_PCLK2_Div6);   <span class="hljs-comment">//设置 ADC 时钟为 PCLK2 的 1/6，PCLK2 默认是主频（72MHz），所以 ADC 时钟是 12MHz，满足 ADC 不超过 14MHz 的要求</span><br>	<br>	GPIO_InitTypeDef GPIO_InitStructure;<br>	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;<br>	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;<br>	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;<br>	GPIO_Init(GPIOA, &amp;GPIO_InitStructure);<br>	<br>	ADC_RegularChannelConfig(ADC1, ADC_Channel_0, <span class="hljs-number">1</span>, ADC_SampleTime_55Cycles5); <span class="hljs-comment">//配置 ADC1 的规则通道 0，序列号为 1，采样时间为 55.5 周期</span><br>	<br>	ADC_InitTypeDef ADC_InitStructure;<br>	ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;  <span class="hljs-comment">//独立模式，ADC1 和 ADC2 互不干扰</span><br>	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;  <span class="hljs-comment">//右对齐，转换结果放在寄存器的低 12 位，方便直接读取数值</span><br>	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None; <span class="hljs-comment">//软件触发转换，转换由软件命令启动</span><br>	ADC_InitStructure.ADC_ContinuousConvMode = DISABLE; <span class="hljs-comment">//单次转换模式，转换完成后停止，等待下一次触发</span><br>	ADC_InitStructure.ADC_ScanConvMode = DISABLE;   <span class="hljs-comment">//非扫描模式，只有一个通道参与转换</span><br>	ADC_InitStructure.ADC_NbrOfChannel = <span class="hljs-number">1</span>; <span class="hljs-comment">//规则通道数量为 1，只有 ADC_Channel_0 参与转换 </span><br>	ADC_Init(ADC1, &amp;ADC_InitStructure);<br>	<br>	ADC_Cmd(ADC1, ENABLE);<br>	<br>	ADC_ResetCalibration(ADC1);<br>	<span class="hljs-keyword">while</span> (ADC_GetResetCalibrationStatus(ADC1) == SET);<br>	ADC_StartCalibration(ADC1);<br>	<span class="hljs-keyword">while</span> (ADC_GetCalibrationStatus(ADC1) == SET);<br>&#125;<br><br><span class="hljs-type">uint16_t</span> <span class="hljs-title function_">AD_GetValue</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>	ADC_SoftwareStartConvCmd(ADC1, ENABLE);<br>	<span class="hljs-keyword">while</span> (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);<br>	<span class="hljs-keyword">return</span> ADC_GetConversionValue(ADC1);<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<h4 id="详细解释-3"><a class="header-anchor" href="#详细解释-3"></a>详细解释</h4>
+<p><strong>ADC (Analog-to-Digital Converter)</strong> 的作用是将连续变化的<strong>模拟电压</strong>（如传感器输出）转换为 CPU 能处理的<strong>数字量</strong>。</p>
+<h4 id="1-分辨率（Resolution）"><a class="header-anchor" href="#1-分辨率（Resolution）"></a>(1). 分辨率（Resolution）</h4>
+<p>STM32F103 的 ADC 是 <strong>12 位</strong> 的。</p>
+<ul>
+<li><strong>含义</strong>：它把输入电压范围（通常是 0V 到 3.3V）平均分成了 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>12</mn></msup><mo>=</mo><mn>4096</mn></mrow><annotation encoding="application/x-tex">2^{12} = 4096</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">12</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">4096</span></span></span></span> 份。</li>
+<li><strong>计算</strong>：如果读到数字 <code>2048</code>，对应的电压就是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3.3</mn><mi>V</mi><mo>×</mo><mo stretchy="false">(</mo><mn>2048</mn><mi mathvariant="normal">/</mi><mn>4096</mn><mo stretchy="false">)</mo><mo>=</mo><mn>1.65</mn><mi>V</mi></mrow><annotation encoding="application/x-tex">3.3V \times (2048 / 4096) = 1.65V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord">3.3</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">2048/4096</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">1.65</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span>。</li>
+</ul>
+<h4 id="2-ADC-时钟与采样时间"><a class="header-anchor" href="#2-ADC-时钟与采样时间"></a>(2). ADC 时钟与采样时间</h4>
+<p>ADC 挂在 APB2 总线上，但它有一个专门的 <strong>ADC 预分频器</strong>。</p>
+<ul>
+<li><strong>限制</strong>：ADC 的工作频率最高不能超过 <strong>14MHz</strong>。如果主频是 72MHz，通常选择 6 分频（12MHz）或 8 分频（9MHz）。</li>
+<li><strong>采样时间</strong>：电压不是瞬间读取的，ADC 需要一小段时间让内部电容充电。采样时间越长，测量越精准，但速度越慢。</li>
+</ul>
+<h4 id="3-转换模式"><a class="header-anchor" href="#3-转换模式"></a>(3). 转换模式</h4>
+<ul>
+<li><strong>单次转换 (Single)</strong>：触发一次，转一次，然后停下。适合对实时性要求不高的电压监测。</li>
+<li><strong>连续转换 (Continuous)</strong>：触发一次后，它不停地转，CPU 随时去读最新的值。</li>
+<li><strong>扫描模式 (Scan)</strong>：如果你有多个通道（比如同时测温度、电压、亮度），它会按顺序依次转换。</li>
+</ul>
+<h4 id="4-规则组-vs-注入组"><a class="header-anchor" href="#4-规则组-vs-注入组"></a>(4). 规则组 vs 注入组</h4>
+<ul>
+<li>
+<p><strong>规则组 (Regular Group)</strong>：就像普通生产线，最多支持 16 个通道。</p>
+<ul>
+<li>规则组：只有一个数据寄存器 ADC_DR。</li>
+</ul>
+<ul>
+<li>
+<p>问题：扫描模式下，CH0 转完放在 DR，CH1 一转完就会覆盖掉 CH0。</p>
+</li>
+<li>
+<p>解决：所以规则组扫描必须配合 DMA，在覆盖前把数据搬走。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>注入组 (Injected Group)</strong>：就像“插队”，可以中断规则组的转换，优先处理紧急信号。</p>
+<ul>
+<li>注入组：有四个独立的数据寄存器 ADC_JDR1 到 ADC_JDR4。</li>
+</ul>
+<ul>
+<li>优势：转完 4 个通道，每个通道都有自己专属的“小抽屉”，不会互相覆盖，不需要 DMA 也能轻松读取。</li>
+</ul>
+</li>
+</ul>
+<h4 id="5-对齐方式"><a class="header-anchor" href="#5-对齐方式"></a>(5). 对齐方式</h4>
+<ul>
+<li><strong>右对齐（常用）</strong>：12 位数据放在 16 位寄存器的低 12 位，读出来的数值直接就是 0-4095。</li>
+<li><strong>左对齐</strong>：数据放在高 12 位。通常用于只需要 8 位精度时，直接取高位字节。</li>
+</ul>
+<hr>
+<h3 id="6-DMA直接存储器存取"><a class="header-anchor" href="#6-DMA直接存储器存取"></a>6.DMA直接存储器存取</h3>
+<h4 id="存储器分类与配置概览"><a class="header-anchor" href="#存储器分类与配置概览"></a>存储器分类与配置概览</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* 典型的 STM32F103 内存分布 (逻辑概念) */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> FLASH_START  0x08000000  <span class="hljs-comment">// 程序存储起始地址</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> SRAM_START   0x20000000  <span class="hljs-comment">// 运行内存起始地址</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> PERIPH_START 0x40000000  <span class="hljs-comment">// 外设寄存器地址 (ADC, TIM, GPIO等)</span></span><br><br><span class="hljs-comment">/* 在代码中强制指定变量到特定存储区域 (Keil 示例) */</span><br><span class="hljs-type">uint32_t</span> <span class="hljs-type">const</span> table[] __attribute__((at(<span class="hljs-number">0x0800F000</span>))) = &#123;<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>&#125;; <span class="hljs-comment">// 存放在 Flash</span><br><span class="hljs-type">uint32_t</span> data_buf[<span class="hljs-number">100</span>] __attribute__((section(<span class="hljs-string">&quot;SRAM_POOL&quot;</span>)));      <span class="hljs-comment">// 存放在 SRAM</span><br><br></code></pre></td></tr></table></figure>
+<hr>
+<h4 id="详细解释：单片机存储器四大支柱"><a class="header-anchor" href="#详细解释：单片机存储器四大支柱"></a>详细解释：单片机存储器四大支柱</h4>
+<h4 id="1-Flash（程序存储器）"><a class="header-anchor" href="#1-Flash（程序存储器）"></a>1. Flash（程序存储器）</h4>
+<p>Flash 是单片机的“硬盘”，是非易失性的。</p>
+<ul>
+<li><strong>用途</strong>：存放编译后的 <strong>二进制代码 (Code)</strong> 和 <strong>常量 (RO-data)</strong>。</li>
+<li><strong>特性</strong>：掉电不丢失，读取速度较快，但写入（编程）速度慢且寿命有限。</li>
+<li><strong>关键点</strong>：在 STM32 中，Flash 通常从 <code>0x08000000</code> 开始映射。你写的每一行代码，最终都会变成电荷存储在这里。</li>
+</ul>
+<h4 id="2-SRAM（静态随机存取存储器）"><a class="header-anchor" href="#2-SRAM（静态随机存取存储器）"></a>2. SRAM（静态随机存取存储器）</h4>
+<p>SRAM 是单片机的“内存 (RAM)”，是易失性的。</p>
+<ul>
+<li><strong>用途</strong>：存放 <strong>变量 (RW-data, ZI-data)</strong>、<strong>堆 (Heap)</strong> 和 <strong>栈 (Stack)</strong>。</li>
+<li><strong>特性</strong>：读写速度极快，但掉电后数据会立即消失。</li>
+<li><strong>逻辑分区</strong>：</li>
+<li><strong>栈 (Stack)</strong>：存放局部变量、函数调用时的现场保护。</li>
+<li><strong>堆 (Heap)</strong>：用于 <code>malloc</code> 动态分配内存。</li>
+</ul>
+<h4 id="3-寄存器（Registers）"><a class="header-anchor" href="#3-寄存器（Registers）"></a>3. 寄存器（Registers）</h4>
+<p>寄存器是 CPU 内部最快的存储单元。</p>
+<ul>
+<li><strong>通用寄存器</strong>：如 ARM 的 R0-R15，用于参与数学运算和逻辑跳转。</li>
+<li><strong>特殊功能寄存器 (SFR)</strong>：这是你最熟悉的，比如 <code>ADC_DR</code>、<code>TIMx_CNT</code>。它们虽然有地址映射，但本质上是控制硬件电路的开关。</li>
+</ul>
+<h4 id="4-EEPROM-Backup-Registers"><a class="header-anchor" href="#4-EEPROM-Backup-Registers"></a>4. EEPROM / Backup Registers</h4>
+<ul>
+<li><strong>EEPROM</strong>：有些单片机内置，用于存放需要经常修改且掉电不丢失的参数（如校准系数）。STM32F103 常用 <strong>Flash 模拟 EEPROM</strong>。</li>
+<li><strong>备份寄存器 (BKP)</strong>：在 STM32 中，有一小块区域由 Vbat 供电。当你主电源断开但有纽扣电池时，这里的数据可以保留。</li>
+</ul>
+<h4 id="存储器对比表"><a class="header-anchor" href="#存储器对比表"></a>存储器对比表</h4>
+<table>
+<thead>
+<tr>
+<th>存储器类型</th>
+<th>速度</th>
+<th>掉电丢失</th>
+<th>存放内容</th>
+<th>操作对象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Flash</strong></td>
+<td>中</td>
+<td>否</td>
+<td>程序代码、const常量</td>
+<td>编译器自动处理</td>
+</tr>
+<tr>
+<td><strong>SRAM</strong></td>
+<td>极快</td>
+<td>是</td>
+<td>变量、堆栈、缓冲区</td>
+<td>开发者代码逻辑</td>
+</tr>
+<tr>
+<td><strong>寄存器</strong></td>
+<td>瞬时</td>
+<td>是</td>
+<td>指令操作数、硬件状态</td>
+<td>CPU 或 底层驱动</td>
+</tr>
+<tr>
+<td><strong>EEPROM</strong></td>
+<td>慢</td>
+<td>否</td>
+<td>系统参数、用户配置</td>
+<td>专门的读写函数</td>
+</tr>
+</tbody>
+</table>
+<p><img src="image-4.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<p><strong>DMA (Direct Memory Access，直接存储器访问)</strong> 是一项极其重要的硬件加速技术。它的核心作用是：<strong>在不占用 CPU 的情况下，实现数据在存储器（Flash、SRAM）与外设（ADC、TIM、USART等）之间的全自动高速搬运。</strong></p>
+<p>你可以把 CPU 想象成“公司总裁”，而 DMA 是“搬运工”。有了 DMA，总裁就不需要亲自搬运每一个字节的数据，只需交代好“从哪搬、搬到哪、搬多少”，然后就可以去处理更高价值的计算逻辑。</p>
+<hr>
+<h4 id="DMA-基础配置代码"><a class="header-anchor" href="#DMA-基础配置代码"></a>DMA 基础配置代码</h4>
+<p>以 <strong>ADC1 采集并通过 DMA 搬运到 SRAM 数组</strong> 为例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;stm32f10x.h&quot;</span>                  <span class="hljs-comment">// Device header</span></span><br><br><span class="hljs-type">uint16_t</span> AD_Value[<span class="hljs-number">4</span>];<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">AD_Init</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);<br>	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);<br>	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);<br>	<br>	RCC_ADCCLKConfig(RCC_PCLK2_Div6);<br>	<br>	GPIO_InitTypeDef GPIO_InitStructure;<br>	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;<br>	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3;<br>	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;<br>	GPIO_Init(GPIOA, &amp;GPIO_InitStructure);<br>	<br>	ADC_RegularChannelConfig(ADC1, ADC_Channel_0, <span class="hljs-number">1</span>, ADC_SampleTime_55Cycles5);<br>	ADC_RegularChannelConfig(ADC1, ADC_Channel_1, <span class="hljs-number">2</span>, ADC_SampleTime_55Cycles5);<br>	ADC_RegularChannelConfig(ADC1, ADC_Channel_2, <span class="hljs-number">3</span>, ADC_SampleTime_55Cycles5);<br>	ADC_RegularChannelConfig(ADC1, ADC_Channel_3, <span class="hljs-number">4</span>, ADC_SampleTime_55Cycles5);<br>		<br>	ADC_InitTypeDef ADC_InitStructure;<br>	ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;<br>	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;<br>	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;<br>	ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;  <span class="hljs-comment">//连续转换模式，转换完成后自动重新开始下一次转换</span><br>	ADC_InitStructure.ADC_ScanConvMode = ENABLE;    <span class="hljs-comment">//扫描模式，规则组有多个通道，依次转换</span><br>	ADC_InitStructure.ADC_NbrOfChannel = <span class="hljs-number">4</span>; <span class="hljs-comment">//规则组通道数量为 4，分别是 ADC_Channel_0 到 ADC_Channel_3</span><br>	ADC_Init(ADC1, &amp;ADC_InitStructure);<br>	<br>	DMA_InitTypeDef DMA_InitStructure;<br>	DMA_InitStructure.DMA_PeripheralBaseAddr = (<span class="hljs-type">uint32_t</span>)&amp;ADC1-&gt;DR;<br>	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord; <span class="hljs-comment">//外设数据宽度为 16 位（ADC_DR 寄存器是 16 位的）</span><br>	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;    <span class="hljs-comment">//外设地址固定，始终读取 ADC_DR 寄存器</span><br>	DMA_InitStructure.DMA_MemoryBaseAddr = (<span class="hljs-type">uint32_t</span>)AD_Value;<br>	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;<br>	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;<br>	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;  <span class="hljs-comment">//数据传输方向：外设到内存</span><br>	DMA_InitStructure.DMA_BufferSize = <span class="hljs-number">4</span>;   <span class="hljs-comment">//本次搬运 4 个数据（对应 4 个通道的转换结果）</span><br>	DMA_InitStructure.DMA_Mode = DMA_Mode_Circular; <span class="hljs-comment">//循环模式，搬运完成后自动重新开始搬运，适合连续转换</span><br>	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;<br>	DMA_InitStructure.DMA_Priority = DMA_Priority_Medium;<br>	DMA_Init(DMA1_Channel1, &amp;DMA_InitStructure);<br>	<br>	DMA_Cmd(DMA1_Channel1, ENABLE);<br>	ADC_DMACmd(ADC1, ENABLE);<br>	ADC_Cmd(ADC1, ENABLE);<br>	<br>	ADC_ResetCalibration(ADC1);<br>	<span class="hljs-keyword">while</span> (ADC_GetResetCalibrationStatus(ADC1) == SET);<br>	ADC_StartCalibration(ADC1);<br>	<span class="hljs-keyword">while</span> (ADC_GetCalibrationStatus(ADC1) == SET);<br>	<br>	ADC_SoftwareStartConvCmd(ADC1, ENABLE);<br>    <span class="hljs-comment">// 现在 ADC 会不断地转换 CH0-CH3 的数据，每当一个通道转换完成，DMA 就会自动把结果搬到 AD_Value 数组中，搬完 4 个后又从头开始搬，CPU 完全不需要管这个过程。若要设置单词转换和DMA非循环模式，需要重新配置DMA的计数器，并且再配置计数器之前需要先失能DMA，重新加载计数器后再使能DMA。</span><br>&#125;<br><br><br></code></pre></td></tr></table></figure>
+<hr>
+<h4 id="详细解释-4"><a class="header-anchor" href="#详细解释-4"></a>详细解释</h4>
+<h5 id="1-DMA-的工作机制"><a class="header-anchor" href="#1-DMA-的工作机制"></a>(1). DMA 的工作机制</h5>
+<p>DMA 挂载在 <strong>AHB 总线</strong>上。当外设准备好数据（如 ADC 转换完成）时，它会向 DMA 发送一个“请求”。DMA 获准后，会瞬间夺取总线控制权，完成一次搬运，随后立即释放总线。整个过程 CPU 完全不知情，也不会被阻塞。</p>
+<h5 id="2-三个核心要素（搬运三要素）"><a class="header-anchor" href="#2-三个核心要素（搬运三要素）"></a>(2). 三个核心要素（搬运三要素）</h5>
+<ul>
+<li><strong>源地址 &amp; 目的地址</strong>：数据从哪里来，到哪里去。</li>
+<li><strong>传输计数器 (BufferSize)</strong>：本次任务一共要搬多少个数据。每搬一个，计数器减 1，减到 0 时停止（或循环）。</li>
+<li><strong>触发源</strong>：谁来喊“开搬”？可以是 ADC 转换完成、串口收到字节，或者是定时器事件。</li>
+</ul>
+<h5 id="3-常见的四种传输方向"><a class="header-anchor" href="#3-常见的四种传输方向"></a>(3). 常见的四种传输方向</h5>
+<ul>
+<li><strong>外设 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 存储器</strong>：ADC 采样存入变量、串口接收数据存入 Buffer。</li>
+<li><strong>存储器 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 外设</strong>：将一段预设的波形表（SRAM）发给 DAC 输出、串口发送一串字符串。</li>
+<li><strong>存储器 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 存储器</strong>：纯内存拷贝，速度远超 <code>memcpy</code> 函数。</li>
+<li><strong>外设 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 外设</strong>：较少见，但在某些高级联动中会用到。</li>
+</ul>
+<h5 id="4-为什么扫描模式必须用-DMA？"><a class="header-anchor" href="#4-为什么扫描模式必须用-DMA？"></a>(4). 为什么扫描模式必须用 DMA？</h5>
+<p>正如之前提到的，ADC 的规则组扫描模式只有一个 <code>DR</code> 寄存器。</p>
+<ul>
+<li>如果不用 DMA，CH1 的结果会瞬间覆盖掉 CH0。</li>
+<li>配合 DMA 后，硬件在 CH0 刚转完的一刹那，就在 CPU 还没反应过来时，就把 <code>DR</code> 里的数值搬到了 <code>Array[0]</code>；CH1 转完，又立刻搬到 <code>Array[1]</code>。这是实现多通道数据采集的<strong>唯一可靠方法</strong>。</li>
+</ul>
+<hr>
+<h4 id="总结：DMA-的优势"><a class="header-anchor" href="#总结：DMA-的优势"></a>总结：DMA 的优势</h4>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>无 DMA (轮询/中断)</th>
+<th>有 DMA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CPU 占用率</strong></td>
+<td>极高（频繁被数据搬运打断）</td>
+<td><strong>极低（仅处理搬运完后的最终结果）</strong></td>
+</tr>
+<tr>
+<td><strong>数据实时性</strong></td>
+<td>受限于中断响应速度</td>
+<td><strong>纳秒级响应（由总线硬件自动控制）</strong></td>
+</tr>
+<tr>
+<td><strong>吞吐量</strong></td>
+<td>较小，适合单个字节</td>
+<td><strong>极大，适合连续的大缓冲区数据</strong></td>
+</tr>
+</tbody>
+</table>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">学习笔记</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E3%80%90STM32-%E6%A0%87%E5%87%86%E5%BA%93%E3%80%91/" class="print-no-link">#【STM32, 标准库】</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>STM32标准库</div>
+      <div>https://atat1010.github.io/2026/02/22/study_note/STM32标准库/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>QM</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年2月22日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/03/08/study_note/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/" title="通讯协议">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">通讯协议</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/11/28/study_note/%E5%B7%B2%E7%9F%A5%E4%BD%8D%E5%A7%BF%E4%B8%8B%E7%9A%84colmap%E9%87%8D%E5%BB%BA/" title="已知相机位姿情况下的colmap稀疏或稠密重建">
+                        <span class="hidden-mobile">已知相机位姿情况下的colmap稀疏或稠密重建</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","appKey":"eD94sW1TI15wEWfAYQ9MecGN","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+<script  src="/js/research-motion.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

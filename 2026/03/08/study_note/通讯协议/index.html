@@ -1,0 +1,1001 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/q-mark.png">
+  <link rel="icon" href="/img/q-mark.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="QM">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="嵌入式通讯协议详解  引言 在嵌入式系统中，通讯协议是确保不同设备之间能够有效、可靠地交换数据的关键。本文将深入探讨常见的嵌入式通讯协议，包括它们的特点、应用场景以及实现细节。“熟悉常见通讯协议”是硬指标。常见的通讯方式有三种：  单工：数据只能单向传输，发送方和接收方不能同时进行通信。 半双工：数据可以双向传输，但不能同时进行通信，发送方和接收方需要轮流使用通信通道。 全双工：数据可以双向传输，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通讯协议">
+<meta property="og:url" content="https://atat1010.github.io/2026/03/08/study_note/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/index.html">
+<meta property="og:site_name" content="啦啦啦">
+<meta property="og:description" content="嵌入式通讯协议详解  引言 在嵌入式系统中，通讯协议是确保不同设备之间能够有效、可靠地交换数据的关键。本文将深入探讨常见的嵌入式通讯协议，包括它们的特点、应用场景以及实现细节。“熟悉常见通讯协议”是硬指标。常见的通讯方式有三种：  单工：数据只能单向传输，发送方和接收方不能同时进行通信。 半双工：数据可以双向传输，但不能同时进行通信，发送方和接收方需要轮流使用通信通道。 全双工：数据可以双向传输，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://atat1010.github.io/2026/03/08/study_note/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/image.png">
+<meta property="og:image" content="https://atat1010.github.io/2026/03/08/study_note/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/image-1.png">
+<meta property="og:image" content="https://atat1010.github.io/2026/03/08/study_note/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/image-2.png">
+<meta property="og:image" content="https://atat1010.github.io/2026/03/08/study_note/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/image-3.png">
+<meta property="og:image" content="https://atat1010.github.io/2026/03/08/study_note/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/image-4.png">
+<meta property="og:image" content="https://atat1010.github.io/2026/03/08/study_note/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/image-5.png">
+<meta property="og:image" content="https://atat1010.github.io/2026/03/08/study_note/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/image-6.png">
+<meta property="article:published_time" content="2026-03-08T04:31:56.000Z">
+<meta property="article:modified_time" content="2026-03-09T12:08:16.099Z">
+<meta property="article:author" content="QM">
+<meta property="article:tag" content="嵌入式">
+<meta property="article:tag" content="通讯协议">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://atat1010.github.io/2026/03/08/study_note/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/image.png">
+  
+  
+  
+  <title>通讯协议 - 啦啦啦</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="/vendor/katex/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"atat1010.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":60,"cursorChar":"|","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"§"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","app_key":"eD94sW1TI15wEWfAYQ9MecGN","server_url":"https://9ir8y8ab.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body class="post-page">
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <img class="brand-mark" src="/img/q-mark.png" srcset="/img/loading.gif" lazyload alt="Q">
+      <strong>啦啦啦</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+
+  <div id="banner" class="banner" parallax=true
+       style="background: url('/img/maqma.jpg') no-repeat center center; background-size: cover;">
+    <div class="full-bg-img">
+      <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+        <div class="banner-text text-center fade-in-up">
+          <div class="h2"><span id="subtitle">通讯协议</span></div>
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-03-08 12:31" pubdate>
+          2026年3月8日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          13k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          105 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+      
+    
+  </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">通讯协议</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年3月9日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1>嵌入式通讯协议详解</h1>
+<hr>
+<h2 id="引言"><a class="header-anchor" href="#引言"></a>引言</h2>
+<p>在嵌入式系统中，通讯协议是确保不同设备之间能够有效、可靠地交换数据的关键。本文将深入探讨常见的嵌入式通讯协议，包括它们的特点、应用场景以及实现细节。“熟悉常见通讯协议”是硬指标。常见的通讯方式有三种：</p>
+<ul>
+<li>单工：数据只能单向传输，发送方和接收方不能同时进行通信。</li>
+<li>半双工：数据可以双向传输，但不能同时进行通信，发送方和接收方需要轮流使用通信通道。</li>
+<li>全双工：数据可以双向传输，并且发送方和接收方可以同时进行通信。</li>
+</ul>
+<hr>
+<h2 id="1-UART-通讯协议"><a class="header-anchor" href="#1-UART-通讯协议"></a>1. UART 通讯协议</h2>
+<h3 id="1-物理层：只需要三根线"><a class="header-anchor" href="#1-物理层：只需要三根线"></a>1. 物理层：只需要三根线</h3>
+<p>UART 是<strong>点对点</strong>通信，通常只需要三根导线：</p>
+<ul>
+<li>
+<p>TX (Transmit): 发送数据端。</p>
+</li>
+<li>
+<p>RX (Receive): 接收数据端。</p>
+</li>
+<li>
+<p>GND (Ground): 信号参考地（必须共地，否则电平逻辑会乱）。</p>
+<p>注意： A 设备的 TX 必须连接到 B 设备的 RX，反之亦然。</p>
+</li>
+</ul>
+<p>理解 UART 的核心在于其名称中的<strong>异步</strong>二字：它不需要共享时钟信号，而是靠双方约定的“协议规则”来对齐数据。</p>
+<h3 id="2-协议层：数据帧结构"><a class="header-anchor" href="#2-协议层：数据帧结构"></a>2. 协议层：数据帧结构</h3>
+<p>由于没有时钟线（Clock），接收方不知道发送方什么时候开始发数据。因此，UART 规定了一套严格的<strong>数据帧</strong>格式：</p>
+<ul>
+<li>
+<p>空闲状态（Idle）： 线路持续保持高电平（Logic 1）。</p>
+</li>
+<li>
+<p>起始位（Start Bit）： 当线路电平从高变低（逻辑 0）时，表示一帧数据的开始。</p>
+</li>
+<li>
+<p>数据位（Data Bits）： 通常是 8 位（1 字节），从最低位（LSB）开始传输。</p>
+</li>
+<li>
+<p>校验位（Parity Bit）： 可选。用于简单的奇偶校验，检查传输是否出错。</p>
+</li>
+<li>
+<p>停止位（Stop Bit）： 保持高电平（1 或 2 位），表示一帧结束，并让线路回到空闲状态。</p>
+</li>
+</ul>
+<p><strong>关键参数</strong>：波特率 (Baud Rate)<br>
+既然没有时钟同步，双方必须约定好“一秒钟发多少个位”，这就是波特率。</p>
+<ul>
+<li>
+<p>常见速率： 9600, 115200（最常用）, 921600 bps。</p>
+</li>
+<li>
+<p>误差容忍： 双方的时钟频率误差通常不能超过 2.5%，否则会导致采样偏移，读出乱码。</p>
+</li>
+</ul>
+<p>其优点是电路简单只需要两根线（不包括地线），适合短距离通信，成本低廉，没有复杂的地址和握手流程。缺点是带宽有限，一对一通信不支持挂载多个设备。下面的STM32配置串口的代码示例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">Serial_Init</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);<br>	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);<br>	<br>            <span class="hljs-comment">//配置TX和RX</span><br>	GPIO_InitTypeDef GPIO_InitStructure;<br>	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;<br>	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;<br>	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;<br>	GPIO_Init(GPIOA, &amp;GPIO_InitStructure);<br>	<br>	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;<br>	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;<br>	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;<br>	GPIO_Init(GPIOA, &amp;GPIO_InitStructure);<br>	<br>	USART_InitTypeDef USART_InitStructure;<br>	USART_InitStructure.USART_BaudRate = <span class="hljs-number">9600</span>;  <span class="hljs-comment">// 波特率</span><br>	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;     <span class="hljs-comment">// 无硬件流控制</span><br>	USART_InitStructure.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;     <span class="hljs-comment">// 使能发送和接收</span><br>	USART_InitStructure.USART_Parity = USART_Parity_No;     <span class="hljs-comment">// 无校验位</span><br>	USART_InitStructure.USART_StopBits = USART_StopBits_1;  <span class="hljs-comment">// 1 位停止位</span><br>	USART_InitStructure.USART_WordLength = USART_WordLength_8b; <span class="hljs-comment">// 8 位数据位</span><br>	USART_Init(USART1, &amp;USART_InitStructure);<br>	<br>	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);  <span class="hljs-comment">// 使能接收中断</span><br>	<br>	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);<br>	<br>	NVIC_InitTypeDef NVIC_InitStructure;<br>	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;<br>	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;<br>	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = <span class="hljs-number">1</span>;<br>	NVIC_InitStructure.NVIC_IRQChannelSubPriority = <span class="hljs-number">1</span>;<br>	NVIC_Init(&amp;NVIC_InitStructure);<br>	<br>	USART_Cmd(USART1, ENABLE);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>当接收到数据时，当 UART 的移位寄存器接收到一帧完整的数据（通常是 8 bits）后，硬件会自动将这 8 位数据拷贝到 USART_DR（数据寄存器）中。一旦数据进入 DR 寄存器，硬件会将状态寄存器中的 RXNE 标志位置为 1。因为使能了 USART_IT_RXNE 中断，只要该标志位为 1，USART1_IRQHandler 函数会被调用：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">USART1_IRQHandler</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>    <span class="hljs-keyword">if</span> (USART_GetITStatus(USART1, USART_IT_RXNE) == SET)<br>    &#123;<br>        <span class="hljs-type">uint8_t</span> data = USART_ReceiveData(USART1);  <span class="hljs-comment">// 读取接收到的数据</span><br>        <span class="hljs-comment">// 处理接收到的数据，例如存储到缓冲区或进行解析</span><br>        USART_ClearITPendingBit(USART1, USART_IT_RXNE);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">Serial_SendByte</span><span class="hljs-params">(<span class="hljs-type">uint8_t</span> Byte)</span><br>&#123;<br>	USART_SendData(USART1, Byte);<br>	<span class="hljs-keyword">while</span> (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);   <span class="hljs-comment">// 等待发送缓冲区空</span><br>&#125;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">Serial_SendArray</span><span class="hljs-params">(<span class="hljs-type">uint8_t</span> *Array, <span class="hljs-type">uint16_t</span> Length)</span><br>&#123;<br>	<span class="hljs-type">uint16_t</span> i;<br>	<span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; Length; i ++)<br>	&#123;<br>		Serial_SendByte(Array[i]);<br>	&#125;<br>&#125;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">Serial_SendString</span><span class="hljs-params">(<span class="hljs-type">char</span> *String)</span><br>&#123;<br>	<span class="hljs-type">uint16_t</span> i;<br>	<span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; String[i] != <span class="hljs-string">&#x27;\0&#x27;</span>; i ++)<br>	&#123;<br>		Serial_SendByte(String[i]);<br>	&#125;<br>&#125;<br><br><span class="hljs-type">uint32_t</span> <span class="hljs-title function_">Serial_Pow</span><span class="hljs-params">(<span class="hljs-type">uint32_t</span> X, <span class="hljs-type">uint32_t</span> Y)</span><br>&#123;<br>	<span class="hljs-type">uint32_t</span> Result = <span class="hljs-number">1</span>;<br>	<span class="hljs-keyword">while</span> (Y--)<br>	&#123;<br>		Result *= X;<br>	&#125;<br>	<span class="hljs-keyword">return</span> Result;<br>&#125;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">Serial_SendNumber</span><span class="hljs-params">(<span class="hljs-type">uint32_t</span> Number, <span class="hljs-type">uint8_t</span> Length)</span><br>&#123;<br>	<span class="hljs-type">uint8_t</span> i;<br>	<span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; Length; i++)							<br>	&#123;<br>            <span class="hljs-comment">// 逐位发送数字,用10的幂次来提取每一位数字，并转换为字符发送</span><br>            Serial_SendByte(Number / Serial_Pow(<span class="hljs-number">10</span>, Length - i - <span class="hljs-number">1</span>) % <span class="hljs-number">10</span> + <span class="hljs-string">&#x27;0&#x27;</span>);    <br>        <br>	&#125;<br>&#125;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">fputc</span><span class="hljs-params">(<span class="hljs-type">int</span> ch, FILE *f)</span><br>&#123;<br>	Serial_SendByte(ch);<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">Serial_Printf</span><span class="hljs-params">(<span class="hljs-type">char</span> *format, ...)</span><br>&#123;<br>	<span class="hljs-type">char</span> String[<span class="hljs-number">100</span>];<br>	va_list arg;<br>	va_start(arg, format);<br>	<span class="hljs-built_in">vsprintf</span>(String, format, arg);<br>	va_end(arg);<br>	Serial_SendString(String);<br>&#125;<br><br><span class="hljs-type">uint8_t</span> <span class="hljs-title function_">Serial_GetRxFlag</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>	<span class="hljs-keyword">if</span> (Serial_RxFlag == <span class="hljs-number">1</span>)<br>	&#123;<br>		Serial_RxFlag = <span class="hljs-number">0</span>;<br>		<span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><br><span class="hljs-type">uint8_t</span> <span class="hljs-title function_">Serial_GetRxData</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>	<span class="hljs-keyword">return</span> Serial_RxData;<br>&#125;<br></code></pre></td></tr></table></figure>
+<hr>
+<h2 id="2-IIC-通讯协议"><a class="header-anchor" href="#2-IIC-通讯协议"></a>2. IIC 通讯协议</h2>
+<h3 id="1-物理层：只需要两根信号线"><a class="header-anchor" href="#1-物理层：只需要两根信号线"></a>1. 物理层：只需要两根信号线</h3>
+<p>IIC 最大的硬件特点是开漏输出（Open-Drain）+ 上拉电阻。</p>
+<ul>
+<li>
+<p>SDA (Serial Data): 双向数据线，负责传输数据。</p>
+</li>
+<li>
+<p>SCL (Serial Clock): 时钟线，由主设备（Master）控制，决定通信节奏。</p>
+<p>关键点： I2C 是<strong>同步通信</strong>。因为有了 SCL 这根时钟线，发送方和接收方不需要约定波特率，只要跟着时钟走就行了。这比 UART 稳定得多。</p>
+</li>
+</ul>
+<p><img src="image.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<p>IIC 最大的硬件特点是<strong>开漏输出（Open-Drain）+ 上拉电阻</strong>。</p>
+<ul>
+<li>开漏输出： 设备只能将线拉低（0），无法主动拉高（1）。当所有设备都不拉低时，线通过上拉电阻自然保持高电平（1）。</li>
+<li>上拉电阻： 连接在 SDA 和 SCL 线上，确保线路在空闲状态下保持高电平。虽不是强上拉但是不妨碍通信。</li>
+</ul>
+<p>IIC规定所有设备只能将线拉低（0），无法主动拉高（1）。当所有设备都不拉低时，线通过上拉电阻自然保持高电平（1）。因此，IIC的空闲状态是SDA和SCL都保持高电平。只有<strong>下拉</strong>和<strong>松手</strong>的状态。</p>
+<h3 id="2-协议层：数据帧结构-2"><a class="header-anchor" href="#2-协议层：数据帧结构-2"></a>2. 协议层：数据帧结构</h3>
+<ul>
+<li>
+<p>IIC总线可以挂载多个设备，支持<strong>一主多从</strong>和<strong>多主多从</strong>的通信模式。每个设备都有一个唯一的地址，主设备通过地址来选择要通信的从设备。常见的IIC地址长度有<strong>7位</strong>和<strong>10位</strong>，7位地址可以支持最多128(2^7)个设备（其中一些地址保留），10位地址可以支持更多设备。</p>
+</li>
+<li>
+<p><strong>起始与停止信号</strong></p>
+<ul>
+<li>
+<p>起始 (Start): 当 SCL 为高电平时，SDA 突然变低，表示“大家注意，我要开始讲话了”。</p>
+</li>
+<li>
+<p>停止 (Stop): 当 SCL 为高电平时，SDA 从低变高，表示“讲话结束，线路释放”。回复默认高电平状态。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>寻址机制</strong><br>
+这是 I2C 的灵魂。在起始信号后，主设备会发送<strong>7 位从机地址 + 1 位读写位</strong> (R/W)。</p>
+<ul>
+<li>
+<p>总线上所有的从机都会收到这个地址，并与自己的“身份证号”对比。</p>
+</li>
+<li>
+<p>匹配上的从机留下，没匹配上的“闭麦”。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>应答信号</strong><br>
+每发送完一个字节（8 位），接收方必须回传一个 bit 作为“收到了”的确认：</p>
+<ul>
+<li>
+<p>ACK (Acknowledge): 低电平，代表“收到，请继续”。</p>
+</li>
+<li>
+<p>NACK (Not Acknowledge): 高电平，代表“出错了”或“我不想要了”。<br>
+在没个八位数据后都要应答。 在起始位发送后，发送一个<strong>7 位从机地址 + 1 位读写位</strong>的8位数据，需要有接收方发送应答位拉低SDA表示有人应答才会继续发送数据。后续每个八位数据后都需要发送应答位，接收方拉低SDA表示收到数据并准备好接收下一字节，拉高SDA表示出错或不想继续了。主设备在发送完数据后会发送停止信号，释放总线。不论是读还是写，都只能在SCL为低电平的时候改变SDA状态，在SCL为高电平的时候保持SDA状态不变供读取。也就是说低电平的时候放数据，高电平的时候读数据。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>三种模式</strong></p>
+<ul>
+<li>指定地址写：对于指定设备地址，在指定地址下写入指定数据。流程是：起始信号 -&gt; 发送设备地址 + 写位 -&gt; 等待应答 -&gt; 指定设备地址(为设备的寄存器) -&gt; 等待应答 -&gt; 发送数据 -&gt;等待应答 -&gt; 停止信号。</li>
+<li>当前地址读：对于指定设备，在当前地址指针指示的地址下读取从机数据。流程是：起始信号 -&gt; 发送设备地址 + 读位 -&gt; 等待应答 -&gt; 读取设备数据 -&gt; 发送应答 -&gt; 停止信号。地址指针在每次读写后会自动加1，指向下一个地址。</li>
+<li>指定地址读：也叫混合模式混合了上述两种时序，先是指定设备地址但是是写位，发送完设备地址后不发送数据而是重新发送起始信号表示重复起始信号，这时<strong>虽然重新开始了但是指针地址已经由我们指定了</strong>，后再发送设备地址但是是读位，最后读取数据。流程是：起始信号 -&gt; 发送设备地址 + 写位 -&gt; 等待应答 -&gt; 重新发送起始信号 -&gt; 发送设备地址 + 读位 -&gt; 等待应答 -&gt; 读取设备数据 -&gt; 发送应答 -&gt; 停止信号。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>还可以一次性读多个字节，只要在发送一个字节后继续发送应答位下拉表示继续读下一个字节，直到最后一个字节发送完后发送NACK悬空表示不想继续了。</p>
+</blockquote>
+<p>现实中常用硬件IIC不需要手搓时序并配合DMA：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;stm32f10x.h&quot;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> BUFFER_SIZE 8</span><br><span class="hljs-type">uint8_t</span> SendBuffer[BUFFER_SIZE] = &#123;<span class="hljs-number">0x01</span>, <span class="hljs-number">0x02</span>, <span class="hljs-number">0x03</span>, <span class="hljs-number">0x04</span>, <span class="hljs-number">0x05</span>, <span class="hljs-number">0x06</span>, <span class="hljs-number">0x07</span>, <span class="hljs-number">0x08</span>&#125;;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">I2C1_DMA_Init</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span> &#123;<br>    <span class="hljs-comment">// 1. 开启时钟</span><br>    RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);<br>    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);<br>    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);<br><br>    <span class="hljs-comment">// 2. GPIO 配置 (SCL: PB6, SDA: PB7) - 复用开漏输出</span><br>    GPIO_InitTypeDef GPIO_InitStructure;<br>    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;<br>    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD; <span class="hljs-comment">// 重要：必须是开漏</span><br>    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;<br>    GPIO_Init(GPIOB, &amp;GPIO_InitStructure);<br><br>    <span class="hljs-comment">// 3. I2C 外设配置</span><br>    I2C_InitTypeDef I2C_InitStructure;<br>    I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;<br>    I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;<br>    I2C_InitStructure.I2C_OwnAddress1 = <span class="hljs-number">0x00</span>;<br>    I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;<br>    I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;<br>    I2C_InitStructure.I2C_ClockSpeed = <span class="hljs-number">400000</span>; <span class="hljs-comment">// 400kHz 快速模式</span><br>    I2C_Init(I2C1, &amp;I2C_InitStructure);<br>    I2C_Cmd(I2C1, ENABLE);<br><br>    <span class="hljs-comment">// 4. DMA1 Channel 6 配置 (I2C1_TX 对应通道 6)</span><br>    DMA_DeInit(DMA1_Channel6);<br>    DMA_InitTypeDef DMA_InitStructure;<br>    DMA_InitStructure.DMA_PeripheralBaseAddr = (<span class="hljs-type">uint32_t</span>)&amp;I2C1-&gt;DR; <span class="hljs-comment">// 外设地址</span><br>    DMA_InitStructure.DMA_MemoryBaseAddr = (<span class="hljs-type">uint32_t</span>)SendBuffer;    <span class="hljs-comment">// 内存地址</span><br>    DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;             <span class="hljs-comment">// 内存 -&gt; 外设</span><br>    DMA_InitStructure.DMA_BufferSize = BUFFER_SIZE;                <span class="hljs-comment">// 搬运数量</span><br>    DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;<br>    DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;        <span class="hljs-comment">// 内存地址自增</span><br>    DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;<br>    DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;<br>    DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;                  <span class="hljs-comment">// 单次模式</span><br>    DMA_InitStructure.DMA_Priority = DMA_Priority_High;<br>    DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;<br>    DMA_Init(DMA1_Channel6, &amp;DMA_InitStructure);<br>&#125;<br><br><span class="hljs-comment">// 触发一次 DMA 发送</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">I2C1_DMA_Send</span><span class="hljs-params">(<span class="hljs-type">uint8_t</span> SlaveAddr)</span> &#123;<br>    <span class="hljs-comment">// 等待总线空闲</span><br>    <span class="hljs-keyword">while</span>(I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY));<br><br>    <span class="hljs-comment">// 生成起始信号</span><br>    I2C_GenerateSTART(I2C1, ENABLE);<br>    <span class="hljs-keyword">while</span>(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));<br><br>    <span class="hljs-comment">// 发送从机地址</span><br>    I2C_Send7bitAddress(I2C1, SlaveAddr, I2C_Direction_Transmitter);<br>    <span class="hljs-keyword">while</span>(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));<br><br>    <span class="hljs-comment">// 【关键步】使能 I2C 的 DMA 发送请求，数据开始由 DMA 接管自动搬运</span><br>    I2C_DMACmd(I2C1, ENABLE);<br>    DMA_Cmd(DMA1_Channel6, ENABLE);<br><br>    <span class="hljs-comment">// 注意：实际应用中通常在 DMA 传输完成中断里停止 I2C</span><br>    <span class="hljs-comment">// 这里为了演示逻辑简单，不等待完成即返回，体现“非阻塞”意图</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>为什么一个引脚既能输入还能输出，SDA在写的时候需要输出模式，在读的时候按理说需要改成输入模式啊，为什么代码中只配置了开漏输出？<strong>原因是开漏输出模式既能输出又能读取引脚状态</strong>，因为开漏输出配置仅改变了输出驱动部分（MOS管只接了地），而引脚的输入采样电路并没有关闭。当开漏输出设置为高阻态（写1）时，引脚是否为高电平取决于外部上拉电阻。若外部为高，读取即为1；若外部被拉低，读取即为0。</p>
+</blockquote>
+<hr>
+<h1>3. SPI 通讯协议</h1>
+<h2 id="SPI-的核心特性："><a class="header-anchor" href="#SPI-的核心特性："></a>SPI 的核心特性：</h2>
+<p><strong>A. 全双工</strong> (Full Duplex)<br>
+这是 SPI 比 I2C 快的重要原因。MOSI 和 MISO 是独立的，这意味着主机在发送一个比特的同时，也能接收到一个比特。就像一条双向四车道的高速公路。</p>
+<p><strong>B. 极高的速率</strong></p>
+<ul>
+<li>
+<p>I2C: 通常 100kbps ~ 400kbps。</p>
+</li>
+<li>
+<p>UART: 通常 115200bps。</p>
+</li>
+<li>
+<p>SPI: 轻轻松松达到 <strong>10Mbps, 50Mbps 甚至更高</strong>。它几乎只受限于硬件电路的物理寄生电容。</p>
+</li>
+</ul>
+<p><strong>C. 没有“应答”机制</strong><br>
+SPI 非常“高冷”。主机发数据，从机收没收到？主机不管。从机有没有在线？主机也不管。这种协议层面的简单，换取了极致的传输速度。</p>
+<h3 id="1-物理层：四根线"><a class="header-anchor" href="#1-物理层：四根线"></a>1. 物理层：四根线</h3>
+<p>SPI 是一种<strong>主从模式</strong>（Master-Slave）的通信，通常需要四根线：</p>
+<ul>
+<li>
+<p><strong>SCK</strong> (Serial Clock): 时钟线，由主机产生（控制节奏）。</p>
+</li>
+<li>
+<p><strong>MOSI</strong> (Master Out Slave In): 主机发送，从机接收。</p>
+</li>
+<li>
+<p><strong>MISO</strong> (Master In Slave Out): 从机发送，主机接收。</p>
+</li>
+<li>
+<p><strong>SS/CS</strong> (Slave Select / Chip Select): 片选线，由主机控制，拉低时表示“选中该设备”。</p>
+</li>
+</ul>
+<p><img src="image-1.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<h3 id="2-SPI-的核心：移位寄存器-Shift-Register"><a class="header-anchor" href="#2-SPI-的核心：移位寄存器-Shift-Register"></a>2. SPI 的核心：移位寄存器 (Shift Register)</h3>
+<p>理解 SPI 的本质，其实就是主机和从机之间交换了两个移位寄存器里的数据。</p>
+<ul>
+<li>
+<p>主机里有一个 8 位寄存器，从机里也有一个。</p>
+</li>
+<li>
+<p>时钟每跳变一次，主机寄存器的最高位移出到 MOSI，进入从机的最低位。</p>
+</li>
+<li>
+<p>同时，从机寄存器的最高位移出到 MISO，进入主机的最低位。</p>
+</li>
+<li>
+<p>8 个时钟周期后，主从完美地交换了数据。</p>
+</li>
+</ul>
+<p><img src="image-2.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<h3 id="3-关键配置：极性-CPOL-与-相位-CPHA"><a class="header-anchor" href="#3-关键配置：极性-CPOL-与-相位-CPHA"></a>3. 关键配置：极性 (CPOL) 与 相位 (CPHA)</h3>
+<p>SPI 比较麻烦的一点是，不同的传感器厂家对“什么时候采样数据”的要求不同。这衍生出了 4 种模式：</p>
+<ul>
+<li>
+<p>CPOL (Clock Polarity): 决定空闲时时钟是高电平还是低电平。</p>
+</li>
+<li>
+<p>CPHA (Clock Phase): 决定是在时钟的第一个边沿采样，还是第二个边沿采样。<br>
+<img src="image-3.png" srcset="/img/loading.gif" lazyload alt="alt text"><br>
+<img src="image-4.png" srcset="/img/loading.gif" lazyload alt="alt text"><br>
+硬件SPI 的配置代码示例配合DMA：</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;stm32f10x.h&quot;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> BUFFER_SIZE 16</span><br><span class="hljs-type">uint8_t</span> TxBuffer[BUFFER_SIZE] = &#123;<span class="hljs-number">0x01</span>, <span class="hljs-number">0x02</span>, <span class="hljs-number">0x03</span>, <span class="hljs-number">0x04</span>, <span class="hljs-number">0x05</span>, <span class="hljs-number">0x06</span>, <span class="hljs-number">0x07</span>, <span class="hljs-number">0x08</span>, <span class="hljs-number">0x09</span>, <span class="hljs-number">0x0A</span>, <span class="hljs-number">0x0B</span>, <span class="hljs-number">0x0C</span>, <span class="hljs-number">0x0D</span>, <span class="hljs-number">0x0E</span>, <span class="hljs-number">0x0F</span>, <span class="hljs-number">0x10</span>&#125;;<br><span class="hljs-type">uint8_t</span> RxBuffer[BUFFER_SIZE];<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">SPI1_DMA_Init</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span> &#123;<br>    <span class="hljs-comment">// 1. 开启时钟</span><br>    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_SPI1, ENABLE);<br>    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);<br><br>    <span class="hljs-comment">// 2. GPIO配置 (PA5:SCK, PA6:MISO, PA7:MOSI)</span><br>    GPIO_InitTypeDef GPIO_InitStructure;<br>    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_7;<br>    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP; <span class="hljs-comment">// 复用推挽输出</span><br>    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;<br>    GPIO_Init(GPIOA, &amp;GPIO_InitStructure);<br><br>    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;<br>    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING; <span class="hljs-comment">// 浮空输入</span><br>    GPIO_Init(GPIOA, &amp;GPIO_InitStructure);<br><br>    <span class="hljs-comment">// 3. SPI1外设配置</span><br>    SPI_InitTypeDef SPI_InitStructure;<br>    SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex; <span class="hljs-comment">// 全双工</span><br>    SPI_InitStructure.SPI_Mode = SPI_Mode_Master;<br>    SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;<br>    SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;    <span class="hljs-comment">// Mode 0</span><br>    SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;  <span class="hljs-comment">// Mode 0</span><br>    SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;     <span class="hljs-comment">// 软件控制片选</span><br>    SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4; <span class="hljs-comment">// 72MHz/4 = 18MHz</span><br>    SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;<br>    SPI_Init(SPI1, &amp;SPI_InitStructure);<br>    SPI_Cmd(SPI1, ENABLE);<br><br>    <span class="hljs-comment">// 4. DMA 配置 - 通道3 (发送)</span><br>    DMA_DeInit(DMA1_Channel3);<br>    DMA_InitTypeDef DMA_TX_Init;<br>    DMA_TX_Init.DMA_PeripheralBaseAddr = (<span class="hljs-type">uint32_t</span>)&amp;SPI1-&gt;DR;<br>    DMA_TX_Init.DMA_MemoryBaseAddr = (<span class="hljs-type">uint32_t</span>)TxBuffer;<br>    DMA_TX_Init.DMA_DIR = DMA_DIR_PeripheralDST; <span class="hljs-comment">// 内存 -&gt; 外设</span><br>    DMA_TX_Init.DMA_BufferSize = BUFFER_SIZE;<br>    DMA_TX_Init.DMA_PeripheralInc = DMA_PeripheralInc_Disable;<br>    DMA_TX_Init.DMA_MemoryInc = DMA_MemoryInc_Enable;<br>    DMA_TX_Init.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;<br>    DMA_TX_Init.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;<br>    DMA_TX_Init.DMA_Mode = DMA_Mode_Normal;<br>    DMA_TX_Init.DMA_Priority = DMA_Priority_High;<br>    DMA_TX_Init.DMA_M2M = DMA_M2M_Disable;<br>    DMA_Init(DMA1_Channel3, &amp;DMA_TX_Init);<br><br>    <span class="hljs-comment">// 5. DMA 配置 - 通道2 (接收)</span><br>    DMA_DeInit(DMA1_Channel2);<br>    DMA_InitTypeDef DMA_RX_Init = DMA_TX_Init; <span class="hljs-comment">// 复用大部分配置</span><br>    DMA_RX_Init.DMA_MemoryBaseAddr = (<span class="hljs-type">uint32_t</span>)RxBuffer;<br>    DMA_RX_Init.DMA_DIR = DMA_DIR_PeripheralSRC; <span class="hljs-comment">// 外设 -&gt; 内存</span><br>    DMA_Init(DMA1_Channel2, &amp;DMA_RX_Init);<br><br>    <span class="hljs-comment">// 6. 关联 SPI 和 DMA</span><br>    SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Tx | SPI_I2S_DMAReq_Rx, ENABLE);<br>&#125;<br><br><span class="hljs-comment">// 启动一次全双工交换</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">SPI1_DMA_Transfer</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span> &#123;<br>    <span class="hljs-comment">// 确保之前的传输已完成</span><br>    DMA_Cmd(DMA1_Channel2, DISABLE);<br>    DMA_Cmd(DMA1_Channel3, DISABLE);<br>    <br>    <span class="hljs-comment">// 设置传输长度（每次传输前需要重新设置）</span><br>    DMA_SetCurrDataCounter(DMA1_Channel2, BUFFER_SIZE);<br>    DMA_SetCurrDataCounter(DMA1_Channel3, BUFFER_SIZE);<br><br>    <span class="hljs-comment">// 开启接收通道(先开)和发送通道</span><br>    DMA_Cmd(DMA1_Channel2, ENABLE);<br>    DMA_Cmd(DMA1_Channel3, ENABLE);<br><br>    <span class="hljs-comment">// 此时数据开始自动在后台交换，CPU可以继续执行其他任务</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>通常只读的情况下主机可以随意发送数据，常用<code>0x00</code>或者<code>0xFF</code>。只写的时候比如驱动屏幕，就不需要管MISO的数据。</p>
+</blockquote>
+<hr>
+<h2 id="4-CAN-通讯协议"><a class="header-anchor" href="#4-CAN-通讯协议"></a>4. CAN 通讯协议</h2>
+<p>CAN（Controller Area Network）是一种专为汽车电子系统设计的通讯协议，具有高可靠性和实时性。它采用<strong>多主机总线结构</strong>，支持错误检测和纠正机制。其通过<code>CAN_H</code>和<code>CAN_L</code>两根线进行信号传输，使用<strong>差分信号</strong>提高抗干扰能力。CAN协议定义了数据帧格式，包括标准帧和扩展帧，支持多种数据速率。</p>
+<p><img src="image-5.png" srcset="/img/loading.gif" lazyload alt=""></p>
+<blockquote>
+<p>与IIC类似，输出0就拉低，输出1就放手，默认高电平。</p>
+</blockquote>
+<h3 id="1-物理层：差分信号的威力"><a class="header-anchor" href="#1-物理层：差分信号的威力"></a>1. 物理层：差分信号的威力</h3>
+<p>CAN 与 UART/I2C 最大的不同在于它不看“绝对电压”，而是看两根线（<strong>CAN_H</strong> 和 <strong>CAN_L</strong>）之间的电压差。</p>
+<ul>
+<li>
+<p>显性电平 (Dominant, 逻辑 0)： 两根线电压拧在一起产生压差。它像“黑体字”，能覆盖掉别人的信号。</p>
+</li>
+<li>
+<p>隐性电平 (Recessive, 逻辑 1)： 两根线电压一致，压差为 0。它像“透明色”，容易被别人覆盖。</p>
+</li>
+</ul>
+<p><img src="image-6.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<p>为什么要这么设计？ 因为差分信号抗干扰极强。如果外界有一个强电磁脉冲，两根线会同时升高，但它们的差值保持不变，数据依然稳如泰山。这在你处理带有大功率电机的机器人或工业设备时是救命的。</p>
+<h3 id="2-协议层：没有地址，只有“标签”"><a class="header-anchor" href="#2-协议层：没有地址，只有“标签”"></a>2. 协议层：没有地址，只有“标签”</h3>
+<p>在 I2C 里，你要给从机点名（地址）。但在 CAN 总线上，消息是没有地址的。</p>
+<ul>
+<li>
+<p>ID (Identifier)： 每一帧数据开头都有一个 ID。它不代表“发给谁”，而是代表“这包数据是什么”。</p>
+</li>
+<li>
+<p>广播机制： 主机会把数据“吼”出来，总线上所有的设备都会收到。设备根据 ID 自行决定：“哦，这是‘车速数据’，我要听”，或者“这是‘空调温度’，跟我没关系，扔掉”。</p>
+</li>
+</ul>
+<h3 id="3-仲裁机制：谁狠谁优先"><a class="header-anchor" href="#3-仲裁机制：谁狠谁优先"></a>3. 仲裁机制：谁狠谁优先</h3>
+<p>CAN 总线支持多主通信。如果两个设备同时开始说话怎么办？</p>
+<ul>
+<li>
+<p>它们会一边发一边读总线电平。</p>
+</li>
+<li>
+<p>逻辑竞争： “显性电平 0”能覆盖“隐性电平 1”。</p>
+</li>
+<li>
+<p>如果 A 发 1，B 发 0，总线呈现 0。A 发现自己发的跟读到的不一样，立刻闭嘴退出。</p>
+</li>
+<li>
+<p>结果： ID 越小的包（开头的 0 越多），优先级越高，能够无损地抢占总线。</p>
+</li>
+</ul>
+<p>未完待续…</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/study-note/" class="category-chain-item">study_note</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/" class="print-no-link">#嵌入式</a>
+      
+        <a href="/tags/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/" class="print-no-link">#通讯协议</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>通讯协议</div>
+      <div>https://atat1010.github.io/2026/03/08/study_note/通讯协议/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>QM</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年3月8日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/02/22/study_note/STM32%E6%A0%87%E5%87%86%E5%BA%93/" title="STM32标准库">
+                        <span class="hidden-mobile">STM32标准库</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","appKey":"eD94sW1TI15wEWfAYQ9MecGN","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+<script  src="/js/research-motion.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

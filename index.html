@@ -8,8 +8,8 @@
 <head>
   <meta charset="UTF-8">
 
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/southeast.png">
-  <link rel="icon" href="/img/southeast.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/q-mark.png">
+  <link rel="icon" href="/img/q-mark.png">
   
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
@@ -96,7 +96,7 @@
 <meta name="generator" content="Hexo 7.3.0"></head>
 
 
-<body>
+<body class="home-page">
   
 
   <header>
@@ -106,6 +106,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
+      <img class="brand-mark" src="/img/q-mark.png" srcset="/img/loading.gif" lazyload alt="Q">
       <strong>啦啦啦</strong>
     </a>
 
@@ -201,28 +202,25 @@
 
   
 
-<div id="banner" class="banner" parallax=true
-     style="background: url('/img/maqma.jpg') no-repeat center center; background-size: cover;">
-  <div class="full-bg-img">
-    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-      <div class="banner-text text-center fade-in-up">
-        <div class="h2">
-          
-            <span id="subtitle" data-typed-text="自律即自由"></span>
-          
-        </div>
 
-        
+  <section id="research-hero" class="research-hero">
+    <img class="research-hero-art" src="/img/research-header-art.png" srcset="/img/loading.gif" lazyload alt="">
+    <div class="container research-hero-content">
+      <p class="eyebrow">PERSONAL RESEARCH NOTES</p>
+      <h1>啦啦啦</h1>
+      <p class="research-hero-slogan">自律即自由</p>
+      <p class="research-hero-copy">记录三维视觉、动态重建与工程实践中的思考，
+        把零散的学习过程整理成可回看的知识脉络。</p>
+      <div class="research-topics" aria-label="Research topics">
+        <span>3D Vision</span><span>SLAM</span><span>Gaussian Splatting</span>
       </div>
-
-      
-        <div class="scroll-down-bar">
-          <i class="iconfont icon-arrowdown"></i>
-        </div>
-      
+      <div class="research-stats">
+        <span><strong>10</strong> 篇笔记</span>
+        <span><strong>8</strong> 个主题</span>
+      </div>
     </div>
-  </div>
-</div>
+  </section>
+
 
 </div>
 
@@ -239,509 +237,166 @@
               <div class="col-12 col-md-10 m-auto">
                 
 
-<h1 style="display: none">啦啦啦</h1>
 
-  <div class="row mx-auto index-card">
+<section class="research-home">
+  
     
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/28/study_note/%E5%B7%B2%E7%9F%A5%E4%BD%8D%E5%A7%BF%E4%B8%8B%E7%9A%84colmap%E9%87%8D%E5%BB%BA/" target="_self">
-          已知相机位姿情况下的colmap稀疏或稠密重建
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/28/study_note/%E5%B7%B2%E7%9F%A5%E4%BD%8D%E5%A7%BF%E4%B8%8B%E7%9A%84colmap%E9%87%8D%E5%BB%BA/" target="_self">
-        <div>
-          已知相机位姿情况下的colmap稀疏或稠密重建 环境准备 首先在官网上下载需要版本的colmap，最好是cuda版本，可以利用GPU加速。  解压后找到colmap.bat文件双击即可打开GUI界面。  这里建议把colmap的路径添加到环境变量中，方便在cmd或powershell中直接使用colmap命令。否则需要用绝对路径：  设置 -&gt;搜索环境变量 -&gt;编辑系统环境变量 -&g
+    <div class="home-section-heading reveal">
+      <p class="eyebrow">SELECTED NOTE</p>
+      <a class="all-posts-link" href="/archives/">浏览归档 <span aria-hidden="true">→</span></a>
+    </div>
+    <article class="featured-note reveal">
+      <div class="featured-note-main">
+        <div class="featured-note-meta">
+          <time datetime="2026-03-08 12:31">2026-03-08</time>
+          <span>study_note</span>
         </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-28 22:38" pubdate>
-              2025-11-28
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">学习笔记</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/colmap-%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BA/">#colmap 三维重建</a>
-            
-          </div>
-        
+        <h2><a href="/2026/03/08/study_note/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/">通讯协议</a></h2>
+        <p>嵌入式通讯协议详解  引言 在嵌入式系统中，通讯协议是确保不同设备之间能够有效、可靠地交换数据的关键。本文将深入探讨常见的嵌入式通讯协议，包括它们的特点、应用场景以及实现细节。“熟悉常见通讯协议”是硬指标。常见的通讯方式有三种：  单工：数据只能单向传输，发送方和接收方不能同时进行通信。 半双工：数据可以双向传输，但不能同时进行通信，发送方和接收方需要轮流使用通信通道。 全双工：数据可以双向传输，并且发送方和接收方可以同时进行通信。</p>
+        <a class="text-link" href="/2026/03/08/study_note/%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/">阅读全文 <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="featured-note-art" aria-hidden="true">
+        <img src="/img/research-header-art.png" srcset="/img/loading.gif" lazyload alt="">
       </div>
     </article>
+  
+
+  <div class="home-section-heading reveal">
+    <div><p class="eyebrow">LATEST WRITING</p><h2>最新笔记</h2></div>
+    <a class="all-posts-link" href="/archives/">查看全部 <span aria-hidden="true">→</span></a>
   </div>
-
-  <div class="row mx-auto index-card">
+  <div class="research-feed">
     
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/14/study_note/3DGS%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" target="_self">
-          50系显卡的3DGS基础环境配置编译diff-gaussian-rasterization和simple-knn
-        </a>
-      </h2>
-
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/14/study_note/3DGS%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" target="_self">
-        <div>
-          50系显卡3DGS基础环境配置：编译diff-gaussian-rasterization和simple-knn报错 在50系显卡下跑深度学习代码配置环境时必须要很高的pytorch(2.x)和cuda(12.x)以上，但是现在很多扩展包并不支持。  在配置3DGS项目环境的时候，需要编译diff-gaussian-rasterization和simple-knn这两个扩展包，但是代码里写法太旧，
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-14 15:44" pubdate>
-              2025-11-14
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
     
-      <span class="category-chain">
-        
-  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">学习笔记</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83/">#虚拟环境</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/14/study_note/5090%E4%B8%8Bpytorch%E5%AE%89%E8%A3%85/" target="_self">
-          5090下pytorch安装
-        </a>
-      </h2>
-
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/14/study_note/5090%E4%B8%8Bpytorch%E5%AE%89%E8%A3%85/" target="_self">
-        <div>
-          ubuntu24.04 + NVIDIA RTX 5090 安装pytorch和pytorch3d pytorch指令安装： 1pip install torch==2.7.1 torchvision==0.22.1 torchaudio==2.7.1 --index-url https://download.pytorch.org/whl/cu128  2.7版本的较为稳定太高有些不兼容  因为
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
         
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-14 11:11" pubdate>
-              2025-11-14
-            </time>
+        <article class="research-post reveal">
+          <time datetime="2026-02-22 20:24"><span>02-22</span><small>2026</small></time>
+          <div class="research-post-content">
+            <div class="research-post-meta">学习笔记</div>
+            <h3><a href="/2026/02/22/study_note/STM32%E6%A0%87%E5%87%86%E5%BA%93/">STM32标准库</a></h3>
+            <p>😄工程模板 1、江协科技模板  Start文件夹存放1启动文件，不同型号选择不同的启动文件；2-3是内核的寄存器描述函数；4是配置寄存器和对应地址的；5-6是用来配置时钟的。复制过来的文件要Add Files to Group XXX。 User文件夹存放用户代码，main.c是主函数。其他文件是配置库函数</p>
           </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">学习笔记</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83/">#虚拟环境</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/12/papers_note/4K4D/" target="_self">
-          论文泛读之4K4D
-        </a>
-      </h2>
-
+          <a class="post-arrow" href="/2026/02/22/study_note/STM32%E6%A0%87%E5%87%86%E5%BA%93/" aria-label="阅读 STM32标准库">→</a>
+        </article>
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/12/papers_note/4K4D/" target="_self">
-        <div>
-          多视角视频：4K4D: Real-Time 4D View Synthesis at 4K Resolution [cvpr2024] paper 😄contribution:  使用空间雕刻获得粗略的动态场景点云，并将每个点的位置表示为可学习的向量。 引入4D特征网格，为每个点分配特征向量这些特征向量输入多层感知器（MLP）网络以预测点的半径、密度和球谐函数（SH）系数。 开发了一种可微的深度
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-12 09:37" pubdate>
-              2025-11-12
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
     
-      <span class="category-chain">
-        
-  <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" class="category-chain-item">论文笔记</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/3DGS/">#3DGS</a>
-            
-              <a href="/tags/4DGS/">#4DGS</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/11/papers_note/RT_4DGS/" target="_self">
-          论文泛读之RT_4DGS
-        </a>
-      </h2>
-
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/11/papers_note/RT_4DGS/" target="_self">
-        <div>
-          单目动态＋多视角视频：REAL-TIME PHOTOREALISTIC DYNAMIC SCENE REPRESENTATION AND RENDERING WITH 4D GAUSSIAN SPLATTING [ICLR2024] paper 😄contribution:  提出连贯的4DGS模型和渲染管线 引入4D球谐函数 SOTA    ⛺method:  3DGS引入时间属性升维至4DG
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
         
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-11 21:28" pubdate>
-              2025-11-11
-            </time>
+        <article class="research-post reveal">
+          <time datetime="2025-11-28 22:38"><span>11-28</span><small>2025</small></time>
+          <div class="research-post-content">
+            <div class="research-post-meta">学习笔记</div>
+            <h3><a href="/2025/11/28/study_note/%E5%B7%B2%E7%9F%A5%E4%BD%8D%E5%A7%BF%E4%B8%8B%E7%9A%84colmap%E9%87%8D%E5%BB%BA/">已知相机位姿情况下的colmap稀疏或稠密重建</a></h3>
+            <p>已知相机位姿情况下的colmap稀疏或稠密重建 环境准备 首先在官网上下载需要版本的colmap，最好是cuda版本，可以利用GPU加速。  解压后找到colmap.bat文件双击即可打开GUI界面。  这里建议把colmap的路径添加到环境变量中，方便在cmd或powershell中直接使用colmap命令</p>
           </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" class="category-chain-item">论文笔记</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/3DGS/">#3DGS</a>
-            
-              <a href="/tags/4DGS/">#4DGS</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/11/papers_note/4DGS/" target="_self">
-          论文泛读之4DGS
-        </a>
-      </h2>
-
+          <a class="post-arrow" href="/2025/11/28/study_note/%E5%B7%B2%E7%9F%A5%E4%BD%8D%E5%A7%BF%E4%B8%8B%E7%9A%84colmap%E9%87%8D%E5%BB%BA/" aria-label="阅读 已知相机位姿情况下的colmap稀疏或稠密重建">→</a>
+        </article>
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/11/papers_note/4DGS/" target="_self">
-        <div>
-          单目动态+多视角视频：4D Gaussian Splatting for Real-Time Dynamic Scene Rendering [CVPR2024] paper 😄contribution:  提出了一种高效4DGS溅射框架，通过在时间上建模高斯运动和高斯形状变化，结合高效高斯变形场，以实现高效处理。 提出了一种多分辨率编码的方法，旨在通过时间-空间结构编码器编码动态场景。 SOT
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-11 15:08" pubdate>
-              2025-11-11
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
     
-      <span class="category-chain">
-        
-  <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" class="category-chain-item">论文笔记</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/3DGS/">#3DGS</a>
-            
-              <a href="/tags/4DGS/">#4DGS</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/10/papers_note/Deformable_3DGS/" target="_self">
-          论文泛读之Deformable 3DGS
-        </a>
-      </h2>
-
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/10/papers_note/Deformable_3DGS/" target="_self">
-        <div>
-          单目动态：Deformable 3D Gaussians for High-Fidelity Monocular Dynamic Scene Reconstruction [CVPR2024] paper 😄contribution:  提出了一种基于可变形3D高斯模型的单目动态场景重建方法，能够高效地捕捉和表示动态场景中的细节变化。 一种新颖的退火平滑训练机制，确保时间平滑性。   ⛺meth
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
         
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-10 21:34" pubdate>
-              2025-11-10
-            </time>
+        <article class="research-post reveal">
+          <time datetime="2025-11-14 15:44"><span>11-14</span><small>2025</small></time>
+          <div class="research-post-content">
+            <div class="research-post-meta">学习笔记</div>
+            <h3><a href="/2025/11/14/study_note/3DGS%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">50系显卡的3DGS基础环境配置编译diff-gaussian-rasterization和simple-knn</a></h3>
+            <p>50系显卡3DGS基础环境配置：编译diff-gaussian-rasterization和simple-knn报错 在50系显卡下跑深度学习代码配置环境时必须要很高的pytorch(2.x)和cuda(12.x)以上，但是现在很多扩展包并不支持。  在配置3DGS项目环境的时候，需要编译diff-gauss</p>
           </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" class="category-chain-item">论文笔记</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/3DGS/">#3DGS</a>
-            
-              <a href="/tags/4DGS/">#4DGS</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/10/27/study_note/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/" target="_self">
-          为什么 keil 开发不同型号单片机需要下载对应支持包
-        </a>
-      </h2>
-
+          <a class="post-arrow" href="/2025/11/14/study_note/3DGS%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" aria-label="阅读 50系显卡的3DGS基础环境配置编译diff-gaussian-rasterization和simple-knn">→</a>
+        </article>
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/10/27/study_note/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/" target="_self">
-        <div>
-          为什么 keil 开发不同型号单片机需要下载对应支持包 Keil 的“支持包”就是让 Keil 能认出、支持某个单片机（MCU）所需的一整套配置文件和驱动。 也就是说：  支持包 = 让 Keil “懂得”你这颗芯片的“语言”的工具包。  😄 举个例子 假设你要用 Keil 开发 STM32F103，Keil 自己其实并“不认识”这颗芯片，它不知道：  这颗芯片用什么 CPU 核（比如 AR
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-10-27 23:01" pubdate>
-              2025-10-27
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
     
-      <span class="category-chain">
+      
         
-  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">学习笔记</a>
-  
-  
-
-      </span>
+        <article class="research-post reveal">
+          <time datetime="2025-11-14 11:11"><span>11-14</span><small>2025</small></time>
+          <div class="research-post-content">
+            <div class="research-post-meta">学习笔记</div>
+            <h3><a href="/2025/11/14/study_note/5090%E4%B8%8Bpytorch%E5%AE%89%E8%A3%85/">5090下pytorch安装</a></h3>
+            <p>ubuntu24.04 + NVIDIA RTX 5090 安装pytorch和pytorch3d pytorch指令安装： 1pip install torch==2.7.1 torchvision==0.22.1 torchaudio==2.7.1 --index-url https://download</p>
+          </div>
+          <a class="post-arrow" href="/2025/11/14/study_note/5090%E4%B8%8Bpytorch%E5%AE%89%E8%A3%85/" aria-label="阅读 5090下pytorch安装">→</a>
+        </article>
+      
     
-  
-</span>
-
+      
+        
+        <article class="research-post reveal">
+          <time datetime="2025-11-12 09:37"><span>11-12</span><small>2025</small></time>
+          <div class="research-post-content">
+            <div class="research-post-meta">论文笔记</div>
+            <h3><a href="/2025/11/12/papers_note/4K4D/">论文泛读之4K4D</a></h3>
+            <p>多视角视频：4K4D: Real-Time 4D View Synthesis at 4K Resolution [cvpr2024] paper 😄contribution:  使用空间雕刻获得粗略的动态场景点云，并将每个点的位置表示为可学习的向量。 引入4D特征网格，为每个点分配特征向量这些特征向量输入</p>
           </div>
+          <a class="post-arrow" href="/2025/11/12/papers_note/4K4D/" aria-label="阅读 论文泛读之4K4D">→</a>
+        </article>
+      
+    
+      
         
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/">#嵌入式</a>
-            
-              <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/">#单片机</a>
-            
+        <article class="research-post reveal">
+          <time datetime="2025-11-11 21:28"><span>11-11</span><small>2025</small></time>
+          <div class="research-post-content">
+            <div class="research-post-meta">论文笔记</div>
+            <h3><a href="/2025/11/11/papers_note/RT_4DGS/">论文泛读之RT_4DGS</a></h3>
+            <p>单目动态＋多视角视频：REAL-TIME PHOTOREALISTIC DYNAMIC SCENE REPRESENTATION AND RENDERING WITH 4D GAUSSIAN SPLATTING [ICLR2024] paper 😄contribution:  提出连贯的4DGS模型和渲染管</p>
           </div>
+          <a class="post-arrow" href="/2025/11/11/papers_note/RT_4DGS/" aria-label="阅读 论文泛读之RT_4DGS">→</a>
+        </article>
+      
+    
+      
         
-      </div>
-    </article>
+        <article class="research-post reveal">
+          <time datetime="2025-11-11 15:08"><span>11-11</span><small>2025</small></time>
+          <div class="research-post-content">
+            <div class="research-post-meta">论文笔记</div>
+            <h3><a href="/2025/11/11/papers_note/4DGS/">论文泛读之4DGS</a></h3>
+            <p>单目动态+多视角视频：4D Gaussian Splatting for Real-Time Dynamic Scene Rendering [CVPR2024] paper 😄contribution:  提出了一种高效4DGS溅射框架，通过在时间上建模高斯运动和高斯形状变化，结合高效高斯变形场，以实现高</p>
+          </div>
+          <a class="post-arrow" href="/2025/11/11/papers_note/4DGS/" aria-label="阅读 论文泛读之4DGS">→</a>
+        </article>
+      
+    
+      
+        
+        <article class="research-post reveal">
+          <time datetime="2025-11-10 21:34"><span>11-10</span><small>2025</small></time>
+          <div class="research-post-content">
+            <div class="research-post-meta">论文笔记</div>
+            <h3><a href="/2025/11/10/papers_note/Deformable_3DGS/">论文泛读之Deformable 3DGS</a></h3>
+            <p>单目动态：Deformable 3D Gaussians for High-Fidelity Monocular Dynamic Scene Reconstruction [CVPR2024] paper 😄contribution:  提出了一种基于可变形3D高斯模型的单目动态场景重建方法，能够高效地捕捉</p>
+          </div>
+          <a class="post-arrow" href="/2025/11/10/papers_note/Deformable_3DGS/" aria-label="阅读 论文泛读之Deformable 3DGS">→</a>
+        </article>
+      
+    
+      
+        
+        <article class="research-post reveal">
+          <time datetime="2025-10-27 23:01"><span>10-27</span><small>2025</small></time>
+          <div class="research-post-content">
+            <div class="research-post-meta">学习笔记</div>
+            <h3><a href="/2025/10/27/study_note/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/">为什么 keil 开发不同型号单片机需要下载对应支持包</a></h3>
+            <p>为什么 keil 开发不同型号单片机需要下载对应支持包 Keil 的“支持包”就是让 Keil 能认出、支持某个单片机（MCU）所需的一整套配置文件和驱动。 也就是说：  支持包 = 让 Keil “懂得”你这颗芯片的“语言”的工具包。  😄 举个例子 假设你要用 Keil 开发 STM32F103，K</p>
+          </div>
+          <a class="post-arrow" href="/2025/10/27/study_note/%E6%94%AF%E6%8C%81%E5%8C%85%E8%A7%A3%E9%87%8A/" aria-label="阅读 为什么 keil 开发不同型号单片机需要下载对应支持包">→</a>
+        </article>
+      
+    
   </div>
 
+  <section class="research-paths reveal" aria-label="文章分类">
+    <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/"><span>01</span><strong>论文泛读</strong><small>从论文脉络中梳理可复用的方法与思考。</small></a>
+    <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><span>02</span><strong>学习笔记</strong><small>记录环境配置、工具链与实践中的关键问题。</small></a>
+    <a href="/archives/"><span>03</span><strong>全部归档</strong><small>回看每一次推导、实验和缓慢积累。</small></a>
+  </section>
 
+  
 
-
+</section>
 
               </div>
             </div>
@@ -840,6 +495,7 @@
 <script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
 <script  src="/js/events.js" ></script>
 <script  src="/js/plugins.js" ></script>
+<script  src="/js/research-motion.js" ></script>
 
 
   <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
