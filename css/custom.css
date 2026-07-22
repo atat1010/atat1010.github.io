@@ -31,6 +31,12 @@ a:hover { color: var(--orange); }
 #navbar .nav-item.active > .nav-link, #navbar .nav-link:hover { color: var(--orange) !important; }
 
 /* Home hero */
+.home-page .header-inner {
+  /* Fluid sets this wrapper to the configured 100vh banner height. The custom
+     research hero has its own height, so keeping that value leaves an empty
+     viewport-sized tail below the artwork. */
+  height: auto !important;
+}
 .research-hero { position: relative; min-height: 430px; overflow: hidden; background: var(--paper); border-bottom: 1px solid var(--line); }
 .research-hero-art { position: absolute; inset: 76px 0 0; width: 100%; height: calc(100% - 76px); object-fit: cover; object-position: center; opacity: 0.9; animation: art-drift 18s ease-in-out infinite alternate; }
 .research-hero-content { position: relative; z-index: 1; max-width: var(--content-width); padding: 132px 0 54px; }
