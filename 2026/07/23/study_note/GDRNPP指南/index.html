@@ -29,7 +29,7 @@
 <meta property="og:image" content="https://atat1010.github.io/2026/07/23/study_note/GDRNPP%E6%8C%87%E5%8D%97/GDRNPP%E6%8C%87%E5%8D%97/image.png">
 <meta property="og:image" content="https://atat1010.github.io/2026/07/23/study_note/GDRNPP%E6%8C%87%E5%8D%97/GDRNPP%E6%8C%87%E5%8D%97/image1.png">
 <meta property="article:published_time" content="2026-07-23T12:35:54.000Z">
-<meta property="article:modified_time" content="2026-07-25T11:07:32.836Z">
+<meta property="article:modified_time" content="2026-07-25T11:11:18.952Z">
 <meta property="article:author" content="QM">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://atat1010.github.io/2026/07/23/study_note/GDRNPP%E6%8C%87%E5%8D%97/GDRNPP%E6%8C%87%E5%8D%97/image.png">
@@ -241,7 +241,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          6.8k 字
+          6.9k 字
         
       </span>
     
@@ -252,7 +252,7 @@
         
         
         
-          57 分钟
+          58 分钟
         
       </span>
     
@@ -546,6 +546,8 @@ GDRNPP 预测的不是普通二维光流，而是三维光流：</li>
 <p>虽说由于BOP格式数据集的单位是统一的，但是我们使用FP做标签，输出的位姿单位是m制的，为了对齐上游输出，我们统一使用m制对齐，并未采用BOP格式的mm单位，为了对齐单位需要更改很多。还有深度图的单位，通常是depth_scale设置成1000，将mm-&gt;m，但是dataloader中已经除以1000了，所以这里需要把depth_scale设置成1.0，避免单位换算错误。</p>
 <h2 id="4-2-数采和推理的相机类型不同"><a class="header-anchor" href="#4-2-数采和推理的相机类型不同"></a>4.2 数采和推理的相机类型不同</h2>
 <p>我在采集数据的时候用了一款相机，但是推理的时候用的是另一款相机，两款相机的image_size是一样的，但是内参不一样，导致推理出来的位姿不能用，要注意训练和推理的相机内参要一致。</p>
+<h1>5. 总结</h1>
+<p>使用体验下来是很好用的一个算法，RGB图像回归出6D位姿，精度很高，速度也很快100ms左右，instance级别的6D位姿估计算法中，GDRNPP是目前比较好的一个算法了。但是训练麻烦，如果需要很精准的位姿需要后接光流优化，但是仍需训练并且推理及其耗时长达7s。</p>
 
                 
               </div>
