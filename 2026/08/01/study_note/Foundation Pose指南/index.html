@@ -19,22 +19,22 @@
   <meta name="author" content="QM">
   <meta name="keywords" content="">
   
-    <meta name="description" content="FoundationPose 指南 1. 项目背景 最近使用 FoundationPose 进行 6D 位姿估计：主要是对箱子这类刚体物体估计 6D 位姿，为机器人抓取提供目标位姿。 2. 技术原理 2.1 6D 位姿的定义 6D 位姿由三维旋转和三维平移组成： Pcamera&#x3D;RPobject+tP_{\text{camera}} &#x3D; R P_{\text{object}} + t Pcamer">
+    <meta name="description" content="FoundationPose 是面向新物体的 RGB-D 6D 位姿估计与跟踪框架。本文梳理其初始化、姿态优化、候选排序与实际使用边界。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="FoundationPose 指南">
 <meta property="og:url" content="https://atat1010.github.io/2026/08/01/study_note/Foundation%20Pose%E6%8C%87%E5%8D%97/index.html">
 <meta property="og:site_name" content="啦啦啦">
-<meta property="og:description" content="FoundationPose 指南 1. 项目背景 最近使用 FoundationPose 进行 6D 位姿估计：主要是对箱子这类刚体物体估计 6D 位姿，为机器人抓取提供目标位姿。 2. 技术原理 2.1 6D 位姿的定义 6D 位姿由三维旋转和三维平移组成： Pcamera&#x3D;RPobject+tP_{\text{camera}} &#x3D; R P_{\text{object}} + t Pcamer">
+<meta property="og:description" content="FoundationPose 是面向新物体的 RGB-D 6D 位姿估计与跟踪框架。本文梳理其初始化、姿态优化、候选排序与实际使用边界。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://atat1010.github.io/2026/08/01/study_note/Foundation%20Pose%E6%8C%87%E5%8D%97/image.png">
 <meta property="og:image" content="https://atat1010.github.io/2026/08/01/study_note/Foundation%20Pose%E6%8C%87%E5%8D%97/image-1.png">
 <meta property="og:image" content="https://atat1010.github.io/2026/08/01/study_note/Foundation%20Pose%E6%8C%87%E5%8D%97/image-2.png">
 <meta property="article:published_time" content="2026-08-01T08:28:31.000Z">
-<meta property="article:modified_time" content="2026-08-01T11:22:10.435Z">
+<meta property="article:modified_time" content="2026-08-01T11:25:15.013Z">
 <meta property="article:author" content="QM">
+<meta property="article:tag" content="机器人抓取">
 <meta property="article:tag" content="6D 位姿估计">
 <meta property="article:tag" content="FoundationPose">
-<meta property="article:tag" content="机器人抓取">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://atat1010.github.io/2026/08/01/study_note/Foundation%20Pose%E6%8C%87%E5%8D%97/image.png">
   
@@ -554,11 +554,11 @@ y_0 &amp;= \frac{v_0 - c_y}{f_y} z_0.
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
+        <a href="/tags/%E6%9C%BA%E5%99%A8%E4%BA%BA%E6%8A%93%E5%8F%96/" class="print-no-link">#机器人抓取</a>
+      
         <a href="/tags/6D-%E4%BD%8D%E5%A7%BF%E4%BC%B0%E8%AE%A1/" class="print-no-link">#6D 位姿估计</a>
       
         <a href="/tags/FoundationPose/" class="print-no-link">#FoundationPose</a>
-      
-        <a href="/tags/%E6%9C%BA%E5%99%A8%E4%BA%BA%E6%8A%93%E5%8F%96/" class="print-no-link">#机器人抓取</a>
       
     </div>
   

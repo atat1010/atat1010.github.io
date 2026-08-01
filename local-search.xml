@@ -20,11 +20,11 @@
     
     <tags>
       
+      <tag>机器人抓取</tag>
+      
       <tag>6D 位姿估计</tag>
       
       <tag>FoundationPose</tag>
-      
-      <tag>机器人抓取</tag>
       
     </tags>
     
@@ -408,13 +408,13 @@
     
     <tags>
       
-      <tag>PyTorch</tag>
+      <tag>Diffusion Policy</tag>
       
       <tag>Action Chunk</tag>
       
-      <tag>机器人控制</tag>
+      <tag>PyTorch</tag>
       
-      <tag>Diffusion Policy</tag>
+      <tag>机器人控制</tag>
       
     </tags>
     
@@ -441,13 +441,13 @@
     
     <tags>
       
-      <tag>ACT</tag>
-      
       <tag>Action Chunk</tag>
       
-      <tag>Transformer</tag>
-      
       <tag>机器人控制</tag>
+      
+      <tag>ACT</tag>
+      
+      <tag>Transformer</tag>
       
     </tags>
     
@@ -474,13 +474,13 @@
     
     <tags>
       
+      <tag>PyTorch</tag>
+      
       <tag>机器人数据</tag>
       
       <tag>坐标系</tag>
       
       <tag>时间同步</tag>
-      
-      <tag>PyTorch</tag>
       
     </tags>
     
@@ -660,11 +660,11 @@
     
     <tags>
       
-      <tag>机器人抓取</tag>
-      
       <tag>6D位姿估计</tag>
       
       <tag>GDRNPP</tag>
+      
+      <tag>机器人抓取</tag>
       
     </tags>
     
