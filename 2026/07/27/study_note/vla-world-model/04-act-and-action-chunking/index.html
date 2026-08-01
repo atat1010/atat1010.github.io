@@ -1,0 +1,829 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/q-mark.png">
+  <link rel="icon" href="/img/q-mark.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="QM">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="ACT 与 Action Chunk：用 100 步轨迹学习双臂协同，但只执行前 10 步  本篇解决一个部署误区：模型一次预测 100 步动作，不表示机器人要开环执行 100 步。  上一篇：机器人数据与动作表示 ｜ 下一篇：Diffusion Policy   1. 从“每一步都在抖”的双臂搬运开始 设双臂每个时刻输出 14 维控制量：左右各 6 维末端增量加 1 维夹爪命令。单步策略看到轻微">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ACT 与 Action Chunk：用 100 步轨迹学习双臂协同，但只执行前 10 步">
+<meta property="og:url" content="https://atat1010.github.io/2026/07/27/study_note/vla-world-model/04-act-and-action-chunking/index.html">
+<meta property="og:site_name" content="啦啦啦">
+<meta property="og:description" content="ACT 与 Action Chunk：用 100 步轨迹学习双臂协同，但只执行前 10 步  本篇解决一个部署误区：模型一次预测 100 步动作，不表示机器人要开环执行 100 步。  上一篇：机器人数据与动作表示 ｜ 下一篇：Diffusion Policy   1. 从“每一步都在抖”的双臂搬运开始 设双臂每个时刻输出 14 维控制量：左右各 6 维末端增量加 1 维夹爪命令。单步策略看到轻微">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://atat1010.github.io/images/vla-world-model/act-temporal-ensemble.svg">
+<meta property="og:image" content="https://atat1010.github.io/images/vla-world-model/action-chunk-temporal-scene.png">
+<meta property="article:published_time" content="2026-07-27T09:37:00.000Z">
+<meta property="article:modified_time" content="2026-07-28T02:59:41.747Z">
+<meta property="article:author" content="QM">
+<meta property="article:tag" content="ACT">
+<meta property="article:tag" content="Action Chunk">
+<meta property="article:tag" content="Transformer">
+<meta property="article:tag" content="机器人控制">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://atat1010.github.io/images/vla-world-model/act-temporal-ensemble.svg">
+  
+  
+  
+  <title>ACT 与 Action Chunk：用 100 步轨迹学习双臂协同，但只执行前 10 步 - 啦啦啦</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="/vendor/katex/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"atat1010.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":60,"cursorChar":"|","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"§"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","app_key":"eD94sW1TI15wEWfAYQ9MecGN","server_url":"https://9ir8y8ab.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body class="post-page">
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <img class="brand-mark" src="/img/q-mark.png" srcset="/img/loading.gif" lazyload alt="Q">
+      <strong>啦啦啦</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+
+  
+  <section class="page-hero">
+    <img class="page-hero-art" src="/img/research-header-art.png" srcset="/img/loading.gif" lazyload alt="">
+    <div class="container page-hero-content">
+      <p class="eyebrow">RESEARCH NOTE</p>
+      <h1>ACT 与 Action Chunk：用 100 步轨迹学习双臂协同，但只执行前 10 步</h1>
+      
+        <div class="page-hero-meta">
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-07-27 17:37" pubdate>
+          2026年7月27日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          29 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+      
+    
+  </div>
+
+</div>
+      
+    </div>
+  </section>
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">ACT 与 Action Chunk：用 100 步轨迹学习双臂协同，但只执行前 10 步</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年7月28日 上午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1>ACT 与 Action Chunk：用 100 步轨迹学习双臂协同，但只执行前 10 步</h1>
+<blockquote>
+<p>本篇解决一个部署误区：<strong>模型一次预测 100 步动作，不表示机器人要开环执行 100 步。</strong></p>
+</blockquote>
+<p><strong>上一篇：</strong><a href="./03-robot-data-and-action-representation.md">机器人数据与动作表示</a> ｜ <strong>下一篇：</strong><a href="./05-diffusion-policy.md">Diffusion Policy</a></p>
+<p><img src="/images/vla-world-model/act-temporal-ensemble.svg" srcset="/img/loading.gif" lazyload alt="动作块、重叠预测与滚动执行"></p>
+<p><img src="/images/vla-world-model/action-chunk-temporal-scene.png" srcset="/img/loading.gif" lazyload alt="双臂任务中的重叠未来动作轨迹"></p>
+<h2 id="1-从“每一步都在抖”的双臂搬运开始"><a class="header-anchor" href="#1-从“每一步都在抖”的双臂搬运开始"></a>1. 从“每一步都在抖”的双臂搬运开始</h2>
+<p>设双臂每个时刻输出 14 维控制量：左右各 6 维末端增量加 1 维夹爪命令。单步策略看到轻微的相机噪声时，下一帧动作会变；左右手独立的小误差会把托盘扭歪。ACT（Action Chunking with Transformers）把监督目标改为一段短轨迹：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">当前时刻 t 的输入：观测 o_t、状态 s_t<br>目标输出：A_t = [a_t, a_(t+1), …, a_(t+H-1)]<br></code></pre></td></tr></table></figure>
+<p>若控制频率为 20 Hz、<code>H=100</code>，模型描述的是未来 5 秒的动作意图：靠近托盘、闭合双夹爪、共同抬起、移动到目标位置。它学习到的是“动作之间的关系”，而非 100 条彼此无关的单步命令。</p>
+<h2 id="2-2-1-一个训练样本究竟长什么样？"><a class="header-anchor" href="#2-2-1-一个训练样本究竟长什么样？"></a>2. 2.1 一个训练样本究竟长什么样？</h2>
+<p>对一条长度为 350 帧的示教，从第 <code>t=120</code> 帧取一个窗口：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">front image             [3, 224, 224]<br>left/right wrist image  [2, 3, 224, 224]<br>robot state             [14]<br>action chunk            [100, 14]<br></code></pre></td></tr></table></figure>
+<p>组成 batch 后：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">images:       [B, 3 cameras, 3, 224, 224]<br>state:        [B, 14]<br>target_chunk: [B, 100, 14]<br></code></pre></td></tr></table></figure>
+<p>不要在 episode 末尾直接补零生成 chunk；这会教模型“任务末尾必须突然静止”。更安全的做法是只采样 <code>t+H &lt;= episode_length</code> 的窗口，或明确加入 <code>valid_mask</code> 并在损失中忽略无效动作。</p>
+<h2 id="3-2-2-为什么动作块能减轻抖动？"><a class="header-anchor" href="#3-2-2-为什么动作块能减轻抖动？"></a>3. 2.2 为什么动作块能减轻抖动？</h2>
+<p>单步回归要在每个 50 ms 控制周期重新作一个局部决定。动作块把同一示教片段的连续性放在一个联合输出里：第 30 步“抬起”受到前面“夹住托盘”的上下文约束。它并不会神奇地消除分布偏移；它只是提供了更强的短时先验，仍须配合闭环重观测和 DAgger 数据。</p>
+<p>[<br>
+\hat A_t=\pi_\theta(o_t,s_t)\in\mathbb R^{H\times D_a}<br>
+]</p>
+<p>(H) 是 chunk 长度，(D_a) 是每步动作维度；本例为 (100\times14)。若用 L1 回归：</p>
+<p>[<br>
+\mathcal L_{action}=\frac{1}{H D_a}\sum_{h=0}<sup>{H-1}\sum_{j=1}</sup>{D_a}|A_{t,h,j}-\hat A_{t,h,j}|<br>
+]</p>
+<p>L1 对偶发的大动作标注误差比 L2 更不敏感，但不能代替安全限幅和接触反馈。</p>
+<h2 id="4-2-3-CVAE-在-ACT-里做了什么？"><a class="header-anchor" href="#4-2-3-CVAE-在-ACT-里做了什么？"></a>4. 2.3 CVAE 在 ACT 里做了什么？</h2>
+<p>同一“把杯子移到左边”可从不同抓取姿态完成。ACT 在训练时让编码器从真值动作块得到潜变量 (z)，解码器以 <code>observation + z</code> 重建动作；同时用 KL 项把训练后验拉向标准正态先验。</p>
+<p>[<br>
+\mathcal L=\mathcal L_{action}+\beta D_{KL}\bigl(q_\phi(z\mid A_t,o_t);|;\mathcal N(0,I)\bigr)<br>
+]</p>
+<p>部署时没有真值未来动作，不能计算 (q_\phi)，因此从先验采样或取零向量。CVAE 是表示示教多样性的工具，不是“自动挑出最安全动作”的规划器。</p>
+<h2 id="5-2-4-Temporal-Ensemble：重叠-chunk-怎样融合？"><a class="header-anchor" href="#5-2-4-Temporal-Ensemble：重叠-chunk-怎样融合？"></a>5. 2.4 Temporal Ensemble：重叠 chunk 怎样融合？</h2>
+<p>在 <code>t=120</code>、<code>t=121</code>、<code>t=122</code> 都预测 chunk 时，真实控制时刻 125 会收到三条候选：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">来自 A_120 的第 5 步、来自 A_121 的第 4 步、来自 A_122 的第 3 步<br></code></pre></td></tr></table></figure>
+<p>可使用随“预测新鲜度”衰减的权重：</p>
+<p>[<br>
+\bar a_\tau=\frac{\sum_{i\leq\tau}e^{-\lambda(\tau-i)}\hat a<sup>{(i)}_\tau}{\sum_{i\leq\tau}e</sup>{-\lambda(\tau-i)}}<br>
+]</p>
+<p>(i) 是生成该 chunk 的时刻，(\tau) 是要执行的绝对时刻，(\lambda) 控制新预测的优先级。融合的是<strong>同一绝对时刻</strong>的动作，不能把整段轨迹首尾拼接。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">temporal_ensemble</span>(<span class="hljs-params">predictions, decay=<span class="hljs-number">0.02</span></span>):<br>    <span class="hljs-string">&quot;&quot;&quot;predictions: newest-last 的 [K, Da]，都对应同一绝对控制时刻。&quot;&quot;&quot;</span><br>    <span class="hljs-keyword">if</span> predictions.ndim != <span class="hljs-number">2</span>:<br>        <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">&quot;期望 [K, Da]&quot;</span>)<br>    age = torch.arange(predictions.shape[<span class="hljs-number">0</span>] - <span class="hljs-number">1</span>, -<span class="hljs-number">1</span>, -<span class="hljs-number">1</span>, device=predictions.device)<br>    weight = torch.exp(-decay * age).unsqueeze(<span class="hljs-number">1</span>)<br>    <span class="hljs-keyword">return</span> (weight * predictions).<span class="hljs-built_in">sum</span>(<span class="hljs-number">0</span>) / weight.<span class="hljs-built_in">sum</span>()<br></code></pre></td></tr></table></figure>
+<h2 id="6-2-5-推理时为何只执行前-10-步？"><a class="header-anchor" href="#6-2-5-推理时为何只执行前-10-步？"></a>6. 2.5 推理时为何只执行前 10 步？</h2>
+<p>若 <code>H=100</code>、<code>m=10</code>，机器人每 0.5 秒重新取相机和状态并生成新块：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python">chunk = policy(observation)                   <span class="hljs-comment"># [100, 14]</span><br>buffer.merge(chunk, observation.timestamp)    <span class="hljs-comment"># 保存带时间戳的预测</span><br><span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">10</span>):<br>    action = buffer.action_for(now())<br>    controller.send(safety.<span class="hljs-built_in">filter</span>(action))<br></code></pre></td></tr></table></figure>
+<p>这叫 receding horizon。<code>m</code> 太小会频繁推理、浪费算力；太大则失去对方块滑动、接触失败、遮挡和人类干预的修正机会。应报告 <code>H</code>、<code>m</code>、策略延迟和控制频率，而不是只说“用了 ACT”。</p>
+<h2 id="7-最小网络：输出-shape-必须可验证"><a class="header-anchor" href="#7-最小网络：输出-shape-必须可验证"></a>7. 最小网络：输出 shape 必须可验证</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">ChunkHead</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, hidden_dim=<span class="hljs-number">512</span>, horizon=<span class="hljs-number">100</span>, action_dim=<span class="hljs-number">14</span></span>):<br>        <span class="hljs-built_in">super</span>().__init__()<br>        <span class="hljs-variable language_">self</span>.horizon, <span class="hljs-variable language_">self</span>.action_dim = horizon, action_dim<br>        <span class="hljs-variable language_">self</span>.net = nn.Sequential(nn.LayerNorm(hidden_dim), nn.Linear(hidden_dim, horizon * action_dim))<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, fused_feature</span>):<br>        <span class="hljs-comment"># fused_feature: [B, 512]，来自视觉/状态 Transformer</span><br>        <span class="hljs-keyword">if</span> fused_feature.ndim != <span class="hljs-number">2</span>:<br>            <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">&quot;期望 [B, hidden_dim]&quot;</span>)<br>        raw = <span class="hljs-variable language_">self</span>.net(fused_feature)                   <span class="hljs-comment"># [B, 1400]</span><br>        <span class="hljs-keyword">return</span> raw.view(-<span class="hljs-number">1</span>, <span class="hljs-variable language_">self</span>.horizon, <span class="hljs-variable language_">self</span>.action_dim)  <span class="hljs-comment"># [B,100,14]</span><br></code></pre></td></tr></table></figure>
+<p>以上仅解释动作头原理，不是 ACT 论文的完整实现；完整模型还包含视觉编码、Transformer、CVAE 和时序处理。</p>
+<h2 id="8-实机排错：这-6-个错误最常见"><a class="header-anchor" href="#8-实机排错：这-6-个错误最常见"></a>8. 实机排错：这 6 个错误最常见</h2>
+<ol>
+<li>**chunk 频率错配：**训练 20 Hz、执行 10 Hz，却没有调整每步增量。</li>
+<li>**旧块未过期：**推理线程卡顿后仍执行 1 秒前生成的动作。</li>
+<li>**新旧块错位：**用接收时间而非控制参考时间索引 buffer。</li>
+<li>**夹爪被平均：**二值开合和连续臂动作直接一起平滑，导致夹爪在阈值附近抖动。</li>
+<li>**远期误差被当作实时命令：**执行 <code>H</code> 全部动作，接触后仍沿原计划推进。</li>
+<li>**训练数据无恢复：**chunk 学会顺利演示，却没见过抓空、滑移和重新靠近。</li>
+</ol>
+<h2 id="9-本节总结与自测"><a class="header-anchor" href="#9-本节总结与自测"></a>9. 本节总结与自测</h2>
+<p>ACT 用 <code>[B,H,Da]</code> 的联合监督学习短期协调；CVAE 表示多样示教；Temporal Ensemble 融合重叠预测；receding horizon 只执行前缀来保持闭环。</p>
+<ol>
+<li><code>H=100,m=10,20Hz</code> 各意味着什么？ 2. 为什么 chunk 末尾不能随意补零？ 3. Temporal Ensemble 融合的对象是什么？ 4. CVAE 在部署时为何不能看真值动作？ 5. 哪个时间戳应该作为 buffer 的索引？</li>
+</ol>
+<h2 id="延伸阅读"><a class="header-anchor" href="#延伸阅读"></a>延伸阅读</h2>
+<ol>
+<li>Zhao et al. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2304.13705">Learning Fine-Grained Bimanual Manipulation with Low-Cost Hardware</a>。</li>
+<li><a target="_blank" rel="noopener" href="https://huggingface.co/docs/lerobot">ACT 参考实现（LeRobot）</a>。</li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">学习笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%85%B7%E8%BA%AB%E6%99%BA%E8%83%BD/" class="category-chain-item">具身智能</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/ACT/" class="print-no-link">#ACT</a>
+      
+        <a href="/tags/Action-Chunk/" class="print-no-link">#Action Chunk</a>
+      
+        <a href="/tags/Transformer/" class="print-no-link">#Transformer</a>
+      
+        <a href="/tags/%E6%9C%BA%E5%99%A8%E4%BA%BA%E6%8E%A7%E5%88%B6/" class="print-no-link">#机器人控制</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>ACT 与 Action Chunk：用 100 步轨迹学习双臂协同，但只执行前 10 步</div>
+      <div>https://atat1010.github.io/2026/07/27/study_note/vla-world-model/04-act-and-action-chunking/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>QM</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年7月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/07/27/study_note/vla-world-model/05-diffusion-policy/" title="Diffusion Policy：从两条可行轨迹到一段可执行的 Action Chunk">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Diffusion Policy：从两条可行轨迹到一段可执行的 Action Chunk</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/07/27/study_note/vla-world-model/03-robot-data-and-action-representation/" title="机器人数据与动作表示：一条示教怎样成为不会在实机上翻译错的训练样本">
+                        <span class="hidden-mobile">机器人数据与动作表示：一条示教怎样成为不会在实机上翻译错的训练样本</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","appKey":"eD94sW1TI15wEWfAYQ9MecGN","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+<script  src="/js/research-motion.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

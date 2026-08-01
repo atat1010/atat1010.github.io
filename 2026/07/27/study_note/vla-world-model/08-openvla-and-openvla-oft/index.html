@@ -1,0 +1,895 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/q-mark.png">
+  <link rel="icon" href="/img/q-mark.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="QM">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="OpenVLA 与 OpenVLA-OFT：VLA 不等于离散动作 Token 上一篇：RT-1 到 RT-2 ｜ 下一篇：π₀ 与 Flow Matching  1. 这篇文章解决什么问题？ OpenVLA 提供开放的 VLA 基线，便于研究数据转换、微调和跨任务评估；OpenVLA-OFT 则聚焦把 VLA 动作接口改造成更适于高效、连续控制的配方。 2. 前置知识 需要了解 VLM toke">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenVLA 与 OpenVLA-OFT：VLA 不等于离散动作 Token">
+<meta property="og:url" content="https://atat1010.github.io/2026/07/27/study_note/vla-world-model/08-openvla-and-openvla-oft/index.html">
+<meta property="og:site_name" content="啦啦啦">
+<meta property="og:description" content="OpenVLA 与 OpenVLA-OFT：VLA 不等于离散动作 Token 上一篇：RT-1 到 RT-2 ｜ 下一篇：π₀ 与 Flow Matching  1. 这篇文章解决什么问题？ OpenVLA 提供开放的 VLA 基线，便于研究数据转换、微调和跨任务评估；OpenVLA-OFT 则聚焦把 VLA 动作接口改造成更适于高效、连续控制的配方。 2. 前置知识 需要了解 VLM toke">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://atat1010.github.io/images/vla-world-model/vit-robot-tokens.svg">
+<meta property="article:published_time" content="2026-07-27T09:41:00.000Z">
+<meta property="article:modified_time" content="2026-07-28T02:46:37.695Z">
+<meta property="article:author" content="QM">
+<meta property="article:tag" content="OpenVLA">
+<meta property="article:tag" content="OpenVLA-OFT">
+<meta property="article:tag" content="LoRA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://atat1010.github.io/images/vla-world-model/vit-robot-tokens.svg">
+  
+  
+  
+  <title>OpenVLA 与 OpenVLA-OFT：VLA 不等于离散动作 Token - 啦啦啦</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="/vendor/katex/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"atat1010.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":60,"cursorChar":"|","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"§"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","app_key":"eD94sW1TI15wEWfAYQ9MecGN","server_url":"https://9ir8y8ab.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body class="post-page">
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <img class="brand-mark" src="/img/q-mark.png" srcset="/img/loading.gif" lazyload alt="Q">
+      <strong>啦啦啦</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+
+  
+  <section class="page-hero">
+    <img class="page-hero-art" src="/img/research-header-art.png" srcset="/img/loading.gif" lazyload alt="">
+    <div class="container page-hero-content">
+      <p class="eyebrow">RESEARCH NOTE</p>
+      <h1>OpenVLA 与 OpenVLA-OFT：VLA 不等于离散动作 Token</h1>
+      
+        <div class="page-hero-meta">
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-07-27 17:41" pubdate>
+          2026年7月27日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          34 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+      
+    
+  </div>
+
+</div>
+      
+    </div>
+  </section>
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">OpenVLA 与 OpenVLA-OFT：VLA 不等于离散动作 Token</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年7月28日 上午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1>OpenVLA 与 OpenVLA-OFT：VLA 不等于离散动作 Token</h1>
+<p><strong>上一篇：</strong><a href="./07-from-rt1-to-rt2.md">RT-1 到 RT-2</a> ｜ <strong>下一篇：</strong><a href="./09-pi0-and-flow-matching.md">π₀ 与 Flow Matching</a></p>
+<p><img src="/images/vla-world-model/vit-robot-tokens.svg" srcset="/img/loading.gif" lazyload alt="连续动作头连接 VLM 骨干"></p>
+<h2 id="1-这篇文章解决什么问题？"><a class="header-anchor" href="#1-这篇文章解决什么问题？"></a>1. 这篇文章解决什么问题？</h2>
+<p>OpenVLA 提供开放的 VLA 基线，便于研究数据转换、微调和跨任务评估；OpenVLA-OFT 则聚焦把 VLA 动作接口改造成更适于高效、连续控制的配方。</p>
+<h2 id="2-前置知识"><a class="header-anchor" href="#2-前置知识"></a>2. 前置知识</h2>
+<p>需要了解 VLM token 接口、动作量化和 LoRA；见 <a href="./06-transformer-and-vlm-basics.md">06</a> 与 <a href="./07-from-rt1-to-rt2.md">07</a>。</p>
+<h2 id="3-从腕相机抓取开始"><a class="header-anchor" href="#3-从腕相机抓取开始"></a>3. 从腕相机抓取开始</h2>
+<p>若离散 token 每次只能逐 token 输出一个细粒度动作，控制频率和精度会受限。OFT 使用连续动作头、action chunk 和并行解码，把“理解指令”的骨干与“精确输出轨迹”的模块明确分工。</p>
+<h2 id="4-核心概念"><a class="header-anchor" href="#4-核心概念"></a>4. 核心概念</h2>
+<p>OpenVLA 基于 Prismatic VLM，组合视觉编码器（包括 SigLIP、DINOv2 组件）与 Llama 系列语言主干，在 Open X-Embodiment 数据上训练动作输出。OFT 的核心是连续动作头，可选 L1 回归或 diffusion，并行预测 chunk；FiLM 可用本体状态等条件调制视觉特征。它不是宣称原模型无效，而是针对动作解码延迟和量化误差的工程改造。</p>
+<h3 id="4-1-同一条-episode-适配-OFT-时要检查什么？"><a class="header-anchor" href="#4-1-同一条-episode-适配-OFT-时要检查什么？"></a>4.1 同一条 episode 适配 OFT 时要检查什么？</h3>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">原始记录：front RGB、wrist RGB、joint state、base-frame action、timestamp<br>预处理后：图像 → [B, cameras, 3, 224, 224]<br>           state → [B, Ds]<br>           action chunk → [B, H, Da]<br>           instruction → 固定 prompt 模板<br></code></pre></td></tr></table></figure>
+<p>以 <code>H=8, Da=7</code> 为例，连续动作头一次输出 <code>[B,8,7]</code>；这 56 个浮点数不需要逐 token 自回归生成。若相机 key 从 <code>front,wrist</code> 改为 <code>wrist,front</code>，shape 仍完全正确，但视觉语义已被交换，因此适配器必须把相机顺序、状态字段、action frame 和归一化统计写进可版本化的配置。</p>
+<h3 id="4-2-“开放权重”不等于“换个机器人就能直接跑”"><a class="header-anchor" href="#4-2-“开放权重”不等于“换个机器人就能直接跑”"></a>4.2 “开放权重”不等于“换个机器人就能直接跑”</h3>
+<p>开放 VLA 的价值是让人能够检查模型、处理器、数据转换和微调接口；但 checkpoint 不会替你解决机器人之间的动作语义差异。至少有四层迁移要逐一回答：</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>源系统与目标系统可能不同的地方</th>
+<th>若忽略会怎样</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>相机</td>
+<td>相机数量、安装位姿、内参、裁剪</td>
+<td>模型将腕相机当前视，或看见未见过的视角</td>
+</tr>
+<tr>
+<td>本体状态</td>
+<td>关节数、顺序、夹爪编码、力传感器</td>
+<td>状态 token 没有物理对应</td>
+</tr>
+<tr>
+<td>动作</td>
+<td>关节/末端、base/world frame、控制频率</td>
+<td>输出方向或幅值错误</td>
+</tr>
+<tr>
+<td>任务语言</td>
+<td>prompt 模板、物体命名、成功定义</td>
+<td>语言条件被弱化或误解</td>
+</tr>
+</tbody>
+</table>
+<p>例如源数据使用“夹爪开度 0 表示闭合，1 表示张开”，而目标设备恰好反过来；即便视觉和语言全对，策略也会在最关键的抓取时做反动作。最稳妥的迁移起点，是先用目标机器人采一小批可验证的示教，让动作头和归一化统计对齐，再讨论更大规模微调。</p>
+<h3 id="4-3-LoRA-在-VLA-微调中实际改了什么"><a class="header-anchor" href="#4-3-LoRA-在-VLA-微调中实际改了什么"></a>4.3 LoRA 在 VLA 微调中实际改了什么</h3>
+<p>对一个原始权重矩阵 (W\in\mathbb R^{d_{out}\times d_{in}})，LoRA 不直接更新完整 (W)，而是学习低秩增量：</p>
+<p>[<br>
+W’=W+\alpha BA,\qquad<br>
+A\in\mathbb R^{r\times d_{in}},\ B\in\mathbb R^{d_{out}\times r}<br>
+]</p>
+<p>当秩 (r) 很小，训练参数和显存占用会下降。直觉上，底座 VLM 保留通用的视觉语言能力，adapter 学“本实验室任务、相机和指令措辞的偏移”。</p>
+<p>但 LoRA 不是数据质量的替代品：</p>
+<ul>
+<li>adapter 只能在它挂载的底座版本、tokenizer、视觉处理器上解释；</li>
+<li>若动作头是新初始化的，少量 LoRA 参数不会凭空让它学会安全控制；</li>
+<li>若微调集只含一个桌面、一个光照，adapter 可能过拟合背景；</li>
+<li>checkpoint 发布时应一并保存 base model ID、adapter 配置、action spec、normalization ID 和 prompt 模板。</li>
+</ul>
+<h3 id="4-4-连续动作专家怎样和-VLM-特征连接"><a class="header-anchor" href="#4-4-连续动作专家怎样和-VLM-特征连接"></a>4.4 连续动作专家怎样和 VLM 特征连接</h3>
+<p>可将 VLM 输出看作长度为 (N) 的 token 序列 (F\in\mathbb R^{B\times N\times D})。动作专家不一定要把全部 token 平均掉；它可通过交叉注意力查询与当前动作有关的信息：</p>
+<p>[<br>
+Q_{action}=\text{LearnedQueries},\quad<br>
+Z=\text{CrossAttention}(Q_{action},F),\quad<br>
+\hat A=h(Z,s_t)<br>
+]</p>
+<p>若有 H 个查询，每个查询可对应 chunk 内的一个时间位置，最终输出形状为 ([B,H,D_a])。这说明“连续头”并不是在忽略语言或视觉，而是用另一种解码方式读取同一套多模态特征。</p>
+<p>实践中应明确本体状态在何处注入：拼接到动作头、作为单独 token、还是用 FiLM 调制。三种方式都可行，但训练与部署必须保持同一种接口。</p>
+<h3 id="4-5-优化实时性时先做-deadline，而不是只看平均耗时"><a class="header-anchor" href="#4-5-优化实时性时先做-deadline，而不是只看平均耗时"></a>4.5 优化实时性时先做 deadline，而不是只看平均耗时</h3>
+<p>控制系统最危险的不是偶尔慢 2 ms，而是偶发 300 ms 卡顿后执行一个已过期的 chunk。给每段预测写入生成时间和有效期：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python">chunk = continuous_head(features, robot_state)       <span class="hljs-comment"># [H, Da]</span><br>buffer.put(chunk, start_control_step=current_step)<br><br>candidate = buffer.action_for(current_step)<br><span class="hljs-keyword">if</span> candidate <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span> <span class="hljs-keyword">or</span> candidate.age_ms &gt; <span class="hljs-number">80</span>:<br>    controller.hold()<br><span class="hljs-keyword">else</span>:<br>    controller.send(safety.<span class="hljs-built_in">filter</span>(candidate.action))<br></code></pre></td></tr></table></figure>
+<p>这里的 80 ms 只是示例，实际阈值应由控制频率、环境速度和可接受误差决定。评估应同时记录 p50、p95、p99 总延迟、超 deadline 比例和因超时触发 hold 的次数。</p>
+<h2 id="5-对比表"><a class="header-anchor" href="#5-对比表"></a>5. 对比表</h2>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>OpenVLA</th>
+<th>OpenVLA-OFT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>动作接口</td>
+<td>离散化动作 token</td>
+<td>连续动作头，可输出 chunk</td>
+</tr>
+<tr>
+<td>解码</td>
+<td>逐 token 自回归</td>
+<td>可并行解码</td>
+</tr>
+<tr>
+<td>适配方式</td>
+<td>VLM 微调/LoRA</td>
+<td>VLM + 高效动作专家</td>
+</tr>
+<tr>
+<td>主要关注</td>
+<td>开放 VLA 基线</td>
+<td>成功率与控制延迟优化</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-训练过程"><a class="header-anchor" href="#6-训练过程"></a>6. 训练过程</h2>
+<p>先将数据转为目标模型所需 schema，验证图像、语言、state、action 的对齐；冻结部分骨干并 LoRA 微调时，动作头仍需足够的任务数据。不要把不同机器人 action spec 生硬混在一个损失里。</p>
+<h2 id="7-推理和部署过程"><a class="header-anchor" href="#7-推理和部署过程"></a>7. 推理和部署过程</h2>
+<p>连续头输出 <code>[H,Da]</code> 后执行 receding horizon；实际吞吐需要测“预处理+VLM+动作头+安全层”。官方 OFT 报告了相对其基线的加速与成功率结果，但它们是特定基准设置下的论文结果，不是所有机器人上的保证。</p>
+<h2 id="8-公式解释"><a class="header-anchor" href="#8-公式解释"></a>8. 公式解释</h2>
+<p>[\hat A_t=h_\psi(F_\theta(I,g),s_t)]</p>
+<p>(F_\theta) 是 VLM 骨干，(h_\psi) 是连续动作头，(I,g,s_t) 分别是图像、指令和本体状态，输出 (\hat A_t\in\mathbb R^{H\times D_a})。该式展示 VLA 可有非 token 动作头。</p>
+<h3 id="8-1-端到端延迟要按时间线而不是模型前向算"><a class="header-anchor" href="#8-1-端到端延迟要按时间线而不是模型前向算"></a>8.1 端到端延迟要按时间线而不是模型前向算</h3>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">相机取帧与同步  18 ms<br>图像预处理       7 ms<br>VLM backbone     42 ms<br>连续动作头        2 ms<br>安全过滤/发送     6 ms<br>总延迟           75 ms<br></code></pre></td></tr></table></figure>
+<p>即使动作头从 20 ms 优化到 2 ms，系统也不是“10 倍更实时”；应测 p50/p95 总延迟，并让 action buffer 丢弃过 deadline 的旧 chunk。</p>
+<h2 id="9-简化伪代码"><a class="header-anchor" href="#9-简化伪代码"></a>9. 简化伪代码</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">features = vla_backbone(images, instruction)     <span class="hljs-comment"># [B, N, D]</span><br>chunk = continuous_head(features, robot_state)   <span class="hljs-comment"># [B, H, Da]</span><br>loss = F.smooth_l1_loss(chunk, target_chunk)<br></code></pre></td></tr></table></figure>
+<h2 id="10-与前后方法的关系"><a class="header-anchor" href="#10-与前后方法的关系"></a>10. 与前后方法的关系</h2>
+<p>OFT 将 <a href="./04-act-and-action-chunking.md">04</a> 和 <a href="./05-diffusion-policy.md">05</a> 的动作头思想接到 VLM 骨干上；π₀ 展示另一种“语义骨干 + 连续生成专家”的路线。</p>
+<h2 id="11-常见误解"><a class="header-anchor" href="#11-常见误解"></a>11. 常见误解</h2>
+<p>“VLA = 动作 token”是错误的。动作 token、L1 回归、扩散和 flow matching 都可作为从语义到控制的接口。</p>
+<h2 id="12-实际工程问题"><a class="header-anchor" href="#12-实际工程问题"></a>12. 实际工程问题</h2>
+<p>不要只下载 checkpoint；同时固定处理器版本、prompt 模板、action normalization、相机名称和控制频率。LoRA adapter 与底座不匹配会静默地产生错误输出。</p>
+<p>最小的适配器检查可以写成：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">assert</span> batch[<span class="hljs-string">&quot;images&quot;</span>][<span class="hljs-string">&quot;front&quot;</span>].shape[-<span class="hljs-number">3</span>:] == (<span class="hljs-number">3</span>, <span class="hljs-number">224</span>, <span class="hljs-number">224</span>)<br><span class="hljs-keyword">assert</span> batch[<span class="hljs-string">&quot;state&quot;</span>].shape[-<span class="hljs-number">1</span>] == action_spec.state_dim<br><span class="hljs-keyword">assert</span> batch[<span class="hljs-string">&quot;action&quot;</span>].shape[-<span class="hljs-number">1</span>] == action_spec.action_dim<br><span class="hljs-keyword">assert</span> action_spec.frame == <span class="hljs-string">&quot;base&quot;</span><br><span class="hljs-keyword">assert</span> metadata[<span class="hljs-string">&quot;normalization_id&quot;</span>] == checkpoint.normalization_id<br></code></pre></td></tr></table></figure>
+<p>任一断言失败都应停止推理，而不是用默认值补齐。</p>
+<h2 id="13-本文总结"><a class="header-anchor" href="#13-本文总结"></a>13. 本文总结</h2>
+<p>OpenVLA 使开放研究成为可能，OFT 强调真正部署时动作头、并行性和连续控制同样关键。</p>
+<h2 id="14-自测问题"><a class="header-anchor" href="#14-自测问题"></a>14. 自测问题</h2>
+<ol>
+<li>OFT 改了哪一层？ 2. 为什么连续头有利于细控制？ 3. LoRA 保存什么？ 4. 如何衡量端到端延迟？ 5. VLA 的必要输入是什么？</li>
+</ol>
+<h2 id="15-延伸阅读"><a class="header-anchor" href="#15-延伸阅读"></a>15. 延伸阅读</h2>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2406.09246">OpenVLA</a>。 2. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2502.19645">OpenVLA-OFT 原始论文</a>。 3. <a target="_blank" rel="noopener" href="https://openvla-oft.github.io/">OFT 项目页</a>。</li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">学习笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%85%B7%E8%BA%AB%E6%99%BA%E8%83%BD/" class="category-chain-item">具身智能</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/OpenVLA/" class="print-no-link">#OpenVLA</a>
+      
+        <a href="/tags/OpenVLA-OFT/" class="print-no-link">#OpenVLA-OFT</a>
+      
+        <a href="/tags/LoRA/" class="print-no-link">#LoRA</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>OpenVLA 与 OpenVLA-OFT：VLA 不等于离散动作 Token</div>
+      <div>https://atat1010.github.io/2026/07/27/study_note/vla-world-model/08-openvla-and-openvla-oft/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>QM</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年7月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/07/27/study_note/vla-world-model/09-pi0-and-flow-matching/" title="π₀ 与 Flow Matching：让 VLM 语义骨干输出连续动作流">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">π₀ 与 Flow Matching：让 VLM 语义骨干输出连续动作流</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/07/27/study_note/vla-world-model/07-from-rt1-to-rt2/" title="从 RT-1 到 RT-2：VLA 如何把网络语义带进机器人动作">
+                        <span class="hidden-mobile">从 RT-1 到 RT-2：VLA 如何把网络语义带进机器人动作</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","appKey":"eD94sW1TI15wEWfAYQ9MecGN","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+<script  src="/js/research-motion.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

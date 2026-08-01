@@ -1,0 +1,850 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/q-mark.png">
+  <link rel="icon" href="/img/q-mark.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="QM">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="实践学习项目：从离线动作预测到真实机器人 VLA 闭环 上一篇：真实机器人训练与部署 ｜ 返回：系列导航  1. 这篇文章解决什么问题？ 把前文拆成六个难度递增、每一步都有验收标准的项目。目标是形成可复现能力，不是一次性跑通大型 checkpoint。 2. 前置知识 完成 01–05 后开始；实机项还必须完成 13 的安全清单。 3. 从离线数据开始 先在一条固定任务轨迹上做动作预测。若 GT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="实践学习项目：从离线动作预测到真实机器人 VLA 闭环">
+<meta property="og:url" content="https://atat1010.github.io/2026/07/27/study_note/vla-world-model/15-practical-learning-project/index.html">
+<meta property="og:site_name" content="啦啦啦">
+<meta property="og:description" content="实践学习项目：从离线动作预测到真实机器人 VLA 闭环 上一篇：真实机器人训练与部署 ｜ 返回：系列导航  1. 这篇文章解决什么问题？ 把前文拆成六个难度递增、每一步都有验收标准的项目。目标是形成可复现能力，不是一次性跑通大型 checkpoint。 2. 前置知识 完成 01–05 后开始；实机项还必须完成 13 的安全清单。 3. 从离线数据开始 先在一条固定任务轨迹上做动作预测。若 GT">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://atat1010.github.io/images/vla-world-model/learning-roadmap.svg">
+<meta property="article:published_time" content="2026-07-27T09:47:00.000Z">
+<meta property="article:modified_time" content="2026-07-27T14:13:36.965Z">
+<meta property="article:author" content="QM">
+<meta property="article:tag" content="VLA">
+<meta property="article:tag" content="实践项目">
+<meta property="article:tag" content="LeRobot">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://atat1010.github.io/images/vla-world-model/learning-roadmap.svg">
+  
+  
+  
+  <title>实践学习项目：从离线动作预测到真实机器人 VLA 闭环 - 啦啦啦</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="/vendor/katex/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"atat1010.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":60,"cursorChar":"|","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"§"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","app_key":"eD94sW1TI15wEWfAYQ9MecGN","server_url":"https://9ir8y8ab.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body class="post-page">
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <img class="brand-mark" src="/img/q-mark.png" srcset="/img/loading.gif" lazyload alt="Q">
+      <strong>啦啦啦</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+
+  
+  <section class="page-hero">
+    <img class="page-hero-art" src="/img/research-header-art.png" srcset="/img/loading.gif" lazyload alt="">
+    <div class="container page-hero-content">
+      <p class="eyebrow">RESEARCH NOTE</p>
+      <h1>实践学习项目：从离线动作预测到真实机器人 VLA 闭环</h1>
+      
+        <div class="page-hero-meta">
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-07-27 17:47" pubdate>
+          2026年7月27日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          17 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+      
+    
+  </div>
+
+</div>
+      
+    </div>
+  </section>
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">实践学习项目：从离线动作预测到真实机器人 VLA 闭环</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年7月27日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1>实践学习项目：从离线动作预测到真实机器人 VLA 闭环</h1>
+<p><strong>上一篇：</strong><a href="./13-real-robot-training-and-deployment.md">真实机器人训练与部署</a> ｜ <strong>返回：</strong><a href="./README.md">系列导航</a></p>
+<p><img src="/images/vla-world-model/learning-roadmap.svg" srcset="/img/loading.gif" lazyload alt="从数据到部署的项目路线"></p>
+<h2 id="1-这篇文章解决什么问题？"><a class="header-anchor" href="#1-这篇文章解决什么问题？"></a>1. 这篇文章解决什么问题？</h2>
+<p>把前文拆成六个难度递增、每一步都有验收标准的项目。目标是形成可复现能力，不是一次性跑通大型 checkpoint。</p>
+<h2 id="2-前置知识"><a class="header-anchor" href="#2-前置知识"></a>2. 前置知识</h2>
+<p>完成 <a href="./01-robot-policy-basics.md">01</a>–<a href="./05-diffusion-policy.md">05</a> 后开始；实机项还必须完成 <a href="./13-real-robot-training-and-deployment.md">13</a> 的安全清单。</p>
+<h2 id="3-从离线数据开始"><a class="header-anchor" href="#3-从离线数据开始"></a>3. 从离线数据开始</h2>
+<p>先在一条固定任务轨迹上做动作预测。若 GT 与预测曲线都对不上，不应直接进入仿真或实机；先检查字段、归一化、时间对齐与动作语义。</p>
+<h2 id="4-六个项目"><a class="header-anchor" href="#4-六个项目"></a>4. 六个项目</h2>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>模型与数据</th>
+<th>验收与常见错误</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 离线动作预测</td>
+<td>公开 episode；MLP/小 Transformer，state→next action</td>
+<td>曲线、MAE；错误多为错位/单位</td>
+</tr>
+<tr>
+<td>2 ACT 仿真</td>
+<td>LeRobot 或自采轨迹；chunk Transformer</td>
+<td>闭环成功率、chunk 可视化；错误为 buffer 时序</td>
+</tr>
+<tr>
+<td>3 Diffusion Policy</td>
+<td>与项目 2 同数据</td>
+<td>比较成功率、平滑度、端到端延迟；错误为采样太慢</td>
+</tr>
+<tr>
+<td>4 语言条件策略</td>
+<td>多任务指令与同场景对照</td>
+<td>消融语言 token；错误为语言与任务伪相关</td>
+</tr>
+<tr>
+<td>5 VLA 微调</td>
+<td>OpenVLA-OFT 或 SmolVLA 的兼容数据</td>
+<td>LoRA、仿真/实机回放；错误为 action spec 不匹配</td>
+</tr>
+<tr>
+<td>6 最小世界模型</td>
+<td>state+action→next state</td>
+<td>rollout 误差和候选排序收益；错误为超出数据分布</td>
+</tr>
+</tbody>
+</table>
+<h3 id="项目一的完整最小验收"><a class="header-anchor" href="#项目一的完整最小验收"></a>项目一的完整最小验收</h3>
+<p>取同一数据集的固定 episode 切分，输入 <code>state:[B,14]</code>，输出 <code>next_action:[B,14]</code>。先只用 2 条轨迹训练，要求训练 loss 明显过拟合；若做不到，停止换模型，先检查 joint order、时间偏移和归一化。再扩到完整训练集，至少保存：每维 action 曲线、MAE、最大绝对误差、按 episode 的误差箱线图。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">pred = mlp(state)                         <span class="hljs-comment"># [B,14]</span><br>loss = F.smooth_l1_loss(pred, next_action)<br>per_dim_mae = (pred - next_action).<span class="hljs-built_in">abs</span>().mean(dim=<span class="hljs-number">0</span>)  <span class="hljs-comment"># [14]</span><br></code></pre></td></tr></table></figure>
+<p>离线项目完成不等于可部署；它的唯一目标是证明数据读取、shape、动作语义和训练循环没有基础错误。</p>
+<h2 id="5-方法整体架构"><a class="header-anchor" href="#5-方法整体架构"></a>5. 方法整体架构</h2>
+<pre><code class=" mermaid">flowchart LR
+ D[数据审计]--&gt;P1[项目1: 离线预测]
+ P1--&gt;P2[项目2: ACT]
+ P2--&gt;P3[项目3: Diffusion]
+ P3--&gt;P4[项目4: 语言条件]
+ P4--&gt;P5[项目5: VLA 微调]
+ P3--&gt;P6[项目6: 世界模型]
+ P5--&gt;R[安全闭环评估]
+ P6--&gt;R
+</code></pre>
+<h2 id="6-训练过程"><a class="header-anchor" href="#6-训练过程"></a>6. 训练过程</h2>
+<p>每个项目固定 train/val/test episode 与随机种子，保存 config、checkpoint、归一化统计、数据 hash。先跑小数据过拟合测试：若模型不能拟合 1–2 条轨迹，先修数据管线。</p>
+<p>每升一级只改变一个变量。例如项目二从项目一升级时，先保持同一 action spec，只把单步 <code>[B,Da]</code> 改为 chunk <code>[B,H,Da]</code>；项目三只替换动作生成器，不同时更换相机、数据集和控制频率。这样失败才能归因。</p>
+<h2 id="7-推理和部署过程"><a class="header-anchor" href="#7-推理和部署过程"></a>7. 推理和部署过程</h2>
+<p>项目 1–4 先离线/仿真，5–6 先回放再低速实机。实机每次只扩大一个维度：速度、工作空间、物体种类、光照或任务语言，禁止同时改变。</p>
+<h2 id="8-公式解释"><a class="header-anchor" href="#8-公式解释"></a>8. 公式解释</h2>
+<p>[e_{rollout}(h)=\frac1N\sum_i|\hat s_{t_i+h}-s_{t_i+h}|_2]</p>
+<p>(h) 是预测视野，(\hat s) 是世界模型预测状态，(s) 是真值状态。必须同时画不同 (h) 的误差，单步准确不保证长滚动准确。</p>
+<h2 id="9-实验记录模板"><a class="header-anchor" href="#9-实验记录模板"></a>9. 实验记录模板</h2>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">任务/数据版本/随机种子：<br>观测、动作、frame、频率：<br>训练损失与验证指标：<br>闭环试验数、成功/失败类型：<br>端到端延迟 p50/p95：<br>安全事件、接管、恢复：<br>下一次仅改变的一个变量：<br></code></pre></td></tr></table></figure>
+<p>建议把失败分类限制为可行动标签：<code>视觉误识别 / 时间错位 / frame 错 / action 饱和 / 接触失败 / 延迟超时 / 安全层拦截</code>。不要只写“模型不好”；每类失败都应链接视频片段、原始观测、预测 action 和执行反馈。</p>
+<h2 id="10-与前后方法的关系"><a class="header-anchor" href="#10-与前后方法的关系"></a>10. 与前后方法的关系</h2>
+<p>项目 1 验证 <a href="./02-behavior-cloning-and-dagger.md">02</a>，2–3 验证序列策略，4–5 连接 VLA，6 验证 <a href="./10-world-models-dreamer-tdmpc.md">10</a> 的预测与规划。</p>
+<h2 id="11-常见误解"><a class="header-anchor" href="#11-常见误解"></a>11. 常见误解</h2>
+<p>不能用更大模型替代数据审计；不能用单条演示成功替代泛化；也不能以在线成功掩盖不可回放、不可诊断的系统。</p>
+<h2 id="12-实际工程问题"><a class="header-anchor" href="#12-实际工程问题"></a>12. 实际工程问题</h2>
+<p>项目完成标准应包含可视化：动作曲线、视频回放、延迟直方图、失败分类和配置快照。公开数据的许可、机器人硬件安全规则同样需要核查。</p>
+<h2 id="13-本文总结"><a class="header-anchor" href="#13-本文总结"></a>13. 本文总结</h2>
+<p>六个项目从最小可验证任务逐级增加序列、多模态、预训练与预测能力，形成从论文到系统的闭环。</p>
+<h2 id="14-自测问题"><a class="header-anchor" href="#14-自测问题"></a>14. 自测问题</h2>
+<ol>
+<li>为什么先过拟合小数据？ 2. 项目 2/3 如何公平比较？ 3. 怎样测试语言是否有效？ 4. rollout 应测什么？ 5. 实机如何逐步扩范围？</li>
+</ol>
+<h2 id="15-延伸阅读"><a class="header-anchor" href="#15-延伸阅读"></a>15. 延伸阅读</h2>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://huggingface.co/docs/lerobot">LeRobot 文档</a>。 2. <a target="_blank" rel="noopener" href="https://openvla.github.io/">OpenVLA</a>。 3. <a target="_blank" rel="noopener" href="https://github.com/nicklashansen/tdmpc2">TD-MPC2</a>。</li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">学习笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%85%B7%E8%BA%AB%E6%99%BA%E8%83%BD/" class="category-chain-item">具身智能</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/VLA/" class="print-no-link">#VLA</a>
+      
+        <a href="/tags/%E5%AE%9E%E8%B7%B5%E9%A1%B9%E7%9B%AE/" class="print-no-link">#实践项目</a>
+      
+        <a href="/tags/LeRobot/" class="print-no-link">#LeRobot</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>实践学习项目：从离线动作预测到真实机器人 VLA 闭环</div>
+      <div>https://atat1010.github.io/2026/07/27/study_note/vla-world-model/15-practical-learning-project/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>QM</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年7月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/07/27/study_note/vla-world-model/glossary/" title="VLA 与世界模型术语表">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">VLA 与世界模型术语表</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/07/27/study_note/vla-world-model/14-real-robot-training-and-deployment/" title="真实机器人训练与部署：把策略放进可观测、可停止的闭环系统">
+                        <span class="hidden-mobile">真实机器人训练与部署：把策略放进可观测、可停止的闭环系统</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","appKey":"eD94sW1TI15wEWfAYQ9MecGN","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+<script  src="/js/research-motion.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

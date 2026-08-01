@@ -1,0 +1,1060 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/q-mark.png">
+  <link rel="icon" href="/img/q-mark.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="QM">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="机器人策略基础：先把观测、状态、动作与闭环讲明白 上一篇：学习路线 ｜ 下一篇：行为克隆与 DAgger  这一篇不急着讲某个最新模型。先把最基础的问题讲透：当我们说“机器人看见杯子后去抓它”，程序里究竟有哪些量？谁负责理解画面，谁决定下一步，谁保证电机真的安全地动起来？    1. 从一个抓取任务开始 假设桌上有红色积木，机械臂要把它放进蓝色盒子。人觉得自然，机器人却要在每个控制周期重新回答：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器人策略基础：先把观测、状态、动作与闭环讲明白">
+<meta property="og:url" content="https://atat1010.github.io/2026/07/27/study_note/vla-world-model/01-robot-policy-basics/index.html">
+<meta property="og:site_name" content="啦啦啦">
+<meta property="og:description" content="机器人策略基础：先把观测、状态、动作与闭环讲明白 上一篇：学习路线 ｜ 下一篇：行为克隆与 DAgger  这一篇不急着讲某个最新模型。先把最基础的问题讲透：当我们说“机器人看见杯子后去抓它”，程序里究竟有哪些量？谁负责理解画面，谁决定下一步，谁保证电机真的安全地动起来？    1. 从一个抓取任务开始 假设桌上有红色积木，机械臂要把它放进蓝色盒子。人觉得自然，机器人却要在每个控制周期重新回答：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://atat1010.github.io/images/vla-world-model/vla-learning-hero.png">
+<meta property="og:image" content="https://atat1010.github.io/images/vla-world-model/policy-control-loop.svg">
+<meta property="article:published_time" content="2026-07-27T09:34:00.000Z">
+<meta property="article:modified_time" content="2026-07-28T02:59:36.351Z">
+<meta property="article:author" content="QM">
+<meta property="article:tag" content="机器人">
+<meta property="article:tag" content="Policy">
+<meta property="article:tag" content="控制">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://atat1010.github.io/images/vla-world-model/vla-learning-hero.png">
+  
+  
+  
+  <title>机器人策略基础：先把观测、状态、动作与闭环讲明白 - 啦啦啦</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="/vendor/katex/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"atat1010.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":60,"cursorChar":"|","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"§"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","app_key":"eD94sW1TI15wEWfAYQ9MecGN","server_url":"https://9ir8y8ab.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body class="post-page">
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <img class="brand-mark" src="/img/q-mark.png" srcset="/img/loading.gif" lazyload alt="Q">
+      <strong>啦啦啦</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+
+  
+  <section class="page-hero">
+    <img class="page-hero-art" src="/img/research-header-art.png" srcset="/img/loading.gif" lazyload alt="">
+    <div class="container page-hero-content">
+      <p class="eyebrow">RESEARCH NOTE</p>
+      <h1>机器人策略基础：先把观测、状态、动作与闭环讲明白</h1>
+      
+        <div class="page-hero-meta">
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-07-27 17:34" pubdate>
+          2026年7月27日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          43 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+      
+    
+  </div>
+
+</div>
+      
+    </div>
+  </section>
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">机器人策略基础：先把观测、状态、动作与闭环讲明白</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年7月28日 上午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1>机器人策略基础：先把观测、状态、动作与闭环讲明白</h1>
+<p><strong>上一篇：</strong><a href="./00-learning-roadmap.md">学习路线</a> ｜ <strong>下一篇：</strong><a href="./02-behavior-cloning-and-dagger.md">行为克隆与 DAgger</a></p>
+<blockquote>
+<p>这一篇不急着讲某个最新模型。先把最基础的问题讲透：当我们说“机器人看见杯子后去抓它”，程序里究竟有哪些量？谁负责理解画面，谁决定下一步，谁保证电机真的安全地动起来？</p>
+</blockquote>
+<p><img src="/images/vla-world-model/vla-learning-hero.png" srcset="/img/loading.gif" lazyload alt="视觉、语言与动作如何汇入机器人策略"></p>
+<p><img src="/images/vla-world-model/policy-control-loop.svg" srcset="/img/loading.gif" lazyload alt="机器人从感知到安全控制的闭环"></p>
+<h2 id="1-从一个抓取任务开始"><a class="header-anchor" href="#1-从一个抓取任务开始"></a>1. 从一个抓取任务开始</h2>
+<p>假设桌上有红色积木，机械臂要把它放进蓝色盒子。人觉得自然，机器人却要在每个控制周期重新回答：</p>
+<ol>
+<li><strong>我现在知道什么？</strong> 两个相机画面、关节角、夹爪开合、文字指令。</li>
+<li><strong>世界实际怎样？</strong> 积木的 6D 位姿、是否夹住、摩擦和接触力，其中有些量看不见。</li>
+<li><strong>下一步做什么？</strong> 末端向前移动 5 mm、向下移动，还是闭合夹爪？</li>
+<li><strong>是否能安全执行？</strong> 会不会越界、碰撞，或超过关节速度和夹爪力限制？</li>
+</ol>
+<p>所谓<strong>机器人策略（policy）</strong>，就是第 3 个问题的学习式回答器。它不是整台机器人，更不是电机驱动器。</p>
+<p>[<br>
+a_t=\pi_\theta(o_{t-k:t},s_t,g)<br>
+]</p>
+<ul>
+<li>(o_{t-k:t})：最近 (k+1) 次<strong>观测</strong>，如图像、深度、触觉；</li>
+<li>(s_t)：机器人自身的<strong>本体状态</strong>，如关节角、夹爪宽度；</li>
+<li>(g)：任务目标，如“红色积木放入蓝盒”；</li>
+<li>(a_t)：这一控制周期的动作；</li>
+<li>(\pi_\theta)：参数为 (\theta) 的神经网络或决策函数。</li>
+</ul>
+<p>后面每一节都在把这条式子变成可检查的数据接口。</p>
+<h2 id="2-五个最容易混淆的概念"><a class="header-anchor" href="#2-五个最容易混淆的概念"></a>2. 五个最容易混淆的概念</h2>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>它回答的问题</th>
+<th>抓积木时的例子</th>
+<th>能否直接获得</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>任务 / 目标 (g)</td>
+<td>“要完成什么？”</td>
+<td>“红色积木放入蓝盒”</td>
+<td>通常由人或任务程序给出</td>
+</tr>
+<tr>
+<td>真实状态 (x_t)</td>
+<td>“世界实际怎样？”</td>
+<td>积木 6D 位姿、接触力、摩擦、遮挡物</td>
+<td>否</td>
+</tr>
+<tr>
+<td>观测 (o_t)</td>
+<td>“传感器测到了什么？”</td>
+<td>RGB、深度图、力传感器读数</td>
+<td>是，但有噪声和延迟</td>
+</tr>
+<tr>
+<td>本体状态 (s_t)</td>
+<td>“机器人是什么姿态？”</td>
+<td>7 个关节角、关节速度、夹爪宽度</td>
+<td>通常可读到</td>
+</tr>
+<tr>
+<td>动作 (a_t)</td>
+<td>“这一步发什么命令？”</td>
+<td>末端位移增量、关节目标、夹爪开合</td>
+<td>由策略输出</td>
+</tr>
+</tbody>
+</table>
+<p>核心区别是：</p>
+<p>[<br>
+\text{观测} \neq \text{真实状态}<br>
+]</p>
+<p>相机看不到被夹爪遮住的一角，也未必能判断积木是否滑落；即使看到物体，深度仍可能有噪声。因此真实机器人常是<strong>部分可观测</strong>的：策略只能根据不完整的信息行动。</p>
+<h3 id="一个反例：同图不同状态"><a class="header-anchor" href="#一个反例：同图不同状态"></a>一个反例：同图不同状态</h3>
+<p>同一张前视 RGB 图像可能对应两种情况：</p>
+<ul>
+<li>积木看起来在夹爪中间，实际悬空 2 cm；</li>
+<li>积木已经被夹住，但被夹爪完全遮住。</li>
+</ul>
+<p>单帧图像难以区分；加入夹爪电流、腕部力、上一帧画面和关节状态后，才更可能做对。这就是 VLA 或机器人策略往往要输入历史帧与本体状态的原因。</p>
+<h2 id="3-策略、感知、规划、控制器各做什么"><a class="header-anchor" href="#3-策略、感知、规划、控制器各做什么"></a>3. 策略、感知、规划、控制器各做什么</h2>
+<p>把四者混在一起，调试会没有抓手。建议用下面的边界理解系统：</p>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>输入</th>
+<th>输出</th>
+<th>主要职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>感知 / 编码器</td>
+<td>图像、深度、触觉</td>
+<td>视觉特征、目标位置、token</td>
+<td>看懂环境</td>
+</tr>
+<tr>
+<td>策略</td>
+<td>特征、本体状态、目标</td>
+<td>下一步动作或动作序列</td>
+<td>决定“现在往哪走”</td>
+</tr>
+<tr>
+<td>规划器</td>
+<td>当前状态、模型、代价</td>
+<td>较长时域参考轨迹</td>
+<td>比较多个未来方案</td>
+</tr>
+<tr>
+<td>低层控制器</td>
+<td>目标位姿 / 目标关节角</td>
+<td>电机力矩或伺服命令</td>
+<td>稳定、快速地跟踪命令</td>
+</tr>
+</tbody>
+</table>
+<p>一次抓取可以写成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs text">RGB-D 图像 ──&gt; 视觉编码器 ──&gt; “积木在右前方，夹爪未对准”<br>关节状态 ───────────────────&gt; 策略 ──&gt; Δx, Δy, Δz, Δ旋转, 夹爪<br>文字目标 ────────────────────^<br>                                      │<br>                                      v<br>                            安全层 / 坐标变换 / IK<br>                                      │<br>                                      v<br>                                关节伺服与电机<br></code></pre></td></tr></table></figure>
+<p><strong>策略不是感知模型。</strong> 6D 位姿估计器回答“积木在哪”；策略还要回答“是否绕开盒沿、何时闭夹爪、失败后怎么恢复”。</p>
+<p><strong>策略也不是低层控制器。</strong> 输出“末端向前 5 mm”不等于直接给电机电流；后面仍要经过逆运动学（IK）、限位、碰撞检查和伺服。</p>
+<h2 id="4-开环与闭环：为什么要持续观察、持续修正"><a class="header-anchor" href="#4-开环与闭环：为什么要持续观察、持续修正"></a>4. 开环与闭环：为什么要持续观察、持续修正</h2>
+<h3 id="4-1-开环：写好整段动作后执行"><a class="header-anchor" href="#4-1-开环：写好整段动作后执行"></a>4.1 开环：写好整段动作后执行</h3>
+<p>例如抬臂 2 秒、向前 1 秒、下落 1 秒、闭夹爪。它简单，但只要积木初始位置偏了 1 cm，之后每一步都会沿错误轨迹继续。</p>
+<h3 id="4-2-闭环：每个周期重新观察再修正"><a class="header-anchor" href="#4-2-闭环：每个周期重新观察再修正"></a>4.2 闭环：每个周期重新观察再修正</h3>
+<p>若频率是 20 Hz，机器人每 <strong>50 ms</strong> 都执行：</p>
+<p>[<br>
+\text{observe} \rightarrow \text{infer} \rightarrow \text{validate} \rightarrow \text{act} \rightarrow \text{observe again}<br>
+]</p>
+<p>第一轮让末端“向右 5 mm”后，积木可能被碰歪，机械臂也有跟踪误差。下一轮看到新画面后，策略可改为“向左 2 mm，再下移 3 mm”。闭环不是模型更花哨，而是系统获得持续纠错的机会。</p>
+<p>现实中还要算<strong>延迟</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>环节</th>
+<th style="text-align:right">示例耗时</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>相机曝光与传输</td>
+<td style="text-align:right">18 ms</td>
+</tr>
+<tr>
+<td>与关节状态对齐</td>
+<td style="text-align:right">3 ms</td>
+</tr>
+<tr>
+<td>策略推理</td>
+<td style="text-align:right">12 ms</td>
+</tr>
+<tr>
+<td>安全检查与下发</td>
+<td style="text-align:right">4 ms</td>
+</tr>
+<tr>
+<td>合计</td>
+<td style="text-align:right">37 ms</td>
+</tr>
+</tbody>
+</table>
+<p>20 Hz 周期为 50 ms，37 ms 尚可；若推理变为 65 ms，策略看到的画面与实际姿态已经错位。此时不是“动作慢一点”就能解决，而是闭环的数据语义已经被破坏。</p>
+<h2 id="5-动作并没有唯一正确的表示"><a class="header-anchor" href="#5-动作并没有唯一正确的表示"></a>5. 动作并没有唯一正确的表示</h2>
+<p>“向杯子靠近”可以翻译成不同动作空间。选择首先取决于低层控制器接受什么命令、示教数据记录了什么。</p>
+<table>
+<thead>
+<tr>
+<th>表示</th>
+<th>例子</th>
+<th>优点</th>
+<th>常见陷阱</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>关节位置</td>
+<td>(q<sup>{target}\in\mathbb{R}</sup>7)</td>
+<td>直接匹配关节伺服</td>
+<td>对不同姿态泛化较弱</td>
+</tr>
+<tr>
+<td>关节速度</td>
+<td>(\dot q\in\mathbb{R}^7)</td>
+<td>连续，适合速度控制</td>
+<td>频率变化会改变真实位移</td>
+</tr>
+<tr>
+<td>末端绝对位姿</td>
+<td>世界系的 ((x,y,z,R))</td>
+<td>语义直观</td>
+<td>IK 多解、目标跳变危险</td>
+</tr>
+<tr>
+<td>末端增量位姿</td>
+<td>((\Delta x,\Delta y,\Delta z,\Delta r))</td>
+<td>闭环微调友好</td>
+<td>必须说明坐标系和时间</td>
+</tr>
+<tr>
+<td>夹爪动作</td>
+<td>开合值或二值开关</td>
+<td>简单</td>
+<td>0/1 含义经常被写反</td>
+</tr>
+</tbody>
+</table>
+<p>本系列常用“基座坐标系下末端增量 + 夹爪开度”：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">action = [dx, dy, dz, droll, dpitch, dyaw, gripper]<br>单位   = [m,  m,  m,  rad,   rad,    rad,  0~1]<br></code></pre></td></tr></table></figure>
+<p>当策略以 20 Hz 输出 dx=0.005，含义是“未来 50 ms 位移增量为 5 mm”。改成 10 Hz 却不改动作定义，真实速度会从 0.1 m/s 降为 0.05 m/s。数据和部署因此不再一致。</p>
+<p>更完整的数据与坐标系约定见：<a href="./03-robot-data-and-action-representation.md">机器人数据与动作表示</a>。</p>
+<h2 id="6-用张量形状把接口写死"><a class="header-anchor" href="#6-用张量形状把接口写死"></a>6. 用张量形状把接口写死</h2>
+<p>许多“模型不学”“真机乱动”不是网络问题，而是训练与部署的字段、单位或维度悄悄不同。下面是双相机、两帧历史、单臂的最小接口：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">images:       [B, 2, 2, 3, 224, 224]  # batch、时间、相机、RGB、高、宽<br>proprio:      [B, 7]                  # 6 个关节角 + 夹爪宽度，已归一化<br>goal_text:    [B, 512]                # 指令的文本 embedding<br>action_label: [B, 7]                  # 下一步末端增量 + 夹爪目标<br></code></pre></td></tr></table></figure>
+<p>第一个 2 是历史长度，第二个 2 是相机数量。若偷写成 [B, 2, 3, 224, 224]，模型可能仍能运行，却已经拿错数据。</p>
+<p>一个最小策略头：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> torch<br><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">TinyRobotPolicy</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, vision_dim=<span class="hljs-number">768</span>, state_dim=<span class="hljs-number">7</span>, goal_dim=<span class="hljs-number">512</span>, action_dim=<span class="hljs-number">7</span></span>):<br>        <span class="hljs-built_in">super</span>().__init__()<br>        <span class="hljs-variable language_">self</span>.image_pool = nn.AdaptiveAvgPool2d((<span class="hljs-number">1</span>, <span class="hljs-number">1</span>))<br>        <span class="hljs-variable language_">self</span>.image_proj = nn.Linear(<span class="hljs-number">3</span>, vision_dim)<br>        <span class="hljs-variable language_">self</span>.head = nn.Sequential(<br>            nn.Linear(vision_dim + state_dim + goal_dim, <span class="hljs-number">512</span>),<br>            nn.ReLU(),<br>            nn.Linear(<span class="hljs-number">512</span>, action_dim),<br>        )<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, images, proprio, goal_text</span>):<br>        <span class="hljs-comment"># images: [B, T, V, 3, H, W]</span><br>        b, t, v, c, h, w = images.shape<br>        <span class="hljs-keyword">assert</span> c == <span class="hljs-number">3</span> <span class="hljs-keyword">and</span> proprio.shape == (b, <span class="hljs-number">7</span>)<br>        pooled = <span class="hljs-variable language_">self</span>.image_pool(images.reshape(b * t * v, c, h, w))<br>        rgb_mean = pooled.flatten(<span class="hljs-number">1</span>)<br>        visual = <span class="hljs-variable language_">self</span>.image_proj(rgb_mean).view(b, t * v, -<span class="hljs-number">1</span>).mean(<span class="hljs-number">1</span>)<br>        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>.head(torch.cat([visual, proprio, goal_text], dim=-<span class="hljs-number">1</span>))<br></code></pre></td></tr></table></figure>
+<p>它不是可直接部署的视觉模型，视觉部分被故意简化；重点是接口。真实 VLA 会用 ViT/VLM 将图像转为视觉 token，再与语言和本体状态 token 融合，详见<a href="./06-transformer-and-vlm-basics.md">Transformer 与视觉语言模型基础</a>。</p>
+<h2 id="7-训练时策略究竟在学什么"><a class="header-anchor" href="#7-训练时策略究竟在学什么"></a>7. 训练时策略究竟在学什么</h2>
+<p>行为克隆将示教切成样本：</p>
+<p>[<br>
+\mathcal{D}={(o_t,s_t,g,a_t<sup>*)}_{t=1}</sup>N<br>
+]</p>
+<p>星号表示专家当时的动作。策略预测 (\hat a_t)，最基本的连续动作损失是：</p>
+<p>[<br>
+\mathcal{L}<em>{action}=\frac{1}{D_a}\sum</em>{i=1}^{D_a}(\hat a_{t,i}-a<sup>*_{t,i})</sup>2<br>
+]</p>
+<p>真实 dx=0.006 m、预测 dx=0.004 m 时，该维误差为 -2 mm，平方是很小的数。但靠近物体时连续 10 次少走 2 mm，末端会偏 2 cm，足以抓空。离线损失小不代表真机闭环可靠。</p>
+<p>训练和部署必须一致的内容包括：</p>
+<ul>
+<li>相机裁剪、RGB 顺序、归一化均值和方差；</li>
+<li>关节顺序、长度/角度单位、夹爪开合定义；</li>
+<li>动作坐标系：基座、末端还是相机坐标系；</li>
+<li>控制周期与每个动作的时间含义。</li>
+</ul>
+<p>它们不是“实现细节”，而是训练分布的一部分。</p>
+<h2 id="8-一次安全的真机控制循环"><a class="header-anchor" href="#8-一次安全的真机控制循环"></a>8. 一次安全的真机控制循环</h2>
+<p>策略输出只是候选动作，绝不能绕开安全层：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python">obs = synchronize(cameras=cameras, robot_state=robot_state, max_skew_ms=<span class="hljs-number">20</span>)<br><br><span class="hljs-keyword">if</span> obs <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:<br>    controller.hold()  <span class="hljs-comment"># 图像与关节状态不同步，保持而不是沿用旧动作</span><br><span class="hljs-keyword">else</span>:<br>    action_norm = policy(obs.images, obs.proprio, goal_embedding)<br>    action = action_normalizer.denormalize(action_norm)<br>    action = safety.clip_delta(action, max_translation_m=<span class="hljs-number">0.01</span>, max_rotation_rad=<span class="hljs-number">0.08</span>)<br>    action = safety.enforce_workspace(action, robot_pose, workspace)<br>    controller.send_end_effector_delta(action)<br></code></pre></td></tr></table></figure>
+<p>务必区分：每控制周期最多移动 1 cm，和每秒最多移动 10 cm，是不同的约束。20 Hz 时它们数值恰好对应；换到 10 Hz 就不对应。把频率、单位和坐标系写进数据元信息，远比把常数散落在代码里可靠。</p>
+<h2 id="9-常见失败现象，先从接口查起"><a class="header-anchor" href="#9-常见失败现象，先从接口查起"></a>9. 常见失败现象，先从接口查起</h2>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>更可能的原因</th>
+<th>第一检查项</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>离目标越近越抖</td>
+<td>图像延迟、动作增量过大、坐标系跳变</td>
+<td>每条消息的采样时间与 Δpose 单位</td>
+</tr>
+<tr>
+<td>仿真很准、真机抓空</td>
+<td>相机内外参或裁剪不同</td>
+<td>对比训练/部署同一帧的预处理结果</td>
+</tr>
+<tr>
+<td>夹爪总在反方向动</td>
+<td>开合编码或归一化上下界写反</td>
+<td>单独回放一条动作记录</td>
+</tr>
+<tr>
+<td>手臂突然大幅运动</td>
+<td>将归一化输出当物理单位</td>
+<td>打印反归一化后的动作</td>
+</tr>
+<tr>
+<td>物体遮挡就停滞</td>
+<td>单帧视觉没有历史和触觉/本体信息</td>
+<td>加历史帧、夹爪状态或失败恢复数据</td>
+</tr>
+</tbody>
+</table>
+<p>一个实用原则：先录制并回放<strong>观测—动作—时间戳</strong>，再讨论模型容量。若坐标系、时间和单位不可靠，更大的模型只会把错误拟合得更自信。</p>
+<h2 id="10-小结与自测"><a class="header-anchor" href="#10-小结与自测"></a>10. 小结与自测</h2>
+<p>机器人策略是在不完整、带噪声观测下，为目标选择下一步动作的条件映射。真正可用的系统还需要：</p>
+<ol>
+<li>区分真实状态、传感器观测、本体状态和目标；</li>
+<li>通过闭环不断用新观测修正动作；</li>
+<li>定义动作的坐标系、单位与时间尺度；</li>
+<li>让策略输出经过同步、安全检查与低层控制器；</li>
+<li>让训练与部署的数据接口一字不差地一致。</li>
+</ol>
+<p>自测：</p>
+<ol>
+<li>为什么“图像中看到杯子”不等于“知道杯子的真实状态”？</li>
+<li>dx=0.005 在 20 Hz 与 10 Hz 下有什么不同？</li>
+<li>为什么网络输出不能直接写入电机？</li>
+<li>图像比关节状态旧 100 ms，会发生什么？</li>
+</ol>
+<p>下一篇开始训练这个 (\pi_\theta)：为什么行为克隆离线很好，机器人却会越走越偏，以及 DAgger 如何补救。</p>
+<h2 id="延伸阅读"><a class="header-anchor" href="#延伸阅读"></a>延伸阅读</h2>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2212.06817">RT-1: Robotics Transformer for Real-World Control at Scale</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2303.04137">Diffusion Policy: Visuomotor Policy Learning via Action Diffusion</a></li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">学习笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%85%B7%E8%BA%AB%E6%99%BA%E8%83%BD/" class="category-chain-item">具身智能</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%9C%BA%E5%99%A8%E4%BA%BA/" class="print-no-link">#机器人</a>
+      
+        <a href="/tags/Policy/" class="print-no-link">#Policy</a>
+      
+        <a href="/tags/%E6%8E%A7%E5%88%B6/" class="print-no-link">#控制</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>机器人策略基础：先把观测、状态、动作与闭环讲明白</div>
+      <div>https://atat1010.github.io/2026/07/27/study_note/vla-world-model/01-robot-policy-basics/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>QM</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年7月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/07/27/study_note/vla-world-model/02-behavior-cloning-and-dagger/" title="行为克隆与 DAgger：为什么离线准确的策略会在机器人上失效">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">行为克隆与 DAgger：为什么离线准确的策略会在机器人上失效</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/07/27/study_note/vla-world-model/00-learning-roadmap/" title="VLA 与世界模型入门：从模仿学习到具身智能的完整路线">
+                        <span class="hidden-mobile">VLA 与世界模型入门：从模仿学习到具身智能的完整路线</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","appKey":"eD94sW1TI15wEWfAYQ9MecGN","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+<script  src="/js/research-motion.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

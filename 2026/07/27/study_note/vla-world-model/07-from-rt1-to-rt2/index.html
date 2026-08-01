@@ -1,0 +1,870 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/q-mark.png">
+  <link rel="icon" href="/img/q-mark.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="QM">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="从 RT-1 到 RT-2：VLA 如何把网络语义带进机器人动作 上一篇：Transformer 与 VLM ｜ 下一篇：OpenVLA 与 OFT  1. 这篇文章解决什么问题？ 用一条技术脉络区分三件事：RT-1 的大规模真实机器人控制、PaLM-E 的具身多模态语言模型、RT-2 的视觉—语言—动作联合学习。它们不是同一个系统的简单参数升级。 2. 前置知识 阅读本篇前应理解 token、因">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从 RT-1 到 RT-2：VLA 如何把网络语义带进机器人动作">
+<meta property="og:url" content="https://atat1010.github.io/2026/07/27/study_note/vla-world-model/07-from-rt1-to-rt2/index.html">
+<meta property="og:site_name" content="啦啦啦">
+<meta property="og:description" content="从 RT-1 到 RT-2：VLA 如何把网络语义带进机器人动作 上一篇：Transformer 与 VLM ｜ 下一篇：OpenVLA 与 OFT  1. 这篇文章解决什么问题？ 用一条技术脉络区分三件事：RT-1 的大规模真实机器人控制、PaLM-E 的具身多模态语言模型、RT-2 的视觉—语言—动作联合学习。它们不是同一个系统的简单参数升级。 2. 前置知识 阅读本篇前应理解 token、因">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://atat1010.github.io/images/vla-world-model/vit-robot-tokens.svg">
+<meta property="article:published_time" content="2026-07-27T09:40:00.000Z">
+<meta property="article:modified_time" content="2026-07-28T02:45:50.946Z">
+<meta property="article:author" content="QM">
+<meta property="article:tag" content="VLA">
+<meta property="article:tag" content="RT-1">
+<meta property="article:tag" content="RT-2">
+<meta property="article:tag" content="PaLM-E">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://atat1010.github.io/images/vla-world-model/vit-robot-tokens.svg">
+  
+  
+  
+  <title>从 RT-1 到 RT-2：VLA 如何把网络语义带进机器人动作 - 啦啦啦</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="/vendor/katex/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"atat1010.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":60,"cursorChar":"|","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"§"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","app_key":"eD94sW1TI15wEWfAYQ9MecGN","server_url":"https://9ir8y8ab.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body class="post-page">
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <img class="brand-mark" src="/img/q-mark.png" srcset="/img/loading.gif" lazyload alt="Q">
+      <strong>啦啦啦</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+
+  
+  <section class="page-hero">
+    <img class="page-hero-art" src="/img/research-header-art.png" srcset="/img/loading.gif" lazyload alt="">
+    <div class="container page-hero-content">
+      <p class="eyebrow">RESEARCH NOTE</p>
+      <h1>从 RT-1 到 RT-2：VLA 如何把网络语义带进机器人动作</h1>
+      
+        <div class="page-hero-meta">
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-07-27 17:40" pubdate>
+          2026年7月27日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          32 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+      
+    
+  </div>
+
+</div>
+      
+    </div>
+  </section>
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">从 RT-1 到 RT-2：VLA 如何把网络语义带进机器人动作</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年7月28日 上午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1>从 RT-1 到 RT-2：VLA 如何把网络语义带进机器人动作</h1>
+<p><strong>上一篇：</strong><a href="./06-transformer-and-vlm-basics.md">Transformer 与 VLM</a> ｜ <strong>下一篇：</strong><a href="./08-openvla-and-openvla-oft.md">OpenVLA 与 OFT</a></p>
+<p><img src="/images/vla-world-model/vit-robot-tokens.svg" srcset="/img/loading.gif" lazyload alt="视觉、语言与动作接口"></p>
+<h2 id="1-这篇文章解决什么问题？"><a class="header-anchor" href="#1-这篇文章解决什么问题？"></a>1. 这篇文章解决什么问题？</h2>
+<p>用一条技术脉络区分三件事：RT-1 的大规模真实机器人控制、PaLM-E 的具身多模态语言模型、RT-2 的视觉—语言—动作联合学习。它们不是同一个系统的简单参数升级。</p>
+<h2 id="2-前置知识"><a class="header-anchor" href="#2-前置知识"></a>2. 前置知识</h2>
+<p>阅读本篇前应理解 token、因果序列和离散/连续动作差异，见 <a href="./06-transformer-and-vlm-basics.md">06</a>。</p>
+<h2 id="3-从“捡起罐子”开始"><a class="header-anchor" href="#3-从“捡起罐子”开始"></a>3. 从“捡起罐子”开始</h2>
+<p>RT-1 把图像和任务指令输入 Transformer，输出离散化机器人动作；RT-2 将动作表示进 token 空间，使视觉问答等互联网数据可与机器人轨迹共享序列学习接口。它们仍需要真实控制数据把语义落到机体与坐标系。</p>
+<h2 id="4-核心概念"><a class="header-anchor" href="#4-核心概念"></a>4. 核心概念</h2>
+<p>RT-1 采用图像编码、TokenLearner 压缩视觉 token、FiLM 用语言调制视觉特征，并离散化动作。PaLM-E 将连续传感器/视觉表示送入语言模型，擅长具身推理，但不等同于低层实时控制器。RT-2 的标志性思路是把机器人动作编码为 token，并与 Web VQA 等视觉语言数据联合训练，以迁移语义概念；动作 token 的量化误差、长序列延迟和离散格点限制仍存在。</p>
+<h3 id="4-1-从连续动作到-token：数值究竟损失在哪里？"><a class="header-anchor" href="#4-1-从连续动作到-token：数值究竟损失在哪里？"></a>4.1 从连续动作到 token：数值究竟损失在哪里？</h3>
+<p>假设末端 (\Delta x) 的训练范围为 <code>[-0.04, 0.04] m</code>，将其均匀量化为 256 个 bin。每个 bin 宽约为 <code>0.08/255 = 0.000314 m</code>，即 0.314 mm。真实动作 <code>0.0123 m</code> 会被编码为一个整数 token，部署时再解码到该 bin 的代表值；这个误差在单维很小，但与旋转、夹爪、连续控制频率叠加后会影响精细接触。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">quantize_delta</span>(<span class="hljs-params">x, low=-<span class="hljs-number">0.04</span>, high=<span class="hljs-number">0.04</span>, bins=<span class="hljs-number">256</span></span>):<br>    x = x.clamp(low, high)<br>    <span class="hljs-keyword">return</span> ((x - low) / (high - low) * (bins - <span class="hljs-number">1</span>)).<span class="hljs-built_in">round</span>().long()<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">dequantize_delta</span>(<span class="hljs-params">token, low=-<span class="hljs-number">0.04</span>, high=<span class="hljs-number">0.04</span>, bins=<span class="hljs-number">256</span></span>):<br>    <span class="hljs-keyword">return</span> token.<span class="hljs-built_in">float</span>() / (bins - <span class="hljs-number">1</span>) * (high - low) + low<br></code></pre></td></tr></table></figure>
+<p>量化表必须和 checkpoint 一起保存；<code>bin=0</code> 是否对应最小值、夹爪 token 是独立词表还是连续维度，都是 action spec 的一部分。</p>
+<h3 id="4-2-RT-1、PaLM-E、RT-2-该怎样读"><a class="header-anchor" href="#4-2-RT-1、PaLM-E、RT-2-该怎样读"></a>4.2 RT-1、PaLM-E、RT-2 该怎样读</h3>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>RT-1</th>
+<th>PaLM-E</th>
+<th>RT-2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>核心接口</td>
+<td>图像/语言→离散动作</td>
+<td>连续传感表示→语言模型</td>
+<td>VLM 序列→动作 token</td>
+</tr>
+<tr>
+<td>关键收获</td>
+<td>规模化真实机器人数据与 Transformer 控制</td>
+<td>具身信息可进入语言模型</td>
+<td>Web 视觉语言语义可与机器人动作共训</td>
+</tr>
+<tr>
+<td>不应推断</td>
+<td>任意新物体都能抓</td>
+<td>可直接替代 20Hz 伺服</td>
+<td>action token 没有量化/延迟代价</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-3-RT-1-的“视觉特征”为什么还要压缩"><a class="header-anchor" href="#4-3-RT-1-的“视觉特征”为什么还要压缩"></a>4.3 RT-1 的“视觉特征”为什么还要压缩</h3>
+<p>一张 224×224 图像经 ViT 切成 14×14 个 patch 后已有 196 个视觉 token；若再加多相机、历史帧和语言 token，Transformer 的序列长度会迅速增加。注意力的计算量会随长度平方增长，因此 RT-1 使用 TokenLearner 从空间特征中学习一小组“该看哪里”的加权 token。</p>
+<p>它可以被直观地理解成：做“拿起红色罐子”时，模型没必要将桌面每块纹理同等对待；更有价值的 token 应该聚焦罐子、夹爪、障碍物和目标区域。压缩不是无损的，若 token 数过少，细小物体、接触点或遮挡边缘可能直接消失。</p>
+<p>FiLM（Feature-wise Linear Modulation）则让语言指令调制视觉特征：</p>
+<p>[<br>
+\text{FiLM}(f,g)=\gamma(g)\odot f+\beta(g)<br>
+]</p>
+<p>同一画面里有红、蓝两个方块时，“拿红方块”和“拿蓝方块”可通过不同的 (\gamma,\beta) 强调不同视觉特征。它不是语言直接生成电机命令，而是为后续动作头提供<strong>任务相关的视觉表示</strong>。</p>
+<h3 id="4-4-动作-token-是怎样排成一句“机器人语言”的"><a class="header-anchor" href="#4-4-动作-token-是怎样排成一句“机器人语言”的"></a>4.4 动作 token 是怎样排成一句“机器人语言”的</h3>
+<p>假设每一步动作有 7 个维度：三维平移、三维旋转和夹爪。一个简化的串行格式可能是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">&lt;dx_143&gt; &lt;dy_127&gt; &lt;dz_132&gt; &lt;drx_120&gt; &lt;dry_128&gt; &lt;drz_126&gt; &lt;gripper_close&gt;<br></code></pre></td></tr></table></figure>
+<p>自回归 Transformer 依次预测这些 token。好处是可复用语言模型成熟的分类目标和词表机制；代价是：</p>
+<ol>
+<li>每个维度都要一次或多次 token 预测，推理长度增加；</li>
+<li>第一个 token 错了，后面的条件上下文会受影响；</li>
+<li>连续控制被限制在有限栅格，接触前的微调受量化分辨率影响；</li>
+<li>不同维度的物理关系要由模型从序列顺序中学习。</li>
+</ol>
+<p>也存在“每个动作维度一个并行分类头”的设计。它延迟更低，但少了动作维度之间自回归条件化。没有一种 token 化对所有任务都最好；评估时要同时报告每维 bins、动作串长度、控制频率和端到端延迟。</p>
+<h3 id="4-5-Web-数据与机器人数据如何真正发生迁移"><a class="header-anchor" href="#4-5-Web-数据与机器人数据如何真正发生迁移"></a>4.5 Web 数据与机器人数据如何真正发生迁移</h3>
+<p>互联网视觉语言数据可以教模型“什么是倾倒、抽屉、可抓取的把手、把物体放在容器里”这类语义关联；机器人轨迹才教它：在某台机械臂、某个相机、某个坐标系下，动作 token 对应多大的位移。</p>
+<p>可把混合训练目标概念性地写为：</p>
+<p>[<br>
+\mathcal L=\lambda_{robot}\mathcal L_{robot-action}<br>
++\lambda_{web}\mathcal L_{vision-language}<br>
+]</p>
+<p>这里的两个 (\lambda) 不是可有可无的超参数。若 Web 数据压倒性更多，模型可能很会描述“杯子在桌上”，却没有足够的动作监督；若机器人数据过少且任务单一，语义迁移难以落到可靠控制上。混合比例、采样策略和冻结/微调哪些模块，都应是实验报告的一部分。</p>
+<h3 id="4-6-一个部署前的-token-往返检查"><a class="header-anchor" href="#4-6-一个部署前的-token-往返检查"></a>4.6 一个部署前的 token 往返检查</h3>
+<p>在让真机接受输出前，先离线验证量化与反量化：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python">raw = torch.tensor([[<span class="hljs-number">0.0123</span>, -<span class="hljs-number">0.0060</span>]])  <span class="hljs-comment"># m，两个平移维度</span><br>token = quantize_delta(raw)<br>decoded = dequantize_delta(token)<br>max_error = (decoded - raw).<span class="hljs-built_in">abs</span>().<span class="hljs-built_in">max</span>().item()<br><span class="hljs-keyword">assert</span> max_error &lt;= <span class="hljs-number">0.000314</span>  <span class="hljs-comment"># 此例中的一个 bin 宽度</span><br></code></pre></td></tr></table></figure>
+<p>然后检查 token 是否饱和：如果大量输出等于最小或最大 bin，可能是训练范围太窄，也可能是归一化、单位或坐标系错了。不能只把范围扩大，因为那会降低相同 bins 下的分辨率。</p>
+<h2 id="5-方法整体架构"><a class="header-anchor" href="#5-方法整体架构"></a>5. 方法整体架构</h2>
+<pre><code class=" mermaid">flowchart LR
+ R1[RT-1: 图像+指令]--&gt;A1[离散动作 token]
+ PE[PaLM-E: 多模态输入]--&gt;L[语言模型推理]
+ R2[RT-2: 图像+语言+机器人数据]--&gt;A2[动作作为 token]
+ W[互联网视觉语言数据]--&gt;R2
+</code></pre>
+<h2 id="6-训练过程"><a class="header-anchor" href="#6-训练过程"></a>6. 训练过程</h2>
+<p>RT-1 主要监督机器人轨迹；RT-2 在视觉语言与机器人任务的混合数据上学习。数据采样配比决定模型会更偏语言能力还是控制能力，不能仅以模型总数据量判断可操作性。</p>
+<h2 id="7-推理和部署过程"><a class="header-anchor" href="#7-推理和部署过程"></a>7. 推理和部署过程</h2>
+<p>将输出 token 反量化为动作，再按频率发送给安全控制层。需要检查 tokenization 的 bin 边界、夹爪编码和反归一化，与 <a href="./03-robot-data-and-action-representation.md">03</a> 的动作契约一致。</p>
+<h2 id="8-公式解释"><a class="header-anchor" href="#8-公式解释"></a>8. 公式解释</h2>
+<p>[p(a_{1:T}\mid o,g)=\prod_{t=1}^{T}p(a_t\mid a_{&lt;t},o,g)]</p>
+<p>(o) 是观测、(g) 是指令、(a_t) 是离散动作 token；因果分解表示每一步只依赖此前已生成 token，不代表可忽略闭环观测。</p>
+<h2 id="9-简化伪代码"><a class="header-anchor" href="#9-简化伪代码"></a>9. 简化伪代码</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">bins = model.generate(multimodal_prompt, max_new_tokens=action_tokens)<br>action = dequantize(bins, action_spec)  <span class="hljs-comment"># [Da]</span><br>controller.send(safety.clip(action))<br></code></pre></td></tr></table></figure>
+<p><code>bins</code> 的 shape 可能是 <code>[B, Da]</code> 或一个自回归 token 序列；<code>dequantize</code> 后才是 <code>[B, Da]</code> 的物理动作。反量化之后仍要做归一化逆变换、frame 检查和工作空间限幅，不能直接发送到机械臂。</p>
+<h2 id="10-与前后方法的关系"><a class="header-anchor" href="#10-与前后方法的关系"></a>10. 与前后方法的关系</h2>
+<p>RT-2 说明 VLA 的形成：高层语义和动作监督可共训；OpenVLA 进一步给出开放权重与可研究的实际接口。</p>
+<h2 id="11-常见误解"><a class="header-anchor" href="#11-常见误解"></a>11. 常见误解</h2>
+<p>动作 token 不是 VLA 的定义；它只是一个接口选择。Web 数据带来概念迁移，也不会自动提供接触动力学标签。</p>
+<h2 id="12-实际工程问题"><a class="header-anchor" href="#12-实际工程问题"></a>12. 实际工程问题</h2>
+<p>记录每个维度的量化区间和饱和率；若动作经常落在最小/最大 bin，首先排查归一化和标定，而非立即扩大模型。</p>
+<h2 id="13-本文总结"><a class="header-anchor" href="#13-本文总结"></a>13. 本文总结</h2>
+<p>RT-1 建立了规模化真实机器人 Transformer 控制，RT-2 把视觉语言语义与动作 token 联合，构成早期 VLA 的关键范式。</p>
+<h2 id="14-自测问题"><a class="header-anchor" href="#14-自测问题"></a>14. 自测问题</h2>
+<ol>
+<li>TokenLearner 做什么？ 2. PaLM-E 为什么不必然是低层 VLA？ 3. RT-2 的知识从何来？ 4. 量化损失在哪里？ 5. token 输出还需什么安全步骤？</li>
+</ol>
+<h2 id="15-延伸阅读"><a class="header-anchor" href="#15-延伸阅读"></a>15. 延伸阅读</h2>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2212.06817">RT-1</a>。 2. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2303.03378">PaLM-E</a>。 3. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2307.15818">RT-2</a>。</li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">学习笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%85%B7%E8%BA%AB%E6%99%BA%E8%83%BD/" class="category-chain-item">具身智能</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/VLA/" class="print-no-link">#VLA</a>
+      
+        <a href="/tags/RT-1/" class="print-no-link">#RT-1</a>
+      
+        <a href="/tags/RT-2/" class="print-no-link">#RT-2</a>
+      
+        <a href="/tags/PaLM-E/" class="print-no-link">#PaLM-E</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>从 RT-1 到 RT-2：VLA 如何把网络语义带进机器人动作</div>
+      <div>https://atat1010.github.io/2026/07/27/study_note/vla-world-model/07-from-rt1-to-rt2/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>QM</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年7月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/07/27/study_note/vla-world-model/08-openvla-and-openvla-oft/" title="OpenVLA 与 OpenVLA-OFT：VLA 不等于离散动作 Token">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">OpenVLA 与 OpenVLA-OFT：VLA 不等于离散动作 Token</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/07/27/study_note/vla-world-model/06-transformer-and-vlm-basics/" title="从相机图像到机器人 Token：ViT、Transformer 与 VLM 的可跟做基础">
+                        <span class="hidden-mobile">从相机图像到机器人 Token：ViT、Transformer 与 VLM 的可跟做基础</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","appKey":"eD94sW1TI15wEWfAYQ9MecGN","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+<script  src="/js/research-motion.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

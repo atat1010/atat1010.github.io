@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
+  <title id="title">机器人学习策略的安全闭环</title>
+  <desc id="desc">相机、本体状态和语言目标经同步与策略网络，经过安全层和控制器驱动机器人，再由传感器反馈。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#F6F9FF"/><stop offset="1" stop-color="#EEF8F5"/></linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#52677D"/></marker>
+    <style>
+      .t{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#172B4D}
+      .small{font-size:18px}.label{font-size:24px;font-weight:700}.note{font-size:16px;fill:#52677D}
+      .box{stroke-width:2.5;rx:18}.line{stroke:#52677D;stroke-width:3;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1200" height="560" rx="28" fill="url(#bg)"/>
+  <text x="600" y="50" text-anchor="middle" class="t" font-size="30" font-weight="700">每 50 ms：观察 → 决策 → 安全校验 → 执行 → 再观察</text>
+
+  <rect x="55" y="110" width="190" height="82" class="box" fill="#DDEBFF" stroke="#5D8FDB"/>
+  <text x="150" y="145" text-anchor="middle" class="t label">视觉观测</text><text x="150" y="173" text-anchor="middle" class="t note">RGB / 深度 / 历史帧</text>
+  <rect x="55" y="245" width="190" height="82" class="box" fill="#E9E1FF" stroke="#8269C9"/>
+  <text x="150" y="280" text-anchor="middle" class="t label">本体状态</text><text x="150" y="308" text-anchor="middle" class="t note">关节角 / 夹爪 / 力</text>
+  <rect x="55" y="380" width="190" height="82" class="box" fill="#FFF0D8" stroke="#D59638"/>
+  <text x="150" y="415" text-anchor="middle" class="t label">任务目标</text><text x="150" y="443" text-anchor="middle" class="t note">语言 / 目标物 / 约束</text>
+
+  <rect x="330" y="214" width="190" height="122" class="box" fill="#DFF4EC" stroke="#43A37A"/>
+  <text x="425" y="257" text-anchor="middle" class="t label">时间同步</text><text x="425" y="285" text-anchor="middle" class="t note">检查时间戳</text><text x="425" y="310" text-anchor="middle" class="t note">丢弃过期数据</text>
+
+  <rect x="610" y="214" width="200" height="122" class="box" fill="#E4EDFF" stroke="#5D8FDB"/>
+  <text x="710" y="257" text-anchor="middle" class="t label">学习策略 πθ</text><text x="710" y="285" text-anchor="middle" class="t note">图像 + 状态 + 目标</text><text x="710" y="310" text-anchor="middle" class="t note">输出候选动作</text>
+
+  <rect x="900" y="214" width="220" height="122" class="box" fill="#FFE5E1" stroke="#D6665A"/>
+  <text x="1010" y="252" text-anchor="middle" class="t label">安全层与控制器</text><text x="1010" y="280" text-anchor="middle" class="t note">限幅 / 工作空间 / IK</text><text x="1010" y="307" text-anchor="middle" class="t note">伺服跟踪 / 急停</text>
+
+  <path d="M245 151 H285 V246 H330" class="line"/><path d="M245 286 H330" class="line"/><path d="M245 421 H285 V304 H330" class="line"/>
+  <path d="M520 275 H610" class="line"/><path d="M810 275 H900" class="line"/>
+  <rect x="465" y="400" width="270" height="82" class="box" fill="#FFF" stroke="#52677D"/>
+  <text x="600" y="435" text-anchor="middle" class="t label">真实机器人与环境</text><text x="600" y="462" text-anchor="middle" class="t note">电机执行后，世界状态发生变化</text>
+  <path d="M1010 336 V441 H735" class="line"/>
+  <path d="M465 441 H300 V151 H245" class="line"/>
+  <text x="290" y="512" class="t small">关键：策略只给“候选动作”；同步、安全检查和低层控制不可省略。</text>
+</svg>

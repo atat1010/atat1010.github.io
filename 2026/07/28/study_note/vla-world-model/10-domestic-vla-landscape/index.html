@@ -1,0 +1,1017 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/q-mark.png">
+  <link rel="icon" href="/img/q-mark.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="QM">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="国内 VLA 发展综述：从 GR-3、RynnVLA 到 Xiaomi-Robotics 与 LingBot 上一篇：π₀ 与 Flow Matching ｜ 下一篇：控制型世界模型    核查截止 2026-07-28。本文优先使用原始论文、官方项目页和官方仓库；“论文公开”“代码公开”“权重可下载”和“完整可复现”严格分开。  1. 先分清哪些系统是真正的 VLA    类别 接口 代表 不应">
+<meta property="og:type" content="article">
+<meta property="og:title" content="国内 VLA 发展综述：从 GR-3、RynnVLA 到 Xiaomi-Robotics 与 LingBot">
+<meta property="og:url" content="https://atat1010.github.io/2026/07/28/study_note/vla-world-model/10-domestic-vla-landscape/index.html">
+<meta property="og:site_name" content="啦啦啦">
+<meta property="og:description" content="国内 VLA 发展综述：从 GR-3、RynnVLA 到 Xiaomi-Robotics 与 LingBot 上一篇：π₀ 与 Flow Matching ｜ 下一篇：控制型世界模型    核查截止 2026-07-28。本文优先使用原始论文、官方项目页和官方仓库；“论文公开”“代码公开”“权重可下载”和“完整可复现”严格分开。  1. 先分清哪些系统是真正的 VLA    类别 接口 代表 不应">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://atat1010.github.io/images/vla-world-model/vla-learning-hero.png">
+<meta property="og:image" content="https://atat1010.github.io/images/vla-world-model/domestic-vla-landscape-hero.png">
+<meta property="article:published_time" content="2026-07-28T04:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-28T06:02:51.858Z">
+<meta property="article:author" content="QM">
+<meta property="article:tag" content="VLA">
+<meta property="article:tag" content="国内具身智能">
+<meta property="article:tag" content="GR-3">
+<meta property="article:tag" content="G0">
+<meta property="article:tag" content="RynnVLA">
+<meta property="article:tag" content="LingBot">
+<meta property="article:tag" content="Xiaomi-Robotics">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://atat1010.github.io/images/vla-world-model/vla-learning-hero.png">
+  
+  
+  
+  <title>国内 VLA 发展综述：从 GR-3、RynnVLA 到 Xiaomi-Robotics 与 LingBot - 啦啦啦</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="/vendor/katex/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"atat1010.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":60,"cursorChar":"|","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"§"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","app_key":"eD94sW1TI15wEWfAYQ9MecGN","server_url":"https://9ir8y8ab.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body class="post-page">
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <img class="brand-mark" src="/img/q-mark.png" srcset="/img/loading.gif" lazyload alt="Q">
+      <strong>啦啦啦</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+
+  
+  <section class="page-hero">
+    <img class="page-hero-art" src="/img/research-header-art.png" srcset="/img/loading.gif" lazyload alt="">
+    <div class="container page-hero-content">
+      <p class="eyebrow">RESEARCH NOTE</p>
+      <h1>中国具身智能团队如何构建视觉—语言—动作基础模型</h1>
+      
+        <div class="page-hero-meta">
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-07-28 12:00" pubdate>
+          2026年7月28日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          38 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+      
+    
+  </div>
+
+</div>
+      
+    </div>
+  </section>
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">中国具身智能团队如何构建视觉—语言—动作基础模型</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年7月28日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1>国内 VLA 发展综述：从 GR-3、RynnVLA 到 Xiaomi-Robotics 与 LingBot</h1>
+<p><strong>上一篇：</strong><a href="./09-pi0-and-flow-matching.md">π₀ 与 Flow Matching</a> ｜ <strong>下一篇：</strong><a href="./11-world-models-dreamer-tdmpc.md">控制型世界模型</a></p>
+<p><img src="/images/vla-world-model/vla-learning-hero.png" srcset="/img/loading.gif" lazyload alt="VLA：视觉、语言与连续机器人动作"></p>
+<p><img src="/images/vla-world-model/domestic-vla-landscape-hero.png" srcset="/img/loading.gif" lazyload alt="国内 VLA 的数据、规划、动作与世界模型路线"></p>
+<blockquote>
+<p>核查截止 2026-07-28。本文优先使用原始论文、官方项目页和官方仓库；“论文公开”“代码公开”“权重可下载”和“完整可复现”严格分开。</p>
+</blockquote>
+<h2 id="1-先分清哪些系统是真正的-VLA"><a class="header-anchor" href="#1-先分清哪些系统是真正的-VLA"></a>1. 先分清哪些系统是真正的 VLA</h2>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>接口</th>
+<th>代表</th>
+<th>不应误解为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>端到端 VLA</td>
+<td>图像/语言/状态 → 机器人动作</td>
+<td>GR-3、G0-VLA、RynnVLA、Xiaomi-Robotics-0、LingBot-VLA</td>
+<td>只会视觉问答的 VLM</td>
+</tr>
+<tr>
+<td>高层具身 VLM</td>
+<td>图像/语言 → 子任务、目标、空间推理</td>
+<td>G0-VLM、Embodied-R1.5 主干</td>
+<td>高频关节控制器</td>
+</tr>
+<tr>
+<td>VLA—世界模型联合</td>
+<td>动作与未来观测共同建模</td>
+<td>RynnVLA-002、LingBot-VA</td>
+<td>普通无条件视频生成</td>
+</tr>
+<tr>
+<td>数据/仿真平台</td>
+<td>数据、场景、评测或仿真</td>
+<td>Galaxea Dataset、AgiBotWorld、Genie Sim</td>
+<td>动作策略模型</td>
+</tr>
+</tbody>
+</table>
+<p>企业演示表明系统能在某个设置完成任务，但不自动说明其模型是端到端 VLA，也不等于可独立复现。</p>
+<h2 id="2-可核查的国内技术时间线"><a class="header-anchor" href="#2-可核查的国内技术时间线"></a>2. 可核查的国内技术时间线</h2>
+<pre><code class=" mermaid">timeline
+    title 国内公开 VLA / 世界模型资料的主要时间点
+    2025-07 : ByteDance Seed GR-3 技术报告提交
+    2025-08 : Galaxea Open-World Dataset 与 G0 论文提交
+    2025-11 : RynnVLA-002 论文与官方仓库发布
+    2026-01 : LingBot-VA 论文与官方仓库发布
+    2026-02 : Xiaomi-Robotics-0 报告、权重、推理和评测资料发布
+    2026-04 : Xiaomi-Robotics-0 后训练代码公开
+    2026-06 : ACoT-VLA 官方实现；Embodied-R1.5 报告
+    2026-07 : LingBot-VLA 2.0 报告
+</code></pre>
+<p>时间线只写本次可由主来源核实的日期。论文提交、技术报告、代码、权重和数据可能分别发布，不用一个模糊年份代替它们。</p>
+<h2 id="3-GR-3：三类数据各自解决什么"><a class="header-anchor" href="#3-GR-3：三类数据各自解决什么"></a>3. GR-3：三类数据各自解决什么</h2>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2507.15493">GR-3 技术报告</a>将其定义为大规模 VLA，面向新物体、新环境、抽象指令、少量数据适配、双臂、长时程与移动操作。其数据配方可写成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">互联网视觉—语言数据 → 开放词汇、语义和常识<br>人类第一视角 / VR 轨迹 → 操作过程与任务阶段先验<br>真实机器人轨迹 → 与本体坐标系、频率和动作空间对齐<br></code></pre></td></tr></table></figure>
+<p>互联网数据没有机械臂动作；人类动作与机械臂运动学不同；机器人数据最可执行却昂贵。三者并非重复数据。ByteMini 是双臂移动<strong>机器人本体</strong>，GR-3 是<strong>策略模型</strong>，不能混称。</p>
+<p>报告中的 π₀ 比较只能理解为作者实验：需核对机器人、数据、后训练量、任务与成功判定是否相同。本次未确认完整训练数据、完整权重及第三方复现包，因此证据等级是“官方技术报告和内部实验”。</p>
+<h2 id="4-G0：高层规划与低层控制为何分开"><a class="header-anchor" href="#4-G0：高层规划与低层控制为何分开"></a>4. G0：高层规划与低层控制为何分开</h2>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2509.00576">G0 / Galaxea Open-World Dataset</a>提出双系统：</p>
+<pre><code class=" mermaid">flowchart LR
+    I[多相机图像] --&gt; P[G0-VLM 高层规划器]
+    L[语言指令] --&gt; P
+    P --&gt; S[子任务序列]
+    S --&gt; A[G0-VLA 低层执行器]
+    I --&gt; A
+    R[机器人状态] --&gt; A
+    A --&gt; O[连续机器人动作]
+</code></pre>
+<p>高层低频地判断“先抓哪个、下一阶段是什么”；低层高频地根据视觉和状态修正连续动作。论文的三阶段训练为：跨本体预训练、单一本体预训练、任务后训练。单一本体阶段仍有必要，因为动作维度、相机、控制频率、运动学和归一化语义一致，可减少跨本体冲突并提升闭环稳定性。</p>
+<p>Galaxea 数据强调在真实生活/工作环境中以一致本体采集及子任务语言标注；它与 Open X-Embodiment 的多本体异构聚合互补。本文不猜测其论文未公开的频率、ROS 版本或权重状态。</p>
+<h2 id="5-RynnVLA：从人类视频先验到动作—世界统一"><a class="header-anchor" href="#5-RynnVLA：从人类视频先验到动作—世界统一"></a>5. RynnVLA：从人类视频先验到动作—世界统一</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/alibaba-damo-academy/RynnVLA-001">RynnVLA-001 官方入口</a>的核心是从人类示范视频学习操作先验。视频能提供任务顺序、手眼协调、对象状态变化；它<strong>不能</strong>直接提供可执行的机器人关节命令，仍须使用机器人数据后训练。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/alibaba-damo-academy/RynnVLA-002">RynnVLA-002</a>将连续动作生成和动作条件图像生成统一。官方仓库列出连续 Action Transformer、腕部相机与 state 输入，并公开 LIBERO、LeRobot 的模型、训练和评测入口。</p>
+<p>[<br>
+a_{t:t+H}=\pi_\theta(o_t,s_t,l),\qquad<br>
+\hat o_{t+1:t+H}=W_\phi(o_t,a_{t:t+H})<br>
+]</p>
+<p>前式输出未来动作块；后式预测动作可能带来的未来观察。未来预测为动作学习提供“后果是否合理”的辅助监督，但统一训练不等于每个控制周期都要在线生成未来视频。官方 LIBERO 分数仍属于作者设置，不能直接外推到工业场景。</p>
+<h2 id="6-智元：Action-CoT-与世界模型平台"><a class="header-anchor" href="#6-智元：Action-CoT-与世界模型平台"></a>6. 智元：Action CoT 与世界模型平台</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/AgibotTech/ACoT-VLA">ACoT-VLA 官方仓库</a>关注“动作空间中的中间推理”。它不同于自然语言 CoT：</p>
+<table>
+<thead>
+<tr>
+<th>中间表示</th>
+<th>与动作执行距离</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>语言步骤</td>
+<td>较远</td>
+</tr>
+<tr>
+<td>视觉子目标</td>
+<td>中等</td>
+</tr>
+<tr>
+<td>粗动作轨迹 / 动作意图</td>
+<td>较近</td>
+</tr>
+</tbody>
+</table>
+<pre><code class=" mermaid">flowchart TD
+ I[图像 + 语言] --&gt; V[VLM]
+ V --&gt; E[Explicit Action Reasoner]
+ E --&gt; C[粗动作轨迹]
+ V --&gt; M[Implicit Action Reasoner]
+ M --&gt; P[隐式动作先验]
+ C --&gt; A[最终动作专家]
+ P --&gt; A
+</code></pre>
+<p>名称中有 CoT 不代表具有可审计的自然语言思维链。仍要核查粗轨迹标签、EAR/IAR/权重是否完整开放，以及它是否改善真实闭环恢复。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/AgibotTech/Genie-Envisioner">Genie Envisioner</a>是世界基础平台；GE-Sim/Genie Sim 是仿真、场景构建、数据生成与评测平台。视频/世界模型预训练可提供动作后果先验，但还需动作后训练；仿真平台不是 VLA 本身。</p>
+<h2 id="7-小米：异步执行与数据规模化"><a class="header-anchor" href="#7-小米：异步执行与数据规模化"></a>7. 小米：异步执行与数据规模化</h2>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2602.12684">Xiaomi-Robotics-0 论文</a>和<a target="_blank" rel="noopener" href="https://github.com/XiaomiRobotics/Xiaomi-Robotics-0">官方仓库</a>称其为 4.7B 开源 VLA：跨本体机器人轨迹与视觉语言数据共同预训练，并为实时性设计异步动作块执行。仓库列出 2026-02 的权重、推理/评测资料以及 2026-04 的后训练代码。</p>
+<pre><code class=" mermaid">flowchart LR
+ C[Camera / State Thread] --&gt; P[Policy Server]
+ P --&gt; N[新 Action Chunk]
+ B[旧动作缓冲区] --&gt; A[时间对齐 / 过渡融合]
+ N --&gt; A
+ A --&gt; R[Robot Controller]
+</code></pre>
+<p>新 chunk 生成时，机器人仍需执行旧 chunk。直接切换会不连续；直接丢弃旧块会出现控制空窗。工程上要按绝对控制时间对齐、丢弃过 deadline 预测，并只在重叠区平滑。这不同于 Temporal Ensemble：后者融合同一绝对时刻的多次预测，异步执行首先处理推理与控制线程不同步。</p>
+<p>附件要求的 Xiaomi-Robotics-1、UMI 和自动语言标注路线，本次未找到标题完全一致且可核查的完整官方报告/仓库，因此明确标为<strong>待主来源核验</strong>，不根据演示断言其数据、权重或部署接口已经开放。</p>
+<h2 id="8-LingBot-与-Embodied-R1-5"><a class="header-anchor" href="#8-LingBot-与-Embodied-R1-5"></a>8. LingBot 与 Embodied-R1.5</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/Robbyant/lingbot-vla">LingBot-VLA</a>是 Robbyant 的 VLA 基础模型路线；其深度版本试图补足预训练 VLM 语义特征缺乏精确三维几何的问题。深度可能是输入、特征或蒸馏监督；若深度相机噪声/内参与训练不同，也会降低跨相机泛化。</p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2607.06403">LingBot-VLA 2.0</a>报告约 60,000 小时数据（50,000 小时机器人轨迹、20 种机器人配置，10,000 小时第一视角视频），并扩展到头、腰、底盘与灵巧手等自由度，使用未来预测代理任务。</p>
+<pre><code class=" mermaid">flowchart TD
+ I[当前图像 / 语言 / 状态] --&gt; B[VLA Backbone]
+ B --&gt; A[动作预测头]
+ B --&gt; S[未来语义特征预测头]
+ B --&gt; D[未来深度 / 几何预测头]
+</code></pre>
+<p>多本体数据需要动作 mask、频率处理、缺失状态处理和质量加权，不能直接拼数组。未来预测通常可作为训练期辅助，是否在线 rollout 需按部署代码确认。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Robbyant/lingbot-va">LingBot-VA</a>将视频和动作交错建模：</p>
+<p>[<br>
+o_t,a_t,o_{t+1},a_{t+1},…<br>
+]</p>
+<p>它是动作条件、因果的世界模型路线，不等于普通视频生成。视频预测可约束动作后果，动作也约束未来视频的可达性；世界分支对实时性的代价必须通过实测确定。</p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2606.11324">Embodied-R1.5</a>首先是具身基础模型（EFM），论文称其可用少量动作数据微调成 VLA。其规划、空间 grounding 和纠错适合高层闭环，但仍需独立低层策略执行高频连续控制，不能简单等同于传统大规模动作预训练 VLA。</p>
+<h2 id="9-横向比较与批判性结论"><a class="header-anchor" href="#9-横向比较与批判性结论"></a>9. 横向比较与批判性结论</h2>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>类型</th>
+<th>世界模型</th>
+<th>公开证据状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GR-3</td>
+<td>VLA</td>
+<td>非主张</td>
+<td>技术报告；完整复现包未确认</td>
+</tr>
+<tr>
+<td>G0</td>
+<td>双系统 VLM+VLA</td>
+<td>辅助/未在摘要明确</td>
+<td>论文；其余以官方仓库为准</td>
+</tr>
+<tr>
+<td>RynnVLA-002</td>
+<td>VLA+世界模型</td>
+<td>是</td>
+<td>代码、模型、训练/评测入口</td>
+</tr>
+<tr>
+<td>ACoT-VLA</td>
+<td>动作推理 VLA</td>
+<td>否</td>
+<td>官方实现；独立复现未确认</td>
+</tr>
+<tr>
+<td>Genie Envisioner</td>
+<td>世界基础平台</td>
+<td>是</td>
+<td>官方实现；非 Genie Sim</td>
+</tr>
+<tr>
+<td>Xiaomi-Robotics-0</td>
+<td>实时 VLA</td>
+<td>否</td>
+<td>权重、推理、评测、后训练代码</td>
+</tr>
+<tr>
+<td>LingBot-VLA</td>
+<td>VLM+动作专家</td>
+<td>否</td>
+<td>官方仓库；逐项看 README</td>
+</tr>
+<tr>
+<td>LingBot-VLA 2.0</td>
+<td>动力学辅助 VLA</td>
+<td>训练期辅助</td>
+<td>论文；代码/权重以项目页为准</td>
+</tr>
+<tr>
+<td>LingBot-VA</td>
+<td>视频—动作联合</td>
+<td>是</td>
+<td>官方仓库</td>
+</tr>
+<tr>
+<td>Embodied-R1.5-VLA</td>
+<td>EFM+动作头</td>
+<td>间接</td>
+<td>论文/项目页；低层部署待核查</td>
+</tr>
+</tbody>
+</table>
+<p>国内路线并非脱离 RT-2、π₀、ACT 和世界模型另起炉灶：它们分别将重点放在数据规模、规划执行分层、动作中间表示、异步实时接口与动作后果预测。是否“超过国外模型”不能凭单个 benchmark 判断；必须统一本体、数据、后训练量、任务分布、成功判定和试验次数。</p>
+<p>数据规模也不等于能力：人类视频域差异、自动语言标签噪声、异构控制频率、相机配置与低质量示教都可能削弱泛化。LIBERO/CALVIN/SimplerEnv 指标与真实机器人长时间稳定运行亦不是同一件事。</p>
+<h2 id="10-自测"><a class="header-anchor" href="#10-自测"></a>10. 自测</h2>
+<ol>
+<li>GR-3 三种数据分别补足什么能力？</li>
+<li>G0 为什么跨本体后仍需单一本体预训练？</li>
+<li>RynnVLA-002 的两条公式分别预测什么？</li>
+<li>Action CoT 为什么比语言 CoT 更接近执行？</li>
+<li>Xiaomi-Robotics-0 为什么需要异步缓冲？</li>
+<li>LingBot-VLA 的深度信息主要补哪个缺口？</li>
+<li>LingBot-VA 为什么不是普通视频生成？</li>
+<li>Embodied-R1.5 为什么不能直接作为高频策略？</li>
+<li>为什么不能把企业演示直接用于模型排名？</li>
+<li>代码、权重和完整可复现分别意味着什么？</li>
+</ol>
+<h2 id="11-主来源"><a class="header-anchor" href="#11-主来源"></a>11. 主来源</h2>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2507.15493">GR-3 Technical Report</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2509.00576">Galaxea Open-World Dataset and G0</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/alibaba-damo-academy/RynnVLA-002">RynnVLA-002 官方仓库</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/AgibotTech/ACoT-VLA">ACoT-VLA 官方仓库</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/AgibotTech/Genie-Envisioner">Genie Envisioner 官方仓库</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/XiaomiRobotics/Xiaomi-Robotics-0">Xiaomi-Robotics-0 官方仓库</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Robbyant/lingbot-vla">LingBot-VLA 官方仓库</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Robbyant/lingbot-va">LingBot-VA 官方仓库</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2607.06403">LingBot-VLA 2.0</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2606.11324">Embodied-R1.5</a></li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">学习笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%85%B7%E8%BA%AB%E6%99%BA%E8%83%BD/" class="category-chain-item">具身智能</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/VLA/" class="print-no-link">#VLA</a>
+      
+        <a href="/tags/%E5%9B%BD%E5%86%85%E5%85%B7%E8%BA%AB%E6%99%BA%E8%83%BD/" class="print-no-link">#国内具身智能</a>
+      
+        <a href="/tags/GR-3/" class="print-no-link">#GR-3</a>
+      
+        <a href="/tags/G0/" class="print-no-link">#G0</a>
+      
+        <a href="/tags/RynnVLA/" class="print-no-link">#RynnVLA</a>
+      
+        <a href="/tags/LingBot/" class="print-no-link">#LingBot</a>
+      
+        <a href="/tags/Xiaomi-Robotics/" class="print-no-link">#Xiaomi-Robotics</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>国内 VLA 发展综述：从 GR-3、RynnVLA 到 Xiaomi-Robotics 与 LingBot</div>
+      <div>https://atat1010.github.io/2026/07/28/study_note/vla-world-model/10-domestic-vla-landscape/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>QM</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年7月28日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/08/01/study_note/Foundation%20Pose%E6%8C%87%E5%8D%97/" title="FoundationPose 指南">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">FoundationPose 指南</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/07/27/study_note/vla-world-model/glossary/" title="VLA 与世界模型术语表">
+                        <span class="hidden-mobile">VLA 与世界模型术语表</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","appKey":"eD94sW1TI15wEWfAYQ9MecGN","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+<script  src="/js/research-motion.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

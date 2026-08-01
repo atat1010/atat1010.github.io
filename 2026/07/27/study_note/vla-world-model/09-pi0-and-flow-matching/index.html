@@ -1,0 +1,854 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/q-mark.png">
+  <link rel="icon" href="/img/q-mark.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="QM">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="π₀ 与 Flow Matching：让 VLM 语义骨干输出连续动作流 上一篇：OpenVLA 与 OFT ｜ 下一篇：国内 VLA 发展综述   1. 这篇文章解决什么问题？ π₀（pi-zero）将预训练 VLM 的语义理解和产生连续动作的 Action Expert 分开：前者理解图像与语言，后者通过 Flow Matching 生成精细动作块。它回答了“为什么 VLA 不必逐 token">
+<meta property="og:type" content="article">
+<meta property="og:title" content="π₀ 与 Flow Matching：让 VLM 语义骨干输出连续动作流">
+<meta property="og:url" content="https://atat1010.github.io/2026/07/27/study_note/vla-world-model/09-pi0-and-flow-matching/index.html">
+<meta property="og:site_name" content="啦啦啦">
+<meta property="og:description" content="π₀ 与 Flow Matching：让 VLM 语义骨干输出连续动作流 上一篇：OpenVLA 与 OFT ｜ 下一篇：国内 VLA 发展综述   1. 这篇文章解决什么问题？ π₀（pi-zero）将预训练 VLM 的语义理解和产生连续动作的 Action Expert 分开：前者理解图像与语言，后者通过 Flow Matching 生成精细动作块。它回答了“为什么 VLA 不必逐 token">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://atat1010.github.io/images/vla-world-model/diffusion-action-chunk.svg">
+<meta property="og:image" content="https://atat1010.github.io/images/vla-world-model/world-model-futures-scene.png">
+<meta property="article:published_time" content="2026-07-27T09:42:00.000Z">
+<meta property="article:modified_time" content="2026-07-28T05:57:38.880Z">
+<meta property="article:author" content="QM">
+<meta property="article:tag" content="VLA">
+<meta property="article:tag" content="π0">
+<meta property="article:tag" content="Flow Matching">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://atat1010.github.io/images/vla-world-model/diffusion-action-chunk.svg">
+  
+  
+  
+  <title>π₀ 与 Flow Matching：让 VLM 语义骨干输出连续动作流 - 啦啦啦</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="/vendor/katex/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"atat1010.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":60,"cursorChar":"|","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"§"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","app_key":"eD94sW1TI15wEWfAYQ9MecGN","server_url":"https://9ir8y8ab.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body class="post-page">
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <img class="brand-mark" src="/img/q-mark.png" srcset="/img/loading.gif" lazyload alt="Q">
+      <strong>啦啦啦</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+
+  
+  <section class="page-hero">
+    <img class="page-hero-art" src="/img/research-header-art.png" srcset="/img/loading.gif" lazyload alt="">
+    <div class="container page-hero-content">
+      <p class="eyebrow">RESEARCH NOTE</p>
+      <h1>π₀ 与 Flow Matching：让 VLM 语义骨干输出连续动作流</h1>
+      
+        <div class="page-hero-meta">
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-07-27 17:42" pubdate>
+          2026年7月27日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          31 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+      
+    
+  </div>
+
+</div>
+      
+    </div>
+  </section>
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">π₀ 与 Flow Matching：让 VLM 语义骨干输出连续动作流</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年7月28日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1>π₀ 与 Flow Matching：让 VLM 语义骨干输出连续动作流</h1>
+<p><strong>上一篇：</strong><a href="./08-openvla-and-openvla-oft.md">OpenVLA 与 OFT</a> ｜ <strong>下一篇：</strong><a href="./10-domestic-vla-landscape.md">国内 VLA 发展综述</a></p>
+<p><img src="/images/vla-world-model/diffusion-action-chunk.svg" srcset="/img/loading.gif" lazyload alt="从噪声动作块到连续动作"></p>
+<p><img src="/images/vla-world-model/world-model-futures-scene.png" srcset="/img/loading.gif" lazyload alt="在执行前生成并筛选多种未来结果的直觉图"></p>
+<h2 id="1-这篇文章解决什么问题？"><a class="header-anchor" href="#1-这篇文章解决什么问题？"></a>1. 这篇文章解决什么问题？</h2>
+<p>π₀（pi-zero）将预训练 VLM 的语义理解和产生连续动作的 Action Expert 分开：前者理解图像与语言，后者通过 Flow Matching 生成精细动作块。它回答了“为什么 VLA 不必逐 token 解码动作”。</p>
+<h2 id="2-前置知识"><a class="header-anchor" href="#2-前置知识"></a>2. 前置知识</h2>
+<p>先掌握条件扩散和 action chunk；见 <a href="./05-diffusion-policy.md">05</a>。Flow Matching 的目标同样是条件生成，但直接回归概率路径上的速度场。</p>
+<h2 id="3-从柔性整理任务开始"><a class="header-anchor" href="#3-从柔性整理任务开始"></a>3. 从柔性整理任务开始</h2>
+<p>整理布料或多物体时，动作既有语言语义也有连续的接触微调。语义骨干可判断“把毛巾折起”，动作专家专注输出密集、连续的末端和夹爪轨迹，从而避免把每个微小控制量都离散化。</p>
+<h2 id="4-核心概念"><a class="header-anchor" href="#4-核心概念"></a>4. 核心概念</h2>
+<p>令噪声动作 (x_0) 沿概率路径变为数据动作 (x_1)。Flow Matching 学习向量场 (v_\theta(x_t,t,c))，其中条件 (c) 来自 VLM 与机器人状态；推理时以数值积分从噪声流向动作。与 diffusion 的逐步去噪相比，它关注“此处该朝哪个方向流动”，可用较少积分步，但质量、稳定性仍取决于训练和求解器。</p>
+<h3 id="4-1-一条路径的-shape-与数值意义"><a class="header-anchor" href="#4-1-一条路径的-shape-与数值意义"></a>4.1 一条路径的 shape 与数值意义</h3>
+<p>以单臂 <code>H=8, Da=7</code> 为例，<code>x0</code> 是 <code>[B,8,7]</code> 的高斯噪声 chunk，<code>x1</code> 是同 shape 的归一化专家 chunk。抽 <code>t=0.25</code> 后，<code>xt=0.75*x0+0.25*x1</code>；目标速度 <code>x1-x0</code> 也仍是 <code>[B,8,7]</code>。每一个元素不是机器人世界的物理速度，而是“动作分布空间中，采样点应朝数据样本流动的方向”。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">flow_train_step</span>(<span class="hljs-params">action, condition, model</span>):<br>    <span class="hljs-comment"># action: [B, H, Da]，已按训练统计归一化</span><br>    x0 = torch.randn_like(action)<br>    t = torch.rand(action.shape[<span class="hljs-number">0</span>], <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, device=action.device)<br>    xt = (<span class="hljs-number">1.0</span> - t) * x0 + t * action<br>    target_velocity = action - x0<br>    pred_velocity = model(xt, t, condition)<br>    <span class="hljs-keyword">return</span> torch.nn.functional.mse_loss(pred_velocity, target_velocity)<br></code></pre></td></tr></table></figure>
+<h3 id="4-2-Flow-Matching-与扩散：相同目标，不同监督对象"><a class="header-anchor" href="#4-2-Flow-Matching-与扩散：相同目标，不同监督对象"></a>4.2 Flow Matching 与扩散：相同目标，不同监督对象</h3>
+<p>两者都希望根据条件 (c) 从随机变量生成合理动作块；差别在于模型被要求预测什么：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>训练时常见目标</th>
+<th>采样时的直觉</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Diffusion Policy</td>
+<td>噪声、原动作或 score</td>
+<td>逐步把被污染的动作修干净</td>
+</tr>
+<tr>
+<td>Flow Matching</td>
+<td>在 (x_t) 处的速度向量</td>
+<td>沿学习到的流场从噪声走向动作</td>
+</tr>
+</tbody>
+</table>
+<p>不要把“速度场”理解为机械臂末端速度。若动作经过标准化，速度场的每个数值位于抽象的归一化动作空间；只有积分完成、反归一化并经 action spec 解释后，才对应物理位移或关节命令。</p>
+<p>Flow Matching 的直线路径 (x_t=(1-t)x_0+tx_1) 也只是常用训练构造，并不宣称真实动作生成过程在物理世界中沿直线发生。它的价值是给每个中间点提供简单、可监督的目标方向。</p>
+<h3 id="4-3-从一次-Euler-积分看采样误差"><a class="header-anchor" href="#4-3-从一次-Euler-积分看采样误差"></a>4.3 从一次 Euler 积分看采样误差</h3>
+<p>连续形式为：</p>
+<p>[<br>
+\frac{dx}{dt}=v_\theta(x,t,c),\qquad x(0)\sim\mathcal N(0,I)<br>
+]</p>
+<p>Euler 方法用 (K) 步、步长 (\Delta t=1/K) 近似：</p>
+<p>[<br>
+x_{i+1}=x_i+\Delta t,v_\theta(x_i,i/K,c)<br>
+]</p>
+<p>若 K=4，每一步跨 0.25 的时间区间，速度场弯曲时近似误差可能较大；K=16 通常更细致，却多出四倍动作专家前向。部署要测量“采样质量—总时延—闭环重规划频率”的整体权衡，而不是孤立比较 K。</p>
+<p>一个安全实现中，要将不合格中间结果显式拒绝：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(num_steps):<br>    velocity = flow_model(x, time_embedding(i, num_steps), condition)<br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> torch.isfinite(velocity).<span class="hljs-built_in">all</span>():<br>        <span class="hljs-keyword">raise</span> RuntimeError(<span class="hljs-string">&quot;动作速度场出现 NaN/Inf，拒绝下发&quot;</span>)<br>    x = x + velocity / num_steps<br><br>chunk = normalizer.denormalize(x)<br><span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> safety.chunk_is_valid(chunk, action_spec):<br>    controller.hold()<br></code></pre></td></tr></table></figure>
+<p>训练中通常不希望随意裁剪归一化动作，因为模型应学到数据分布；部署中却必须拒绝 NaN、越界或过期动作。这两个层面的约束应分开记录。</p>
+<h3 id="4-4-条件信息不足时会发生什么"><a class="header-anchor" href="#4-4-条件信息不足时会发生什么"></a>4.4 条件信息不足时会发生什么</h3>
+<p>对“把杯子放进左边盒子”，若 condition 只包含语言而没有当前相机和本体状态，生成器能学到平均动作风格，却不知道杯子当前在左还是右、夹爪是否已夹住。若有图像却没有本体状态，它也不清楚末端相对杯子的几何关系。</p>
+<p>因此动作专家通常需要视觉 token、语言 token、本体状态，以及动作维度、frame、归一化和控制周期这份动作规范。缺失哪一项都不必然导致训练报错，却会改变“同一条件应生成何种动作”的含义。</p>
+<h2 id="5-方法整体架构"><a class="header-anchor" href="#5-方法整体架构"></a>5. 方法整体架构</h2>
+<pre><code class=" mermaid">flowchart LR
+ I[图像+语言]--&gt;V[VLM Backbone]
+ S[机器人状态]--&gt;E[Action Expert]
+ V--&gt;E
+ N[噪声动作块]--&gt;E
+ E--&gt;F[向量场 vθ]
+ F--&gt;O[ODE 积分]
+ O--&gt;A[连续 Action Chunk]
+</code></pre>
+<h2 id="6-训练过程"><a class="header-anchor" href="#6-训练过程"></a>6. 训练过程</h2>
+<p>对真动作 (x_1) 与高斯噪声 (x_0) 采样插值 (x_t)，监督目标速度。多机器人预训练需要显式的 embodiment/action spec；不相同的关节语义不能仅靠补零对齐。</p>
+<h2 id="7-推理和部署过程"><a class="header-anchor" href="#7-推理和部署过程"></a>7. 推理和部署过程</h2>
+<p>从随机块开始，按求解器步长积分速度场得到 chunk，再按 receding horizon 执行。求解器步数、随机种子与安全裁剪都应记录，便于复现故障。</p>
+<h3 id="7-1-4-步-Euler-积分的最小接口"><a class="header-anchor" href="#7-1-4-步-Euler-积分的最小接口"></a>7.1 4 步 Euler 积分的最小接口</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python">x = torch.randn(<span class="hljs-number">1</span>, <span class="hljs-number">8</span>, <span class="hljs-number">7</span>, device=device)<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">4</span>):<br>    t = torch.full((<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>), i / <span class="hljs-number">4</span>, device=device)<br>    velocity = flow_model(x, t, condition)  <span class="hljs-comment"># [1,8,7]</span><br>    x = x + <span class="hljs-number">0.25</span> * velocity<br>action_chunk = normalizer.denormalize(x)<br></code></pre></td></tr></table></figure>
+<p><code>4</code> 是分布采样积分步数，不是机械臂执行 4 个控制周期；得到 <code>action_chunk</code> 后仍只执行前缀并重新观测。步数、求解器与 action normalizer 必须写入部署配置，否则无法复现速度/质量权衡。</p>
+<h2 id="8-公式解释"><a class="header-anchor" href="#8-公式解释"></a>8. 公式解释</h2>
+<p>[x_t=(1-t)x_0+t x_1,\qquad \mathcal L=\mathbb E|v_\theta(x_t,t,c)-(x_1-x_0)|_2^2]</p>
+<p>(t\in[0,1])，(x_0) 是噪声、(x_1) 是数据动作、(c) 是条件。右侧速度是这条直线路径的目标场；实际模型学习的是条件分布上的近似。</p>
+<h2 id="9-简化伪代码"><a class="header-anchor" href="#9-简化伪代码"></a>9. 简化伪代码</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python">t = torch.rand(B, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, device=action.device)<br>x0 = torch.randn_like(action); xt = (<span class="hljs-number">1</span> - t) * x0 + t * action<br>target_v = action - x0<br>loss = F.mse_loss(flow_model(xt, t, condition), target_v)<br></code></pre></td></tr></table></figure>
+<p>张量均为 <code>[B,H,Da]</code>；推理需 ODE 步进，以上仅用于解释原理，不是论文完整实现。</p>
+<h2 id="10-与前后方法的关系"><a class="header-anchor" href="#10-与前后方法的关系"></a>10. 与前后方法的关系</h2>
+<p>Diffusion 和 flow 都是条件动作生成器；π₀ 用后者作为 Action Expert。下一篇转向世界模型：它预测动作的后果，而不是直接产生动作。</p>
+<h2 id="11-常见误解"><a class="header-anchor" href="#11-常见误解"></a>11. 常见误解</h2>
+<p>Flow Matching 不是物理动力学模型；它学习的是动作分布采样路径。更少步数也不自动等于更低的端到端延迟。</p>
+<h2 id="12-实际工程问题"><a class="header-anchor" href="#12-实际工程问题"></a>12. 实际工程问题</h2>
+<p>连续输出仍可能超过关节限位；在积分每一步或最终动作上施加何种投影，要与训练分布一致并通过实机安全测试。</p>
+<p>另一个常见错误是把 <code>t</code> 写成 <code>[B]</code> 后依赖隐式广播，导致网络时间 embedding 的 batch 对齐错误。训练日志应打印 <code>xt/pred_velocity/target_velocity</code> 三者的 <code>[B,H,Da]</code>，并对每一维动作记录反归一化后的最大值。</p>
+<h2 id="13-本文总结"><a class="header-anchor" href="#13-本文总结"></a>13. 本文总结</h2>
+<p>π₀ 体现“语义理解—动作生成”模块化，Flow Matching 以速度场生成连续动作，是 VLA 动作接口的重要方向。</p>
+<h2 id="14-自测问题"><a class="header-anchor" href="#14-自测问题"></a>14. 自测问题</h2>
+<ol>
+<li>Action Expert 做什么？ 2. (x_0,x_1) 是什么？ 3. 与去噪区别？ 4. 为什么仍需 chunk？ 5. 为什么它不是世界模型？</li>
+</ol>
+<h2 id="15-延伸阅读"><a class="header-anchor" href="#15-延伸阅读"></a>15. 延伸阅读</h2>
+<ol>
+<li>Black et al., <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2410.24164">π₀ 原始论文</a>。 2. <a target="_blank" rel="noopener" href="https://www.physicalintelligence.company/research/pi0">Physical Intelligence π₀ 页面</a>。</li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">学习笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%85%B7%E8%BA%AB%E6%99%BA%E8%83%BD/" class="category-chain-item">具身智能</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/VLA/" class="print-no-link">#VLA</a>
+      
+        <a href="/tags/%CF%800/" class="print-no-link">#π0</a>
+      
+        <a href="/tags/Flow-Matching/" class="print-no-link">#Flow Matching</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>π₀ 与 Flow Matching：让 VLM 语义骨干输出连续动作流</div>
+      <div>https://atat1010.github.io/2026/07/27/study_note/vla-world-model/09-pi0-and-flow-matching/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>QM</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年7月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/07/27/study_note/vla-world-model/11-world-models-dreamer-tdmpc/" title="控制型世界模型：从 Dreamer 到 TD-MPC2">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">控制型世界模型：从 Dreamer 到 TD-MPC2</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/07/27/study_note/vla-world-model/08-openvla-and-openvla-oft/" title="OpenVLA 与 OpenVLA-OFT：VLA 不等于离散动作 Token">
+                        <span class="hidden-mobile">OpenVLA 与 OpenVLA-OFT：VLA 不等于离散动作 Token</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","appKey":"eD94sW1TI15wEWfAYQ9MecGN","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+<script  src="/js/research-motion.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

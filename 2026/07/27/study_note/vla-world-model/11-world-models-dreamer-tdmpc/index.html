@@ -1,0 +1,812 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/q-mark.png">
+  <link rel="icon" href="/img/q-mark.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="QM">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="控制型世界模型：从 Dreamer 到 TD-MPC2 上一篇：国内 VLA 发展综述 ｜ 下一篇：视频与表征世界模型   1. 这篇文章解决什么问题？ 世界模型不是视频生成的同义词。对控制而言，它学习 (z_{t+1}&#x3D;f(z_t,a_t)) 等可预测未来的表示，以便在真实环境少试错、在“想象”中评估策略或候选动作。 2. 前置知识 需要策略、价值函数和动作序列概念。观测&#x2F;动作契约仍来自 03。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="控制型世界模型：从 Dreamer 到 TD-MPC2">
+<meta property="og:url" content="https://atat1010.github.io/2026/07/27/study_note/vla-world-model/11-world-models-dreamer-tdmpc/index.html">
+<meta property="og:site_name" content="啦啦啦">
+<meta property="og:description" content="控制型世界模型：从 Dreamer 到 TD-MPC2 上一篇：国内 VLA 发展综述 ｜ 下一篇：视频与表征世界模型   1. 这篇文章解决什么问题？ 世界模型不是视频生成的同义词。对控制而言，它学习 (z_{t+1}&#x3D;f(z_t,a_t)) 等可预测未来的表示，以便在真实环境少试错、在“想象”中评估策略或候选动作。 2. 前置知识 需要策略、价值函数和动作序列概念。观测&#x2F;动作契约仍来自 03。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://atat1010.github.io/images/vla-world-model/world-model.svg">
+<meta property="og:image" content="https://atat1010.github.io/images/vla-world-model/world-model-futures-scene.png">
+<meta property="article:published_time" content="2026-07-27T09:43:00.000Z">
+<meta property="article:modified_time" content="2026-07-28T05:57:41.343Z">
+<meta property="article:author" content="QM">
+<meta property="article:tag" content="World Model">
+<meta property="article:tag" content="Dreamer">
+<meta property="article:tag" content="TD-MPC2">
+<meta property="article:tag" content="MPC">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://atat1010.github.io/images/vla-world-model/world-model.svg">
+  
+  
+  
+  <title>控制型世界模型：从 Dreamer 到 TD-MPC2 - 啦啦啦</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="/vendor/katex/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"atat1010.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":60,"cursorChar":"|","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"§"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","app_key":"eD94sW1TI15wEWfAYQ9MecGN","server_url":"https://9ir8y8ab.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body class="post-page">
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <img class="brand-mark" src="/img/q-mark.png" srcset="/img/loading.gif" lazyload alt="Q">
+      <strong>啦啦啦</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+
+  
+  <section class="page-hero">
+    <img class="page-hero-art" src="/img/research-header-art.png" srcset="/img/loading.gif" lazyload alt="">
+    <div class="container page-hero-content">
+      <p class="eyebrow">RESEARCH NOTE</p>
+      <h1>控制型世界模型：从 Dreamer 到 TD-MPC2</h1>
+      
+        <div class="page-hero-meta">
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-07-27 17:43" pubdate>
+          2026年7月27日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          19 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+      
+    
+  </div>
+
+</div>
+      
+    </div>
+  </section>
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">控制型世界模型：从 Dreamer 到 TD-MPC2</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年7月28日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1>控制型世界模型：从 Dreamer 到 TD-MPC2</h1>
+<p><strong>上一篇：</strong><a href="./10-domestic-vla-landscape.md">国内 VLA 发展综述</a> ｜ <strong>下一篇：</strong><a href="./12-video-world-model-and-vjepa.md">视频与表征世界模型</a></p>
+<p><img src="/images/vla-world-model/world-model.svg" srcset="/img/loading.gif" lazyload alt="控制型世界模型"></p>
+<p><img src="/images/vla-world-model/world-model-futures-scene.png" srcset="/img/loading.gif" lazyload alt="机器人在执行前比较不同未来结果"></p>
+<h2 id="1-这篇文章解决什么问题？"><a class="header-anchor" href="#1-这篇文章解决什么问题？"></a>1. 这篇文章解决什么问题？</h2>
+<p>世界模型不是视频生成的同义词。对控制而言，它学习 (z_{t+1}=f(z_t,a_t)) 等可预测未来的表示，以便在真实环境少试错、在“想象”中评估策略或候选动作。</p>
+<h2 id="2-前置知识"><a class="header-anchor" href="#2-前置知识"></a>2. 前置知识</h2>
+<p>需要策略、价值函数和动作序列概念。观测/动作契约仍来自 <a href="./03-robot-data-and-action-representation.md">03</a>。</p>
+<h2 id="3-从推方块避障开始"><a class="header-anchor" href="#3-从推方块避障开始"></a>3. 从推方块避障开始</h2>
+<p>策略可直接输出向前动作；世界模型则能先想象“若向前推，方块会不会碰到杯子”，比较多条候选序列后执行第一步。预测错了，闭环观测会校正，但不能掩盖长期模型误差。</p>
+<h2 id="4-核心概念"><a class="header-anchor" href="#4-核心概念"></a>4. 核心概念</h2>
+<p>早期 World Models 用 VAE 压缩图像、RNN 学动力学、controller 在潜空间决策。PlaNet 的 RSSM（recurrent state-space model）结合确定性记忆与随机状态，可用 CEM 搜索动作。Dreamer 在潜空间 imagination rollout 中训练 actor/critic；DreamerV3 强调统一超参数下的训练稳定性。TD-MPC/TD-MPC2 聚焦任务相关 latent dynamics、reward 与 value，并用模型预测控制优化候选动作，不必重建每个 RGB 像素。</p>
+<h3 id="4-1-用推方块任务看潜空间-rollout"><a class="header-anchor" href="#4-1-用推方块任务看潜空间-rollout"></a>4.1 用推方块任务看潜空间 rollout</h3>
+<p>当前 RGB/状态经编码器得到 <code>z_t: [B, 256]</code>。为绕过水杯，采样 <code>N=256</code> 条候选序列、每条 <code>H=8</code> 步、每步 <code>Da=7</code> 维：<code>candidates: [256,8,7]</code>。动力学每步输出下一潜状态 <code>[256,256]</code>，奖励头输出 <code>[256]</code>；并不要求生成 256×8 张未来 RGB。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python">z = encoder(observation)                         <span class="hljs-comment"># [1, 256]</span><br>actions = sample_candidates(<span class="hljs-number">256</span>, horizon=<span class="hljs-number">8</span>, dim=<span class="hljs-number">7</span>)  <span class="hljs-comment"># [256,8,7]</span><br>z_roll = z.expand(<span class="hljs-number">256</span>, -<span class="hljs-number">1</span>)<br>score = torch.zeros(<span class="hljs-number">256</span>, device=z.device)<br><span class="hljs-keyword">for</span> h <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">8</span>):<br>    z_roll = dynamics(z_roll, actions[:, h])     <span class="hljs-comment"># [256,256]</span><br>    score += <span class="hljs-number">0.99</span> ** h * reward_head(z_roll, actions[:, h]).squeeze(-<span class="hljs-number">1</span>)<br>score += <span class="hljs-number">0.99</span> ** <span class="hljs-number">8</span> * value_head(z_roll).squeeze(-<span class="hljs-number">1</span>)<br>best_first_action = actions[score.argmax(), <span class="hljs-number">0</span>]   <span class="hljs-comment"># [7]，只执行首步</span><br></code></pre></td></tr></table></figure>
+<p>这里的模型误差会随 rollout 视野累积，因此 <code>H</code> 不能只追求越长越好；应画出不同 horizon 的预测误差和真实任务收益。</p>
+<h2 id="5-方法整体架构"><a class="header-anchor" href="#5-方法整体架构"></a>5. 方法整体架构</h2>
+<pre><code class=" mermaid">flowchart LR
+ O[观测]--&gt;E[Encoder]--&gt;Z[潜状态]
+ Z--&gt;D[动力学模型]
+ A[候选动作序列]--&gt;D
+ D--&gt;R[奖励/价值预测]
+ R--&gt;P[MPC 或 Actor]
+ P--&gt;X[执行第一步]
+</code></pre>
+<h2 id="6-训练过程"><a class="header-anchor" href="#6-训练过程"></a>6. 训练过程</h2>
+<p>从 replay buffer 取序列，训练编码器、动力学、奖励/价值及必要的重建或一致性目标。训练集覆盖的接触和速度范围决定模型可信区间；离开该分布的 rollout 不应被当作事实。</p>
+<h2 id="7-推理和部署过程"><a class="header-anchor" href="#7-推理和部署过程"></a>7. 推理和部署过程</h2>
+<p>MPC 从当前潜状态采样/优化动作序列，滚动预测累计回报，执行最优序列第一步并重复。Dreamer 的 actor 可直接给动作，也可与规划混合；两种方式都需安全限幅。</p>
+<h2 id="8-公式解释"><a class="header-anchor" href="#8-公式解释"></a>8. 公式解释</h2>
+<p>[J(a_{t:t+H})=\sum_{k=0}<sup>{H-1}\gamma</sup>k\hat r(z_{t+k},a_{t+k})+\gamma^H\hat V(z_{t+H})]</p>
+<p>(\hat r) 和 (\hat V) 是模型预测奖励与终端价值，(\gamma) 是折扣，(H) 是规划视野。优化的是候选序列，但只执行第一动作。</p>
+<h2 id="9-简化伪代码"><a class="header-anchor" href="#9-简化伪代码"></a>9. 简化伪代码</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python">candidates = sample_actions(num=<span class="hljs-number">512</span>, horizon=H)      <span class="hljs-comment"># [N,H,Da]</span><br>z_roll = dynamics.rollout(z_now, candidates)<br>score = reward(z_roll).<span class="hljs-built_in">sum</span>(<span class="hljs-number">1</span>) + value(z_roll[:, -<span class="hljs-number">1</span>])<br>controller.send(safety.clip(candidates[score.argmax(), <span class="hljs-number">0</span>]))<br></code></pre></td></tr></table></figure>
+<h2 id="10-与前后方法的关系"><a class="header-anchor" href="#10-与前后方法的关系"></a>10. 与前后方法的关系</h2>
+<p>VLA 直接产生动作；世界模型可训练 VLA 的预测表征、生成子目标或评估候选动作。下一篇比较像素、潜表征与价值预测的差别。</p>
+<h2 id="11-常见误解"><a class="header-anchor" href="#11-常见误解"></a>11. 常见误解</h2>
+<p>“能生成未来视频”不等于能给出正确代价；“不重建 RGB”也不等于没有世界模型。控制只需预测对决策足够的信息。</p>
+<h2 id="12-实际工程问题"><a class="header-anchor" href="#12-实际工程问题"></a>12. 实际工程问题</h2>
+<p>记录 rollout 的不确定性、模型版本与规划耗时；对碰撞、接触等高风险状态应有独立硬约束，不能只相信学得的 reward。</p>
+<p>若 <code>256×8</code> 次动力学展开超过当前控制 deadline，应减少候选数、缩短视野、用 actor 给 warm start，或退回安全直接策略。不能让一次规划卡住低层控制线程。</p>
+<h2 id="13-本文总结"><a class="header-anchor" href="#13-本文总结"></a>13. 本文总结</h2>
+<p>Dreamer 在潜空间想象并学习策略，TD-MPC2 以任务相关潜模型和 MPC 控制；共同点是预测未来以帮助决策。</p>
+<h2 id="14-自测问题"><a class="header-anchor" href="#14-自测问题"></a>14. 自测问题</h2>
+<ol>
+<li>RSSM 有何作用？ 2. 为什么只执行首步？ 3. 像素重建为何非必要？ 4. actor 与 MPC 区别？ 5. rollout 何时不可信？</li>
+</ol>
+<h2 id="15-延伸阅读"><a class="header-anchor" href="#15-延伸阅读"></a>15. 延伸阅读</h2>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1912.01603">Dreamer</a>。 2. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2301.04104">DreamerV3</a>。 3. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2310.16828">TD-MPC2</a>。</li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">学习笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%85%B7%E8%BA%AB%E6%99%BA%E8%83%BD/" class="category-chain-item">具身智能</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/World-Model/" class="print-no-link">#World Model</a>
+      
+        <a href="/tags/Dreamer/" class="print-no-link">#Dreamer</a>
+      
+        <a href="/tags/TD-MPC2/" class="print-no-link">#TD-MPC2</a>
+      
+        <a href="/tags/MPC/" class="print-no-link">#MPC</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>控制型世界模型：从 Dreamer 到 TD-MPC2</div>
+      <div>https://atat1010.github.io/2026/07/27/study_note/vla-world-model/11-world-models-dreamer-tdmpc/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>QM</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年7月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/07/27/study_note/vla-world-model/12-video-world-model-and-vjepa/" title="视频世界模型、JEPA 与 V-JEPA：预测什么比画得像更重要">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">视频世界模型、JEPA 与 V-JEPA：预测什么比画得像更重要</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/07/27/study_note/vla-world-model/09-pi0-and-flow-matching/" title="π₀ 与 Flow Matching：让 VLM 语义骨干输出连续动作流">
+                        <span class="hidden-mobile">π₀ 与 Flow Matching：让 VLM 语义骨干输出连续动作流</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","appKey":"eD94sW1TI15wEWfAYQ9MecGN","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+<script  src="/js/research-motion.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
