@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://atat1010.github.io/2026/08/01/study_note/Foundation%20Pose%E6%8C%87%E5%8D%97/image-1.png">
 <meta property="og:image" content="https://atat1010.github.io/2026/08/01/study_note/Foundation%20Pose%E6%8C%87%E5%8D%97/image-2.png">
 <meta property="article:published_time" content="2026-08-01T08:28:31.000Z">
-<meta property="article:modified_time" content="2026-08-01T11:17:03.260Z">
+<meta property="article:modified_time" content="2026-08-01T11:22:10.435Z">
 <meta property="article:author" content="QM">
 <meta property="article:tag" content="6D 位姿估计">
 <meta property="article:tag" content="FoundationPose">
@@ -245,7 +245,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          6.1k 字
+          6.2k 字
         
       </span>
     
@@ -456,6 +456,9 @@ y_0 &amp;= \frac{v_0 - c_y}{f_y} z_0.
 </ul>
 <p>官方实现中，首帧执行 <code>register()</code>，后续帧执行 <code>track_one()</code>。论文报告跟踪更快，主要原因就是只需精修单个位姿，不再处理多个全局候选。</p>
 <p><img src="image-2.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<blockquote>
+<p>这个相当于跑这个紫色部分但是没有很多候选位姿了，用上一帧位姿当作初始位姿，所以跟踪模式会很快。</p>
+</blockquote>
 <h3 id="3-2-跟踪模式的缺点"><a class="header-anchor" href="#3-2-跟踪模式的缺点"></a>3.2 跟踪模式的缺点</h3>
 <p>跟踪本质上是局部优化，假设：</p>
 <p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>T</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>≈</mo><msub><mi>T</mi><mi>t</mi></msub><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">T_{t-1} \approx T_t.
