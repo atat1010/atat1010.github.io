@@ -1,0 +1,1090 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/q-mark.png">
+  <link rel="icon" href="/img/q-mark.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="QM">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="VLA入门指南  最近在学习VLA，开始从前几年的论文入手，先对VLA的整体概念有一个初步了解。总的来说是将Vision、Language和Action结合起来，形成一个统一的框架。VLA的目标是让机器人能够理解视觉信息、自然语言指令，并据此执行相应的动作。  1. 机器人算法的演变 看了大佬的blog之后对机器人算法的发展有了一定的认识。 1.1 基于规则符号 这个时期，主要是用离散的概念和规则">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初入VLA">
+<meta property="og:url" content="https://atat1010.github.io/2026/08/03/study_note/%E5%88%9D%E5%85%A5VLA/index.html">
+<meta property="og:site_name" content="啦啦啦">
+<meta property="og:description" content="VLA入门指南  最近在学习VLA，开始从前几年的论文入手，先对VLA的整体概念有一个初步了解。总的来说是将Vision、Language和Action结合起来，形成一个统一的框架。VLA的目标是让机器人能够理解视觉信息、自然语言指令，并据此执行相应的动作。  1. 机器人算法的演变 看了大佬的blog之后对机器人算法的发展有了一定的认识。 1.1 基于规则符号 这个时期，主要是用离散的概念和规则">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://atat1010.github.io/2026/08/03/study_note/%E5%88%9D%E5%85%A5VLA/image.png">
+<meta property="og:image" content="https://atat1010.github.io/2026/08/03/study_note/%E5%88%9D%E5%85%A5VLA/image-1.png">
+<meta property="og:image" content="https://atat1010.github.io/2026/08/03/study_note/%E5%88%9D%E5%85%A5VLA/image-2.png">
+<meta property="article:published_time" content="2026-08-03T06:50:34.000Z">
+<meta property="article:modified_time" content="2026-08-07T13:56:12.155Z">
+<meta property="article:author" content="QM">
+<meta property="article:tag" content="VLA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://atat1010.github.io/2026/08/03/study_note/%E5%88%9D%E5%85%A5VLA/image.png">
+  
+  
+  
+  <title>初入VLA - 啦啦啦</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="/vendor/katex/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"atat1010.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":60,"cursorChar":"|","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"§"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","app_key":"eD94sW1TI15wEWfAYQ9MecGN","server_url":"https://9ir8y8ab.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body class="post-page">
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <img class="brand-mark" src="/img/q-mark.png" srcset="/img/loading.gif" lazyload alt="Q">
+      <strong>啦啦啦</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+
+  
+  <section class="page-hero">
+    <img class="page-hero-art" src="/img/research-header-art.png" srcset="/img/loading.gif" lazyload alt="">
+    <div class="container page-hero-content">
+      <p class="eyebrow">RESEARCH NOTE</p>
+      <h1>初入VLA</h1>
+      
+        <div class="page-hero-meta">
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-08-03 14:50" pubdate>
+          2026年8月3日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          80 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+      
+    
+  </div>
+
+</div>
+      
+    </div>
+  </section>
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">初入VLA</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年8月7日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1>VLA入门指南</h1>
+<blockquote>
+<p>最近在学习VLA，开始从前几年的论文入手，先对VLA的整体概念有一个初步了解。总的来说是将Vision、Language和Action结合起来，形成一个统一的框架。VLA的目标是让机器人能够理解视觉信息、自然语言指令，并据此执行相应的动作。</p>
+</blockquote>
+<h2 id="1-机器人算法的演变"><a class="header-anchor" href="#1-机器人算法的演变"></a>1. 机器人算法的演变</h2>
+<p>看了<a target="_blank" rel="noopener" href="https://immortalqx.github.io/2026/06/02/why-action/#2-%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%AE%97%E6%B3%95%E7%9A%84%E6%97%B6%E4%BB%A3%E5%8F%98%E8%BF%81">大佬的blog</a>之后对机器人算法的发展有了一定的认识。</p>
+<h3 id="1-1-基于规则符号"><a class="header-anchor" href="#1-1-基于规则符号"></a>1.1 基于规则符号</h3>
+<p>这个时期，主要是用离散的概念和规则描述机器人世界。</p>
+<ol>
+<li>什么叫“符号方法”？</li>
+</ol>
+<p>符号方法就是把现实世界转换成一些人能理解的离散概念。<br>
+例如机器人面前有一个箱子：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc">物体：Box_A<br>位置：Table<br>状态：Gripper<span class="hljs-emphasis">_Empty</span><br><span class="hljs-emphasis">目标：Box_A_In_</span>Bin<br></code></pre></td></tr></table></figure>
+<p>然后人为规定一些动作:</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">动作：Pick(<span class="hljs-keyword">Box_A)</span><br><span class="hljs-keyword"></span>前提条件：<span class="hljs-keyword">Box_A在Table上，Gripper为空</span><br><span class="hljs-keyword"></span>动作：Place(<span class="hljs-keyword">Box_A, </span><span class="hljs-keyword">Bin)</span><br><span class="hljs-keyword"></span>前提条件：<span class="hljs-keyword">Box_A在Gripper中，Bin为空</span><br></code></pre></td></tr></table></figure>
+<p>但是问题是：<br>
+符号规划本身只知道”抓箱子–&gt; 放箱子“这个流程，并不能知道这个动作是怎么实现的，比如箱子的6D Pose，抓取位姿等，所以传统系统通常分为两层：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs">符号规划：决定“做什么”<br>几何与控制：决定“具体怎么做”<br></code></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">符号层：抓取 <span class="hljs-keyword">Box_A</span><br><span class="hljs-keyword"></span>    ↓<br>感知层：得到 <span class="hljs-keyword">Box_A </span>的 <span class="hljs-number">6</span>D pose<br>    ↓<br>抓取规划：计算夹爪抓取位姿<br>    ↓<br>运动规划：生成机械臂轨迹<br>    ↓<br>控制器：控制关节执行<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>感觉跟我现在做的很像，原来我们做的这么传统😢</p>
+</blockquote>
+<h3 id="1-2-RL-模仿学习"><a class="header-anchor" href="#1-2-RL-模仿学习"></a>1.2 RL/模仿学习</h3>
+<p>到了这个阶段，就不需要人力把看到什么情况就做什么动作给编排完，由于这样很费人力并且不可能编排完所有情况，所以就引入了RL和模仿学习。其让机器人从数据或试错中学出一个策略函数。写成：</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>a</mi><mi>t</mi></msub><mo>=</mo><mi>π</mi><mo stretchy="false">(</mo><msub><mi>o</mi><mi>t</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">a_{t}=\pi(o_{t})
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>其中：</p>
+<p>o<br>
+t<br>
+​</p>
+<p>：机器人当前的 observation，观测；<br>
+a<br>
+t<br>
+​</p>
+<p>：当前要执行的 action，动作；<br>
+π：policy，策略，也就是需要训练的神经网络。</p>
+<p>这时的观测不只是图片了，包含机器人当前能够获得的所有信息：</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>o</mi><mi>t</mi></msub><mo>=</mo><mo stretchy="false">{</mo><msub><mi>I</mi><mi>t</mi></msub><mo separator="true">,</mo><msub><mi>q</mi><mi>t</mi></msub><mo separator="true">,</mo><msub><mover accent="true"><mi>q</mi><mo>˙</mo></mover><mi>t</mi></msub><mo separator="true">,</mo><msub><mi>g</mi><mi>t</mi></msub><mo separator="true">,</mo><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">e</mi></mrow><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">o_{t}=\{ I_{t},q_{t},\dot{q}_{t},g_{t},\mathrm{language}\}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6679em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.0556em;"><span class="mord">˙</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1944em;"><span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathrm">language</span></span><span class="mclose">}</span></span></span></span></span></p>
+<p>可能包含：</p>
+<p>相机 RGB 图像 I<br>
+t<br>
+​</p>
+<p>；<br>
+深度图；<br>
+机械臂关节角 q<br>
+t<br>
+​</p>
+<p>；<br>
+关节速度<br>
+q<br>
+˙<br>
+​</p>
+<p>t<br>
+​</p>
+<p>；<br>
+夹爪状态；<br>
+力传感器数据；<br>
+用户的语言指令；<br>
+历史若干帧观测。</p>
+<p>Action 是机器人下一步实际要执行的控制命令。例如末端增量控制：</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="bold-italic">a</mi><mi>t</mi></msub><mo>=</mo><mo stretchy="false">[</mo><mi mathvariant="normal">Δ</mi><mi>x</mi><mo separator="true">,</mo><mi mathvariant="normal">Δ</mi><mi>y</mi><mo separator="true">,</mo><mi mathvariant="normal">Δ</mi><mi>z</mi><mo separator="true">,</mo><mi mathvariant="normal">Δ</mi><msub><mi>r</mi><mi>x</mi></msub><mo separator="true">,</mo><mi mathvariant="normal">Δ</mi><msub><mi>r</mi><mi>y</mi></msub><mo separator="true">,</mo><mi mathvariant="normal">Δ</mi><msub><mi>r</mi><mi>z</mi></msub><mo separator="true">,</mo><mi>g</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">\boldsymbol{a}_{t}=[\Delta x,\Delta y,\Delta z,\Delta r_{x},\Delta r_{y},\Delta r_{z},g]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5944em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord"><span class="mord boldsymbol">a</span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0361em;vertical-align:-0.2861em;"></span><span class="mopen">[</span><span class="mord">Δ</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">Δ</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">x</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">Δ</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">Δ</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.04398em;">z</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mclose">]</span></span></span></span></span></p>
+<p>其中：</p>
+<p>Δx,Δy,Δz：机械臂末端移动多少；<br>
+Δr<br>
+x<br>
+​</p>
+<p>,Δr<br>
+y<br>
+​</p>
+<p>,Δr<br>
+z<br>
+​</p>
+<p>：末端旋转多少；<br>
+g：夹爪张开或闭合。</p>
+<p>也可能直接输出关节动作：</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>a</mi><mi>t</mi></msub><mo>=</mo><mo stretchy="false">[</mo><mi mathvariant="normal">Δ</mi><msub><mi>q</mi><mn>1</mn></msub><mo separator="true">,</mo><mi mathvariant="normal">Δ</mi><msub><mi>q</mi><mn>2</mn></msub><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><mi mathvariant="normal">Δ</mi><msub><mi>q</mi><mn>7</mn></msub><mo separator="true">,</mo><mi>g</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">a_{t}=[\Delta q_{1},\Delta q_{2},\dots,\Delta q_{7},g]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">Δ</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">Δ</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">Δ</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">7</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mclose">]</span></span></span></span></span></p>
+<p>例如某一时刻模型输出：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs vim">向前移动 <span class="hljs-number">1</span> <span class="hljs-keyword">cm</span><br>向下移动 <span class="hljs-number">0.5</span> <span class="hljs-keyword">cm</span><br>夹爪保持张开<br></code></pre></td></tr></table></figure>
+<p>执行后，机器人得到下一帧图像，再预测下一个动作：</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>o</mi><mi>t</mi></msub><mo>→</mo><msub><mi>a</mi><mi>t</mi></msub><mo>→</mo><msub><mi>o</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>→</mo><msub><mi>a</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">o_{t}\rightarrow a_{t}\rightarrow o_{t+1}\rightarrow a_{t+1}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6389em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6389em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p>因此它是一个不断反馈的闭环。</p>
+<p><strong>模仿学习</strong>，Imitation Learning，核心是：让机器人模仿人类或专家已经做过的动作。在遥操时，专家操作机械臂，记录下每一帧的观测和动作，形成数据集：</p>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs excel">时刻 <span class="hljs-built_in">t</span>：<br>相机图像<br>机械臂关节状态<br>夹爪状态<br>你执行的动作<br></code></pre></td></tr></table></figure>
+<p>训练时把观测observation作为输入，动作action作为输出，然后比较预测动作和专家动作：</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="script">L</mi><mo>=</mo><mi mathvariant="normal">∥</mi><msub><mover accent="true"><mi>a</mi><mo>^</mo></mover><mi>t</mi></msub><mo>−</mo><msubsup><mi>a</mi><mi>t</mi><mrow><mi>e</mi><mi>x</mi><mi>p</mi><mi>e</mi><mi>r</mi><mi>t</mi></mrow></msubsup><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\mathcal{L}=\|\hat{a}_{t}-a_{t}^{expert}\|^{2}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathcal">L</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∥</span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6944em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal">a</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.25em;"><span class="mord">^</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.1615em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9115em;"><span style="top:-2.4542em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span style="top:-3.1809em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">x</span><span class="mord mathnormal mtight">p</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">er</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2458em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord">∥</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>训练一个神经网络模型。训练完成后，机器人就可以在相似的场景下模仿专家的操作。</p>
+<p>这类最简单的方法叫 <strong>Behavior Cloning</strong>，<strong>行为克隆</strong>。</p>
+<hr>
+<p><strong>强化学习</strong>，Reinforcement Learning，不一定告诉机器人每一步正确动作是什么。</p>
+<p>它主要给机器人一个奖励：</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>r</mi><mi>t</mi></msub><mo>=</mo><mi>R</mi><mo stretchy="false">(</mo><msub><mi>o</mi><mi>t</mi></msub><mo separator="true">,</mo><msub><mi>a</mi><mi>t</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">r_{t}=R(o_{t},a_{t})
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>机器人自己尝试动作，根据结果好坏获得奖励。</p>
+<p>机器人的目标是最大化<strong>未来总奖励</strong>：</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><munder><mrow><mi mathvariant="normal">max</mi><mo>⁡</mo></mrow><mi>π</mi></munder><mi mathvariant="double-struck">E</mi><mrow><mo fence="true">[</mo><munderover><mo>∑</mo><mrow><mi>t</mi><mo>=</mo><mn>0</mn></mrow><mi>T</mi></munderover><msup><mi>γ</mi><mi>t</mi></msup><msub><mi>r</mi><mi>t</mi></msub><mo fence="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">\operatorname*{max}_{\pi}\mathbb{E}\left[\sum_{t=0}^{T}\gamma^{t}r_{t}\right]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:3.0954em;vertical-align:-1.2671em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.4306em;"><span style="top:-2.4em;margin-left:0em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">π</span></span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span><span class="mop"><span class="mord mathrm">max</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.7em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathbb">E</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size4">[</span></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8283em;"><span style="top:-1.8829em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mrel mtight">=</span><span class="mord mtight">0</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2671em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05556em;">γ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8436em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size4">]</span></span></span></span></span></span></span></p>
+<p>它可能一开始随机乱动：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs">向左<br>向右<br>关闭夹爪<br>撞到桌子<br></code></pre></td></tr></table></figure>
+<p>经过大量试错后逐渐发现：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs">先靠近箱子<br>再对准<br>再闭合夹爪<br>最后向上抬<br></code></pre></td></tr></table></figure>
+<p>这套动作更容易获得高奖励，于是策略学会了抓取。</p>
+<h3 id="1-3-LLM-VLM-结合-Skill-Code"><a class="header-anchor" href="#1-3-LLM-VLM-结合-Skill-Code"></a>1.3 LLM/VLM 结合 Skill/Code</h3>
+<p>RL/IL这一阶段虽然免去了枚举所有情况的麻烦，而且通常是单个技能、单个任务，比如：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs css">模型 <span class="hljs-selector-tag">A</span>：抓箱子<br>模型 <span class="hljs-selector-tag">B</span>：开抽屉<br>模型 C：插入插头<br></code></pre></td></tr></table></figure>
+<p>通常没有语言理解能力，新任务需要重新训练。</p>
+<p><strong>强化学习</strong>中，放任机器人自己探索是有风险的，并且reward设计也很困难太稀疏（学不动）太稠密（模型容易学到偏好）都会有问题。</p>
+<p><strong>模仿学习</strong>中，专家的示范数据通常不会出错，但是当模型遇到没见过的场景的时候，小误差会把机器人带到训练集中没见过的状态  ，错误会累积。</p>
+<p><strong>多模态动作</strong>，同一个observation可能对应多种动作，单一的动作预测模型无法处理，如果用简单的MSE，模型可能会把几个可能的动作平均：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs">左边抓和右边抓的平均<br>→ 从中间一个不可行的位置抓<br></code></pre></td></tr></table></figure>
+<p>因此后来出现了：</p>
+<ul>
+<li>Diffusion Policy；</li>
+<li>CVAE；</li>
+<li>Flow Matching；</li>
+<li>多模态 action distribution。</li>
+</ul>
+<blockquote>
+<p>这在RT-1中就有初步但不完全的一个解决，对于action的每维，不直接连续回归高斯分布，而是离散化成若干个bin，然后预测每个bin的概率分布，最后采样得到动作。这样就是一个多峰分布，也类似与GDRNPP的解决对称性物体问题的预测的CAD区域分布<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mrow><mi>S</mi><mi>R</mi><mi>A</mi></mrow></msub></mrow><annotation encoding="application/x-tex">M_{SRA}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">SR</span><span class="mord mathnormal mtight">A</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>.但是RT-1并没有解决维度间的相关性问题，只是预测单维度的多峰分布。说是隐藏在Transformer的输出得到的共享特征中。具体分析我会另起一篇。</p>
+</blockquote>
+<ul>
+<li><strong>skill</strong>可以看作是一个预先封装好的机器人能力，例如:</li>
+</ul>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs stylus"><span class="hljs-function"><span class="hljs-title">navigate_to</span><span class="hljs-params">(location)</span></span><br><span class="hljs-function"><span class="hljs-title">detect_object</span><span class="hljs-params">(object_name)</span></span><br><span class="hljs-function"><span class="hljs-title">pick_object</span><span class="hljs-params">(object_name)</span></span><br><span class="hljs-function"><span class="hljs-title">place_object</span><span class="hljs-params">(location)</span></span><br><span class="hljs-function"><span class="hljs-title">open_gripper</span><span class="hljs-params">()</span></span><br><span class="hljs-function"><span class="hljs-title">close_gripper</span><span class="hljs-params">()</span></span><br><span class="hljs-function"><span class="hljs-title">move_end_effector</span><span class="hljs-params">(target_pose)</span></span><br></code></pre></td></tr></table></figure>
+<p>其中每个skill可能包含一系列动作，比如之前说的IL/RL的动作序列。skill可以被看作是一个更高层次的抽象，它将一系列低级动作封装成一个可复用的功能模块。</p>
+<p>但是对于上层大模型来说，只需要调用：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs stylus"><span class="hljs-function"><span class="hljs-title">pick_object</span><span class="hljs-params">(<span class="hljs-string">&quot;box&quot;</span>)</span></span><br></code></pre></td></tr></table></figure>
+<p>函数内部可由人提前实现，大模型只负责选择:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">Skill</span> <span class="hljs-number">1</span>：定位箱子<br><span class="hljs-attribute">Skill</span> <span class="hljs-number">2</span>：抓取箱子<br><span class="hljs-attribute">Skill</span> <span class="hljs-number">3</span>：搬运箱子<br><span class="hljs-attribute">Skill</span> <span class="hljs-number">4</span>：放置箱子<br><span class="hljs-attribute">Skill</span> <span class="hljs-number">5</span>：失败后重新定位<br></code></pre></td></tr></table></figure>
+<ul>
+<li><strong>code</strong>就是让大模型不只选择一个 skill，而是直接生成一段程序，把多个技能、判断条件和循环组织起来。</li>
+</ul>
+<p>例如，大模型生成：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs python">box = detect_object(<span class="hljs-string">&quot;red_box&quot;</span>)<br><br><span class="hljs-keyword">if</span> box <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:<br>    rotate_camera()<br>    box = detect_object(<span class="hljs-string">&quot;red_box&quot;</span>)<br><br><span class="hljs-keyword">if</span> box <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:<br>    success = pick_object(box)<br><br>    <span class="hljs-keyword">if</span> success:<br>        navigate_to(<span class="hljs-string">&quot;right_shelf&quot;</span>)<br>        place_object(<span class="hljs-string">&quot;right_shelf&quot;</span>)<br>    <span class="hljs-keyword">else</span>:<br>        retry_grasp(box)<br></code></pre></td></tr></table></figure>
+<p>它并不是让大模型直接编写底层电机驱动，通常是生成一段高层程序，调用提前提供的机器人 API。</p>
+<p>Skill 和 code 的区别可以简单理解为：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs css">Skill：已经封装好的能力<br><span class="hljs-selector-tag">Code</span>：把这些能力组织起来的程序<br></code></pre></td></tr></table></figure>
+<h3 id="1-4-VLA-Vision-Language-Action"><a class="header-anchor" href="#1-4-VLA-Vision-Language-Action"></a>1.4 VLA (Vision-Language-Action)</h3>
+<p>对于<strong>LLM + Skill/Code</strong>架构来说</p>
+<p>大模型负责高层决策：</p>
+<p>输入：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs">相机图像<br>机器人当前状态<br>“把箱子放到货架上”<br></code></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs stylus"><span class="hljs-function"><span class="hljs-title">pick_object</span><span class="hljs-params">(<span class="hljs-string">&quot;box&quot;</span>)</span></span><br><span class="hljs-function"><span class="hljs-title">place_object</span><span class="hljs-params">(<span class="hljs-string">&quot;shelf&quot;</span>)</span></span><br></code></pre></td></tr></table></figure>
+<p>底层具体动作由传统模块完成：</p>
+<figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs mathematica"><span class="hljs-number">6</span><span class="hljs-built_in">D</span>位姿估计<br>抓取位姿生成<br>运动规划<br>控制器<br></code></pre></td></tr></table></figure>
+<p>而 <strong>VLA</strong> 更进一步，直接根据图像和语言输出机器人 action：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs">输入：<br>相机图像<br>机器人当前状态<br>“把箱子放到货架上”<br></code></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">未来若干步机械臂动作<br></code></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs">第1步：末端向左移动<br>第2步：末端向前移动<br>第3步：向下靠近箱子<br>第4步：闭合夹爪<br></code></pre></td></tr></table></figure>
+<p>VLA直接控制最底层的动作，省略了传统模块的中间步骤。直接集成机器人的动作到一个可训练的大模型中，让动作的生成，执行都集成进一个统一的可训练评估的框架中。</p>
+<h2 id="2-VLA代表作"><a class="header-anchor" href="#2-VLA代表作"></a>2. VLA代表作</h2>
+<h3 id="2-1-RT-1"><a class="header-anchor" href="#2-1-RT-1"></a>2.1 RT-1</h3>
+<p>RT-1是Google提出的一个VLA模型，采用基于 Transformer 的架构，专门为机器人控制设计，平衡了高容量和实时操作所需的计算效率。该模型处理一系列 RGB 图像（300×300 分辨率）以及自然语言指令，以输出离散的机器人动作。</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">Action</mi><mo>⁡</mo><mo>=</mo><mo stretchy="false">[</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo separator="true">,</mo><mi>z</mi><mo separator="true">,</mo><mi mathvariant="normal">roll</mi><mo>⁡</mo><mo separator="true">,</mo><mi mathvariant="normal">pitch</mi><mo>⁡</mo><mo separator="true">,</mo><mi mathvariant="normal">yaw</mi><mo>⁡</mo><mo separator="true">,</mo><mi mathvariant="normal">gripper</mi><mo>⁡</mo><mo separator="true">,</mo><msub><mrow><mi mathvariant="normal">base</mi><mo>⁡</mo></mrow><mi>z</mi></msub><mo separator="true">,</mo><msub><mrow><mi mathvariant="normal">base</mi><mo>⁡</mo></mrow><mi>y</mi></msub><mo separator="true">,</mo><msub><mrow><mi mathvariant="normal">base</mi><mo>⁡</mo></mrow><mrow><mi>y</mi><mi>w</mi></mrow></msub><mo separator="true">,</mo><mi mathvariant="normal">mode</mi><mo>⁡</mo><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">\operatorname{Action}=[x,y,z,\operatorname{roll},\operatorname{pitch},\operatorname{yaw},\operatorname{gripper},\operatorname{base}_{z},\operatorname{base}_{y},\operatorname{base}_{yw},\operatorname{mode}]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mop"><span class="mord mathrm">Action</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0361em;vertical-align:-0.2861em;"></span><span class="mopen">[</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mord mathrm">roll</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mord mathrm">pitch</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">yaw</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mord mathrm">gripper</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop"><span class="mord mathrm">base</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.04398em;">z</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop"><span class="mord mathrm">base</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop"><span class="mord mathrm">base</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mord mathrm">mode</span></span><span class="mclose">]</span></span></span></span></span></p>
+<p>其架构和技术方法：<br>
+<img src="image.png" srcset="/img/loading.gif" lazyload alt="overview"></p>
+<ul>
+<li>图像和语言处理：RT-1 使用在 ImageNet 上预训练的 FiLM 条件 EfficientNet-B3 主干网络来处理视觉输入。自然语言指令使用 Universal Sentence Encoder 进行嵌入，并通过特征式线性调制 (FiLM) 层集成到视觉处理中。这种早期融合方法允许视觉编码器提取与任务相关的特征，同时忽略不相关的场景元素。</li>
+</ul>
+<blockquote>
+<p>FiLM 条件 EfficientNet-B3 主干网络：FiLM（Feature-wise Linear Modulation）是一种条件神经网络方法，它通过对特征图进行线性变换来实现条件信息的融合让语言指导视觉关注区域.<br>
+例如：</p>
+<ul>
+<li>指令是“打开抽屉”，视觉特征会更关注抽屉；</li>
+<li>指令是“拿起苹果”，视觉特征会更关注苹果和夹爪的交互区域。</li>
+</ul>
+</blockquote>
+<ul>
+<li>Token 压缩：鉴于 EfficientNet 每张图像产生 81 个视觉 Token（9×9 空间特征图），并且 RT-1 顺序处理 6 张图像，TokenLearner 模块通过学习的注意力机制将每个图像的 Token 压缩到仅 8 个。这减少了后续 Transformer 的计算负担，同时保留了基本信息。</li>
+</ul>
+<blockquote>
+<p>EfficientNet 最后产生一个 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>9</mn><mo>×</mo><mn>9</mn><mo>×</mo><mn>512</mn></mrow><annotation encoding="application/x-tex">9\times9\times512</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">9</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">9</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">512</span></span></span></span> 的空间特征图。展平后，每一帧得到：9×9=81 个视觉 token。如果 6 帧都保留 81 个 token，就会有 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>6</mn><mo>×</mo><mn>81</mn><mo>=</mo><mn>486</mn></mrow><annotation encoding="application/x-tex">6\times81=486</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">6</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">81</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">486</span></span></span></span> 个 token，Transformer 的计算量较大。因此，RT-1 使用 TokenLearner，从 81 个 token 中自适应地提取最重要的信息，只保留 8 个 token。</p>
+</blockquote>
+<ul>
+<li>动作生成：Transformer 组件包含 8 个仅解码器自注意力层 <strong>(decoder-only Transformer)</strong>，它们处理压缩后的视觉-语言 Token 并输出离散动作。11 个动作维度中的每一个（7 个用于手臂控制，3 个用于底座移动，1 个用于操作模式）都被离散化为 256 个 bin，这使得模型能够表示复杂、可能多模态的动作分布。</li>
+</ul>
+<blockquote>
+<p>这里使用离散的动作空间，会有上述我说的&quot;边缘分布不能唯一确定联合分布&quot;的问题，但是作者发现自回归动作生成会使推理速度减慢两倍以上，而没有性能上的益处。说明transformer输出的共享特征已经包含了维度间的关系。</p>
+</blockquote>
+<h3 id="2-2-RT-2"><a class="header-anchor" href="#2-2-RT-2"></a>2.2 RT-2</h3>
+<p>RT-2 不再把视觉、语言和控制完全分成不同模块，而是直接把它们放入一个视觉—语言模型中共同处理。论文使用了两个已有的视觉—语言模型作为初始化：</p>
+<ul>
+<li>PaLI-X(55B)；</li>
+<li>PaLM-E(12B)。</li>
+</ul>
+<h4 id="流程框图"><a class="header-anchor" href="#流程框图"></a>流程框图</h4>
+<p><img src="image-1.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<p>RT-2 不是只用机器人数据微调，而是进行 <strong>co-fine-tuning</strong>：</p>
+<ul>
+<li>一部分数据来自机器人示范轨迹；</li>
+<li>另一部分数据仍然来自原始互联网视觉—语言任务，例如图像描述和视觉问答。</li>
+</ul>
+<blockquote>
+<p>这样做的目的是可以避免模型在微调过程中学习底层动作的时候不会忘记原本的视觉语言知识。</p>
+</blockquote>
+<pre><code class=" mermaid">flowchart LR
+    A[互联网视觉-语言预训练] --&gt; B[PaLI-X 或 PaLM-E]
+    C[机器人轨迹数据] --&gt; D[动作离散化为文本 Token]
+
+    B --&gt; E[RT-2：视觉-语言-动作模型]
+    D --&gt; E
+
+    E --&gt; F[输出动作 Token]
+    F --&gt; G[动作反离散化]
+    G --&gt; H[机器人闭环控制]
+    H --&gt; I[新的相机观测]
+    I --&gt; E
+</code></pre>
+<h4 id="关键设计"><a class="header-anchor" href="#关键设计"></a>关键设计</h4>
+<p>其关键是将动作表示为文本token，模型最终输出的不是传统意义上的连续控制向量，而是一串“看起来像文本”的动作 Token；系统再将这些 Token 解码回机器人动作。</p>
+<p>这种统一表示有两个效果：</p>
+<ul>
+<li>语言输出和机器人动作使用同一个输出空间；</li>
+<li>视觉—语言预训练模型不需要增加一个完全独立的动作网络，就可以被微调为机器人策略。</li>
+</ul>
+<blockquote>
+<p>这样在QA的时候模型的输出可以是一个动作token序列，也可以是一个自然语言的回答。并且在训练时，模型可以同时学习视觉-语言任务和机器人动作任务。</p>
+</blockquote>
+<p>RT-2 的机器人动作为：</p>
+<ul>
+<li>末端执行器的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>6</mn></mrow><annotation encoding="application/x-tex">6</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">6</span></span></span></span> 个自由度位姿变化；</li>
+<li>夹爪开合；</li>
+<li>终止指令。</li>
+</ul>
+<h4 id="设计目的"><a class="header-anchor" href="#设计目的"></a>设计目的</h4>
+<p>RT-2使用大量的web视觉-语言数据进行训练，把语言模型和视觉—语言模型中的知识也带入了控制过程，目的是从这些学到的语义知识中进行推理。而RT-1主要是学习语言指令和相应动作之间的对应关系，主要来自机器人示范数据。</p>
+<p>其action通过自回归的方式生成，模型在每个时间步输出一个动作token，直到输出终止token。然后将这些token解码为连续的机器人动作。，T-2 也将每个连续动作维度划分成 256 个区间。</p>
+<p>直观地说，它不是一次并行输出全部 8 维，而是类似语言模型逐字生成：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs css">先生成 terminate<br>       ↓<br>根据前面的token生成 Δ<span class="hljs-attribute">x</span><br>       ↓<br>生成 Δ<span class="hljs-attribute">y</span><br>       ↓<br>生成 Δz<br>       ↓<br>生成旋转<br>       ↓<br>生成夹爪动作<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>RT-1 已经能够“听懂语言并执行机器人任务”；RT-2 的进一步之处，是试图让机器人利用大规模视觉—语言预训练中获得的常识和语义知识来理解新的任务，而不仅仅是匹配训练过的语言—动作模式。</p>
+</blockquote>
+<h3 id="2-3-ACT（Action-Chunking-with-Transformers）"><a class="header-anchor" href="#2-3-ACT（Action-Chunking-with-Transformers）"></a>2.3 ACT（Action Chunking with Transformers）</h3>
+<p>是一种新颖的模仿学习方法，专门设计用于处理精细操作的挑战：</p>
+<ul>
+<li>
+<p>基于 Transformer 的架构：ACT 采用 Transformer 编码器-解码器，处理来自多个摄像头的视觉输入以及机器人状态信息，以预测动作序列。</p>
+</li>
+<li>
+<p>条件变分自编码器（CVAE）：为了处理人类演示中固有的可变性，ACT 被训练为一个 CVAE，将观察结果映射到动作序列的分布。</p>
+</li>
+</ul>
+<p>该算法根据来自四个摄像头视图（每个480×640×3像素）的输入和当前机器人关节位置，生成多步动作预测：</p>
+<p><img src="image-2.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
+<p>整体框架由 ALOHA 低成本双臂遥操作硬件 和 ACT（Action Chunking with Transformers）模仿学习算法 两部分组成，目标是让低成本机器人通过少量真实示范完成精细双臂操作任务。</p>
+<blockquote>
+<p>依旧是模仿学习的思路</p>
+</blockquote>
+<h5 id="核心创新一：动作分块（Action-Chunking）"><a class="header-anchor" href="#核心创新一：动作分块（Action-Chunking）"></a>核心创新一：动作分块（Action Chunking）</h5>
+<p>普通行为克隆通常学习：</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>π</mi><mo stretchy="false">(</mo><msub><mi>a</mi><mi>t</mi></msub><mo>∣</mo><msub><mi>o</mi><mi>t</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\pi(a_t\mid o_t)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>也就是每次只预测一个动作。这容易产生累积误差：一旦某一步预测偏了，机器人就会进入训练数据中没有出现过的状态，后续误差继续扩大。ACT 改为一次预测一整个动作片段：</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>π</mi><mo stretchy="false">(</mo><msub><mi>a</mi><mrow><mi>t</mi><mo>:</mo><mi>t</mi><mo>+</mo><mi>k</mi></mrow></msub><mo>∣</mo><msub><mi>o</mi><mi>t</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\pi(a_{t:t+k}\mid o_t)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mrel mtight">:</span><span class="mord mathnormal mtight">t</span><span class="mbin mtight">+</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>这样做有两个作用：</p>
+<ul>
+<li>将任务的有效决策长度缩短约 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> 倍；</li>
+<li>让一个动作片段内部的行为保持连贯，例如“抓住—移动—插入”可以作为一个连续过程建模。</li>
+</ul>
+<h5 id="核心创新二：Temporal-Ensembling"><a class="header-anchor" href="#核心创新二：Temporal-Ensembling"></a>核心创新二：Temporal Ensembling</h5>
+<p>如果机器人每隔 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> 步才重新观察并生成动作，动作切换可能会突然、不平滑。因此 ACT 实际上在每个时间步重新预测一个动作 chunk。这会导致同一个未来时刻拥有多个预测值。例如，时间 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span>、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">t+1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6984em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>+</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">t+2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6984em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span></span></span></span> 的预测都可能包含对时间 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>+</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">t+3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6984em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">3</span></span></span></span> 的动作。ACT 对这些重叠预测进行加权平均：</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>a</mi><mi>t</mi></msub><mo>=</mo><mfrac><mrow><munder><mo>∑</mo><mi>i</mi></munder><msub><mi>w</mi><mi>i</mi></msub><msub><mi>A</mi><mi>t</mi></msub><mo stretchy="false">[</mo><mi>i</mi><mo stretchy="false">]</mo></mrow><mrow><munder><mo>∑</mo><mi>i</mi></munder><msub><mi>w</mi><mi>i</mi></msub></mrow></mfrac><mo separator="true">,</mo><mspace width="2em"/><msub><mi>w</mi><mi>i</mi></msub><mo>=</mo><mi>exp</mi><mo>⁡</mo><mo stretchy="false">(</mo><mo>−</mo><mi>m</mi><mi>i</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">a_t =
+\frac{\sum_i w_i A_t[i]}{\sum_i w_i},
+\qquad
+w_i=\exp(-m i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4254em;vertical-align:-0.9857em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.4397em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.162em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.6897em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.162em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">[</span><span class="mord mathnormal">i</span><span class="mclose">]</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9857em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:2em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">exp</span><span class="mopen">(</span><span class="mord">−</span><span class="mord mathnormal">mi</span><span class="mclose">)</span></span></span></span></span></p>
+<p>越新的预测通常权重越大。这样可以：</p>
+<ul>
+<li>平滑不同动作 chunk 之间的边界；</li>
+<li>减少单次预测噪声；</li>
+<li>让机器人持续结合最新视觉观测进行修正。<br>
+这一步称为 Temporal Ensemble。它不增加训练成本，但会增加推理时的计算量。</li>
+</ul>
+<h5 id="核心创新三：用-CVAE-建模示范中的多样性"><a class="header-anchor" href="#核心创新三：用-CVAE-建模示范中的多样性"></a>核心创新三：用 CVAE 建模示范中的多样性</h5>
+<p>同一个观测下，人类可能采取多种合理动作。例如，交接物体时，人手的位置和轨迹不一定完全相同。如果直接用确定性的回归模型，模型容易对不同示范取平均，产生一个实际上不可执行的“中间动作”。因此，ACT 将策略训练成一个条件变分自编码器（CVAE）。训练阶段CVAE 编码器接收：</p>
+<ul>
+<li>当前关节状态；</li>
+<li>示范中的动作序列。</li>
+</ul>
+<p>CVAE，即 <code>Conditional Variational Autoencoder</code>，<strong>条件变分自编码器</strong>，包含两个网络：<br>
+编码器 <code>Encoder</code>：观察真实示范，推断这段动作对应的潜变量 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span></span></span></span>；<br>
+解码器 <code>Decoder</code>：根据当前观测和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span></span></span></span>，生成动作序列。<br>
+在 ACT 中，可以写成：$$<br>
+q_\phi(z\mid a_{t:t+k},\bar{o}_t)</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>和：</mtext></mrow><annotation encoding="application/x-tex">和：
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">和：</span></span></span></span></span></p>
+<p>\pi_\theta(\hat a_{t:t+k}\mid o_t,z)</p>
+<p class='katex-block katex-error ' title='ParseError: KaTeX parse error: Can&#039;t use function &#039;$&#039; in math mode at position 7: 其中：
+- $̲o_t$：完整当前观测，包括图…'>其中：
+- $o_t$：完整当前观测，包括图像和关节状态；
+- $\bar{o}_t$：去掉图像后的观测，主要是关节状态；
+- $a_{t:t+k}$：示范中的未来动作片段；
+- $z$：潜变量，也可以理解为动作风格；
+- $\hat a_{t:t+k}$：模型重建或预测的动作片段；
+- $q_\phi$：编码器；
+- $\pi_\theta$：解码器，也就是最终的策略网络。
+
+训练目标包含两部分：
+
+$$\mathcal{L}
+=
+\mathcal{L}_{\mathrm{reconst}}
++
+\beta
+D_{\mathrm{KL}}
+\left(
+q_\phi(z\mid a_{t:t+k},\bar{o}_t)
+\parallel
+\mathcal{N}(0,I)
+\right)</p>
+<p>其中重建损失使用动作序列的误差，KL 项则把潜变量分布约束到标准高斯分布。CVAE Training推理阶段测试时不再使用 CVAE 编码器，而是将：$$z=0$$即使用先验分布的均值，让策略确定性地输出动作。Inference论文的消融实验表明：<br>
+对脚本生成的确定性数据，去掉 CVAE 影响很小；<br>
+对人类示范数据，使用 CVAE 时成功率约为 35.3%，去掉后下降到约 2%。<br>
+这说明 CVAE 主要用于处理人类示范中的噪声、多模态和行为差异。</p>
+<blockquote>
+<p>对于同一个观测 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>o</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">o_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 可能有不同的动作，如果直接回归，模型可能会输出一个不可执行的平均动作。在训练阶段使用 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span></span></span></span> 来帮模型区分不同示范，在测试的时候使用0均值来生成一个确定性的稳定动作序列。</p>
+</blockquote>
+<p>在训练阶段模型并不输出一个固定的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span></span></span></span> ,而是一个高斯分布：</p>
+<ul>
+<li>均值 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi></mrow><annotation encoding="application/x-tex">\mu</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">μ</span></span></span></span></li>
+<li>标准差 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>σ</mi></mrow><annotation encoding="application/x-tex">\sigma</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span></span></span></span></li>
+</ul>
+<p>采样的时候可能会采样均值附近的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span></span></span></span> 值，代表的是与这条示范相近但不完全相同的动作风格。如果一直使用均值，那CVAE就像一个确定性编码器</p>
+<p>假如：一个动作有三种示范在训练集中A、B、C，模型在训练阶段会学习到：</p>
+<ul>
+<li>A 对应潜变量 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mi>A</mi></msub></mrow><annotation encoding="application/x-tex">z_A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">A</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>；</li>
+<li>B 对应潜变量 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mi>B</mi></msub></mrow><annotation encoding="application/x-tex">z_B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05017em;">B</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>；</li>
+<li>C 对应潜变量 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mi>C</mi></msub></mrow><annotation encoding="application/x-tex">z_C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">C</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。</li>
+</ul>
+<p>在测试阶段，模型使用 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">z=0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span>，也就是使用先验分布的均值，生成一个确定性的动作序列。这样可以避免模型在测试阶段输出一个不可执行的平均动作。为了方便反向传播，使用重参数化技巧，将随机性放在 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi></mrow><annotation encoding="application/x-tex">\epsilon</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">ϵ</span></span></span></span> 上:</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>ϵ</mi><mo>∼</mo><mi mathvariant="script">N</mi><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mi>I</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\epsilon \sim \mathcal{N}(0, I)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">ϵ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathcal" style="margin-right:0.14736em;">N</span><span class="mopen">(</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mclose">)</span></span></span></span></span></p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>z</mi><mo>=</mo><mi>μ</mi><mo>+</mo><mi>σ</mi><mo>⊙</mo><mi>ϵ</mi></mrow><annotation encoding="application/x-tex">z=\mu+\sigma\odot\epsilon
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">μ</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⊙</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">ϵ</span></span></span></span></span></p>
+<blockquote>
+<p>所以说 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span></span></span></span> 是代表一个风格，风格不应该是一个确切的点，所以用一个高斯分布表示。</p>
+</blockquote>
+<pre><code class=" mermaid">flowchart LR
+
+    A[&quot;四路 RGB 图像&lt;br/&gt;+ 关节状态&quot;] --&gt; B[&quot;ResNet-18&lt;br/&gt;视觉特征提取&quot;]
+    B --&gt; C[&quot;多视角特征融合&quot;]
+
+    D[&quot;示范动作序列&quot;] --&gt; E[&quot;CVAE Encoder&quot;]
+    E --&gt; F[&quot;μ, σ&quot;]
+    F --&gt; G[&quot;采样潜变量 z&quot;]
+
+    C --&gt; H[&quot;Transformer Encoder&quot;]
+    G --&gt; H
+    H --&gt; I[&quot;Transformer Decoder&quot;]
+
+    I --&gt; J[&quot;动作序列&lt;br/&gt;k × 14&quot;]
+    J --&gt; K[&quot;Action Chunking&quot;]
+    K --&gt; L[&quot;Temporal Ensemble&quot;]
+    L --&gt; M[&quot;PID 控制器&quot;]
+    M --&gt; N[&quot;ALOHA 双臂机器人&quot;]
+
+    N -. &quot;新的视觉观测和关节状态&quot; .-&gt; A
+</code></pre>
+<p>训练时使用：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">示范动作序列 → CVAE Encoder → μ、σ → 采样 z<br>当前观测 + z → ACT → 预测动作序列<br></code></pre></td></tr></table></figure>
+<p>推理时使用：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">当前观测 + z=0 → ACT → 动作分块 → Temporal Ensemble → 机器人执行<br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/VLA/" class="print-no-link">#VLA</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>初入VLA</div>
+      <div>https://atat1010.github.io/2026/08/03/study_note/初入VLA/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>QM</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年8月3日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/08/01/study_note/Foundation%20Pose%E6%8C%87%E5%8D%97/" title="FoundationPose 指南">
+                        <span class="hidden-mobile">FoundationPose 指南</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"9ir8Y8ABM0ZSQDrckfzjkkOh-gzGzoHsz","appKey":"eD94sW1TI15wEWfAYQ9MecGN","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+<script  src="/js/research-motion.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
